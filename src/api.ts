@@ -11,12 +11,12 @@ export const fetchVacRequest = async (vacRequest: {
   date: number;
   timezone: string;
 }): Promise<Response> =>
-  fetch(`${baseUrl()}/rest/ticket`, {
+  fetch(`${baseUrl()}/api/timelogs`, {
     method: 'post',
     headers: {
-      'Accept': 'application/json',
+      Accept: 'application/json',
       'Content-Type': 'application/json',
-      'charset': "utf-8",
+      charset: 'utf-8',
     },
     body: JSON.stringify(vacRequest),
   }).then((response) => {
