@@ -10,7 +10,7 @@ window.onload = () => {
     globalThis.horde = window.horde || {
       appMode: 'mock',
       sessionToken: '1ccAAAAAAcA1cAA-AcAcyA1',
-      currentApp: 'coronado',
+      currentApp: 'timetool',
       userUid: 'mockuser1',
       appWebroot: process.env.PUBLIC_URL,
       languageKey: 'en_US',
