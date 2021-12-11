@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { FormEvent, useState } from 'react';
 import DatePicker from 'react-datepicker';
+import { v4 as uuidv4 } from 'uuid';
 
 import NoteAddIcon from '@mui/icons-material/NoteAdd';
 import {
@@ -23,130 +24,164 @@ import Typography from '@mui/material/Typography';
 export default function InputCard(props: {
   types: string[];
   month: Date | null;
-  uuid: string;
+  uuidProject: string | null;
+  uuidLog: string | null;
 }) {
-  //todo UUID gen for new logs
   const [type, setType] = useState<string>(props.types[0]);
   const [breakTime, setBreakTime] = useState<number>(45);
   const [travelTime, setTravelTime] = useState<number>(0);
   const [logMsg, setLogMsg] = useState<string>('');
+  const [selectedDay, setSelectedDay] = useState<Date | null>(props.month);
 
-  const handleTest = () => {
-    console.log(props.month);
-    console.log(props.types);
-    console.log(props.uuid);
-    console.log(breakTime);
-    console.log(travelTime);
-    console.log(logMsg);
-    console.log(type);
-  };
+  // const handleTest = () => {
+  //   console.log(props.month);
+  //   console.log(props.types);
+  //   console.log(props.uuid);
+  //   console.log(breakTime);
+  //   console.log(travelTime);
+  //   console.log(logMsg);
+  //   console.log(type);
+  // };
   const setTypeHandler = (event: SelectChangeEvent) => {
     setType(event.target.value as string);
   };
 
-  const handleSubmit = () => {};
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    let request;
+    if (props.uuidLog === null) {
+      request = {
+        uuidProject: props.uuidProject,
+        uuidLog: uuidv4(),
+        type: type,
+        breakTime: breakTime,
+        travelTime: travelTime,
+        logMsg: logMsg,
+        selectedDay: selectedDay,
+      };
+    } else {
+      request = {
+        uuidProject: props.uuidProject,
+        uuidLog: props.uuidLog,
+        type: type,
+        breakTime: breakTime,
+        travelTime: travelTime,
+        logMsg: logMsg,
+        selectedDay: selectedDay,
+      };
+    }
+    console.log(
+      'prototyp API call',
+      'PUT',
+      '/rest/timelog/:loguuid',
+      'Body json:',
+      request,
+    );
+  };
+
   const handleRemote = () => {};
-  //! TODO STACK Für übersicht
   return (
     <Card elevation={0} sx={{border: 1, borderColor: 'grey.300'}}>
       <CardContent>
-        <Button onClick={handleTest}>Test</Button>
-        <Box style={{alignItems: 'center'}}>
+        {/* <Button onClick={handleTest}>Test</Button> */}
+        <Box sx={{mx: 'auto', textAlign: 'start', p: 3}}>
           <form onSubmit={handleSubmit}>
-            <FormControl fullWidth>
-              <InputLabel id='select-label-typState'>
-                {props.types.length === 1
-                  ? 'Only one typ in this project'
-                  : 'Typ'}
-              </InputLabel>
-              <Select
-                labelId='select-label-typ'
-                id='demo-simple-select-typ'
-                value={type}
-                label={
-                  props.types.length === 1
-                    ? 'Only one typ in this project'
-                    : 'Typ'
-                }
-                onChange={setTypeHandler}
-                disabled={props.types.length === 1}
-              >
-                {props.types.map((typ, idx) => (
-                  <MenuItem key={idx} value={typ}>
-                    {typ}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <FormControl component='fieldset'>
-              <RadioGroup
-                row
-                aria-label='position'
-                name='position'
-                defaultValue='remote'
-                onChange={handleRemote}
-                sx={{mr: 2}}
-              >
-                <FormControlLabel
-                  value='remote'
-                  control={<Radio />}
-                  label='remote'
-                  labelPlacement='start'
+            <Grid container spacing={3}>
+              <div className='picker'>
+                <Typography style={{color: '#838282'}}>Select day</Typography>
+                <DatePicker
+                  id='datePicker'
+                  wrapperClassName='datePicker'
+                  dateFormat='dd/MM/yy'
+                  required={true}
+                  minDate={props.month}
+                  selected={selectedDay}
+                  showYearDropdown={!!props.uuidLog}
+                  scrollableMonthYearDropdown={!!props.uuidLog}
+                  onChange={(newDate: Date | null) => setSelectedDay(newDate)}
+                ></DatePicker>
+              </div>
+              <Grid item xs={4}>
+                <FormControl fullWidth>
+                  <InputLabel id='select-label-typState'>Typ</InputLabel>
+                  <Select
+                    labelId='select-label-typ'
+                    id='demo-simple-select-typ'
+                    value={type}
+                    label='Typ'
+                    onChange={setTypeHandler}
+                  >
+                    {props.types.map((typ, idx) => (
+                      <MenuItem key={idx} value={typ}>
+                        {typ}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={3}>
+                <FormControl component='fieldset'>
+                  <RadioGroup
+                    row
+                    aria-label='position'
+                    name='position'
+                    defaultValue='remote'
+                    onChange={handleRemote}
+                  >
+                    <FormControlLabel
+                      value='remote'
+                      control={<Radio />}
+                      label='remote'
+                      labelPlacement='start'
+                    />
+                    <FormControlLabel
+                      value='on Site'
+                      control={<Radio />}
+                      label='on site'
+                      labelPlacement='start'
+                    />
+                  </RadioGroup>
+                </FormControl>
+              </Grid>
+            </Grid>
+            <Grid container spacing={3} sx={{textAlign: 'start', mt: 0}}>
+              <TextField
+                sx={{mt: 3, width: 150}}
+                label='Break time (Minutes)'
+                value={breakTime}
+                onChange={(e) => setBreakTime(parseInt(e.target.value))}
+                type='number'
+                inputProps={{min: '0', max: '180', step: '15'}}
+              />
+              <TextField
+                sx={{mt: 3, width: 150}}
+                label='Travel time (Minutes)'
+                value={travelTime}
+                onChange={(e) => setTravelTime(parseInt(e.target.value))}
+                type='number'
+                inputProps={{min: '0', step: '15'}}
+              />
+              <Grid item xs={5}>
+                <TextField
+                  fullWidth
+                  label='Comment'
+                  required={true}
+                  value={logMsg}
+                  onChange={(e) => setLogMsg(e.target.value)}
                 />
-                <FormControlLabel
-                  value='on Site'
-                  control={<Radio />}
-                  label='on Site'
-                  labelPlacement='start'
-                />
-              </RadioGroup>
-            </FormControl>
-            <div className='picker'>
-              <Typography style={{color: '#838282'}}>Select day</Typography>
-              <DatePicker
-                id='datePicker'
-                wrapperClassName='datePicker'
-                dateFormat='dd/MM/yyyy'
-                required={true}
-                selected={null}
-                minDate={new Date('2020-01-01')}
-                maxDate={new Date()}
-                showYearDropdown
-                scrollableMonthYearDropdown
-                onChange={() => {}}
-              ></DatePicker>
-            </div>
-            <TextField
-              label='Break time (Minutes)'
-              value={breakTime}
-              onChange={(e) => setBreakTime(parseInt(e.target.value))}
-              type='number'
-              inputProps={{min: '0', max: '180', step: '15'}}
-              sx={{width: 176, mb: 1, mt: 2}}
-            />
-            <TextField
-              label='Travel time (Minutes)'
-              value={travelTime}
-              onChange={(e) => setTravelTime(parseInt(e.target.value))}
-              type='number'
-              inputProps={{min: '0', max: '180', step: '15'}}
-              sx={{width: 176, mt: 2}}
-            />
-            <TextField
-              label='Comment'
-              required={true}
-              value={logMsg}
-              onChange={(e) => setLogMsg(e.target.value)}
-              sx={{width: 400, mb: 1, mt: 2}}
-            />
-            <Button
-              variant='contained'
-              startIcon={<NoteAddIcon />}
-              type='submit'
-              sx={{mt: 3, ml: 1}}
-            >
-              commit
-            </Button>
+              </Grid>
+              <Grid item xs={3}>
+                <Button
+                  sx={{mt: 1, width: 250}}
+                  size='large'
+                  variant='contained'
+                  startIcon={<NoteAddIcon />}
+                  type='submit'
+                >
+                  commit
+                </Button>
+              </Grid>
+            </Grid>
           </form>
         </Box>
       </CardContent>
