@@ -19,34 +19,31 @@ import {
 	MenuItem,
 	Select,
 	SelectChangeEvent,
-	Stack,
 	Table,
 	TableBody,
 	TableCell,
 	TableContainer,
 	TableHead,
 	TableRow,
-	TextField,
 	ToggleButton,
 	ToggleButtonGroup,
 } from '@mui/material';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemText from '@mui/material/ListItemText';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 
 import InputCard from './InputCard';
+import MonthEndDialog from './MonthEndDialog';
 import { StyledTableCell } from './StyledTable';
 
 export default function Log() {
-  const [selectedMoth, setSelectedMonth] = useState<Date | null>(null);
+  const [selectedMonth, setSelectedMonth] = useState<Date | null>(null);
   const [project, setProject] = useState<string>('');
   const [projectUuid, setProjectUuid] = useState<string | null>(null);
   const [uuidLog, setUuidLog] = useState<string | null>(null);
   const [projectTypes, setProjectTypes] = useState<string[]>([]);
+  const [endMonthOpen, setEndMonthOpen] = useState(false);
 
   //_PLACEHOLDER shicht/paushale=perdiem/default-imelog
   const projects = [
@@ -104,6 +101,10 @@ export default function Log() {
   //   );
   // };
 
+  const monthEndHandler = () => {
+    setEndMonthOpen(false);
+  };
+
   const handleChangeProjectState = (event: SelectChangeEvent) => {
     const projectFiltred = projects.filter(
       (project) => project.name === (event.target.value as string),
@@ -112,7 +113,7 @@ export default function Log() {
     setProjectUuid(projectFiltred[0].uuid);
     setProjectTypes(projectFiltred[0].types);
     const request = {
-      date: selectedMoth,
+      date: selectedMonth,
       project: projectFiltred[0].uuid,
     };
     console.log(
@@ -129,7 +130,7 @@ export default function Log() {
       uuid: uuid,
     };
     console.log('prototyp API call', 'DELETE', '/rest/timelog/:loguuid');
-    console.log('uuid:', uuid);
+    console.log('uuid:', request.uuid);
   };
 
   // const handleTest = () => {
@@ -143,6 +144,12 @@ export default function Log() {
     <Paper>
       <Card elevation={0} sx={{border: 1, borderColor: 'grey.300'}}>
         {/* <Button onClick={handleTest}>Test</Button> */}
+        {endMonthOpen && (
+          <MonthEndDialog
+            close={monthEndHandler}
+            selectedMonth={selectedMonth}
+          />
+        )}
         <CardContent>
           <Box sx={{mx: 'auto', textAlign: 'start', p: 3}}>
             <Grid container spacing={3}>
@@ -152,15 +159,14 @@ export default function Log() {
                   id='datePicker'
                   wrapperClassName='datePicker'
                   dateFormat='LLLL    yyyy'
-                  selected={selectedMoth}
+                  selected={selectedMonth}
                   showMonthYearPicker
                   showFullMonthYearPicker
                   showTwoColumnMonthYearPicker
                   onChange={(newDate: Date | null) => setSelectedMonth(newDate)}
                 ></DatePicker>
               </div>
-              {/* //todo GET Project for user and month  */}
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={6}>
                 <FormControl fullWidth>
                   <InputLabel id='select-label-projectState'>
                     Project
@@ -171,7 +177,7 @@ export default function Log() {
                     value={project}
                     label='Project'
                     onChange={handleChangeProjectState}
-                    disabled={!selectedMoth}
+                    disabled={!selectedMonth}
                   >
                     {projects.map((project) => (
                       <MenuItem key={project.uuid} value={project.name}>
@@ -181,6 +187,18 @@ export default function Log() {
                   </Select>
                 </FormControl>
               </Grid>
+              <Grid item xs={3}>
+                <Button
+                  sx={{mt: 1, width: 250}}
+                  size='large'
+                  variant='contained'
+                  startIcon={<NoteAddIcon />}
+                  disabled={!selectedMonth}
+                  onClick={() => setEndMonthOpen(true)}
+                >
+                  end month
+                </Button>
+              </Grid>
             </Grid>
           </Box>
         </CardContent>
@@ -189,7 +207,7 @@ export default function Log() {
         <>
           <InputCard
             types={projectTypes}
-            month={selectedMoth}
+            month={selectedMonth}
             uuidProject={projectUuid}
             uuidLog={uuidLog}
           />
@@ -224,13 +242,12 @@ export default function Log() {
                               <ToggleButton value='Edit'>
                                 <EditIcon color='warning' />
                               </ToggleButton>
-                              <ToggleButton value='phone' aria-label='phone'>
+                              <ToggleButton value='Copy'>
                                 <FileCopyIcon color='info' />
                               </ToggleButton>
                               <ToggleButton
                                 onClick={() => handleDelte(log.uuid)}
-                                value='tv'
-                                aria-label='tv'
+                                value='Delete'
                               >
                                 <DeleteIcon color='error' />
                               </ToggleButton>
