@@ -15,7 +15,6 @@ import List from '@mui/material/List';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import Toolbar from '@mui/material/Toolbar';
 
-import InputCard from './InputCard';
 import Log from './Log';
 
 const drawerWidth = 240;

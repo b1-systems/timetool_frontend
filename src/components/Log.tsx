@@ -83,6 +83,27 @@ export default function Log() {
     },
   ];
 
+  // old get specific
+  // const handleChangeProjectState = (event: SelectChangeEvent) => {
+  //   const projectFiltred = projects.filter(
+  //     (project) => project.name === (event.target.value as string),
+  //   );
+  //   setProject(event.target.value as string);
+  //   setProjectUuid(projectFiltred[0].uuid);
+  //   setProjectTypes(projectFiltred[0].types);
+  //   const request = {
+  //     date: selectedMoth,
+  //     project: projectFiltred[0].uuid,
+  //   };
+  //   console.log(
+  //     'prototyp API call',
+  //     'GET',
+  //     '/rest/:date/:project',
+  //     'Body json:',
+  //     request,
+  //   );
+  // };
+
   const handleChangeProjectState = (event: SelectChangeEvent) => {
     const projectFiltred = projects.filter(
       (project) => project.name === (event.target.value as string),
