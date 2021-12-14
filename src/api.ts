@@ -44,7 +44,12 @@ export const fetchProjects = async (requestPrototyp: {
     }
   });
 
-export const fetchOldLogs = async (requestPrototyp: {
+/**
+ * Get logs to display for the current month selected
+ * @param newDate 
+ * 
+ */
+export const fetchCurrentMonthLogs = async (requestPrototyp: {
   params?: Object;
 }): Promise<Response> =>
   fetch(

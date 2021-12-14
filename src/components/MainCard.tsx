@@ -33,8 +33,8 @@ import Container from '@mui/material/Container';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 
-import { Log, Project } from '../models';
-import { fetchOldLogs, fetchProjects } from '../api';
+import { Logs, Project } from '../models';
+import { fetchCurrentMonthLogs, fetchProjects } from '../api';
 import InputCard from './InputCard';
 import MonthEndDialog from './MonthEndDialog';
 import { StyledTableCell } from './StyledTable';
@@ -42,7 +42,10 @@ import { StyledTableCell } from './StyledTable';
 export default function MainCard() {
   const [selectedMonth, setSelectedMonth] = useState<Date | null>(null);
   const [availableProjects, setAvailableProjects] = useState<Project[]>([]);
-  const [oldLogs, setoldLogs] = useState<Log[]>([]);
+  const [oldLogs, setoldLogs] =  useState<Logs>({
+    timelogs: [],
+    perdiems: [],
+  });
   const [project, setProject] = useState<string>('');
   const [projectUuid, setProjectUuid] = useState<string | null>(null);
   const [uuidLog, setUuidLog] = useState<string | null>(null);
@@ -63,23 +66,30 @@ export default function MainCard() {
 
   const setMonthGetProjectsHandler = (newDate: Date | null) => {
     setSelectedMonth(newDate);
-    let requestPrototyp;
+    let requestPrototype;
     if (newDate !== null) {
-      requestPrototyp = {
+      requestPrototype = {
         params: {
           year: newDate.getFullYear(),
-          month: newDate.getMonth(),
+          month: newDate.getMonth() + 1,
           scope: 'me',
         },
       };
-      fetchProjects(requestPrototyp)
+      fetchProjects(requestPrototype)
         .then((response) => {
           return response.json();
         })
         .then((projectsResponse) => {
           setAvailableProjects(projectsResponse.projects);
         });
-    }
+        fetchCurrentMonthLogs(requestPrototype)
+         .then((response) => {
+           return response.json();
+         })
+         .then((LogsResponse) => {
+         setoldLogs(LogsResponse.projects);
+         });
+      }
   };
 
   const setProjectGetLogsHandler = (event: SelectChangeEvent) => {
@@ -94,11 +104,10 @@ export default function MainCard() {
       requestPrototype = {
         params: {
           year: selectedMonth.getFullYear(),
-          month: selectedMonth.getMonth(),
+          month: selectedMonth.getMonth() + 1,
           format: 'traditional'
         },
       };
-      fetchOldLogs(requestPrototype);
     }
   };
 

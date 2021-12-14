@@ -6,7 +6,7 @@ import Timelog from './components/Timelog';
 function App() {
   return (
     <BrowserRouter basename={globalThis.horde.appWebroot}>
-      <Timelog></Timelog>
+        <Timelog></Timelog>
     </BrowserRouter>
   );
 }

@@ -67,7 +67,7 @@ const Timelog = () => {
               <Link
                 color='inherit'
                 component={RouterLink}
-                to='/'
+                to='/employee/projects'
                 underline='hover'
               >
                 <ListItemButton>
