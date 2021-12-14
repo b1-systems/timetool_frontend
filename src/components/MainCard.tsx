@@ -89,15 +89,16 @@ export default function MainCard() {
     setProject(event.target.value as string);
     setProjectUuid(projectFiltered[0].uuid);
     setProjectTypes(projectFiltered[0].worktypes);
-    let requestPrototyp;
+    let requestPrototype;
     if (selectedMonth !== null) {
-      requestPrototyp = {
+      requestPrototype = {
         params: {
           year: selectedMonth.getFullYear(),
           month: selectedMonth.getMonth(),
+          format: 'traditional'
         },
       };
-      fetchOldLogs(requestPrototyp);
+      fetchOldLogs(requestPrototype);
     }
   };
 
