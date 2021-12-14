@@ -1,4 +1,4 @@
-import { Project } from '../models';
+import { Project } from './models';
 
 const getParams = (params?: Object) => {
   if (params === undefined) {
@@ -24,7 +24,7 @@ export const fetchProjects = async (requestPrototyp: {
   params?: Object;
 }): Promise<Response> =>
   fetch(
-    `${baseUrl()}/rest/employee/me/projects${getParams(
+    `${baseUrl()}/rest/project${getParams(
       requestPrototyp.params,
     )}`,
     {
@@ -48,7 +48,7 @@ export const fetchOldLogs = async (requestPrototyp: {
   params?: Object;
 }): Promise<Response> =>
   fetch(
-    `${baseUrl()}rest/employee/me/timelogs${getParams(requestPrototyp.params)}`,
+    `${baseUrl()}/rest/employee/me/timelogs${getParams(requestPrototyp.params)}`,
     {
       method: 'get',
       headers: {

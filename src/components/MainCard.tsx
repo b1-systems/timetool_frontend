@@ -33,7 +33,7 @@ import Container from '@mui/material/Container';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 
-import { Log, Project } from '../../models';
+import { Log, Project } from '../models';
 import { fetchOldLogs, fetchProjects } from '../api';
 import InputCard from './InputCard';
 import MonthEndDialog from './MonthEndDialog';
@@ -76,19 +76,19 @@ export default function MainCard() {
         .then((response) => {
           return response.json();
         })
-        .then((projects) => {
-          setAvailableProjects(projects);
+        .then((projectsResponse) => {
+          setAvailableProjects(projectsResponse.projects);
         });
     }
   };
 
   const setProjectGetLogsHandler = (event: SelectChangeEvent) => {
-    const projectFiltred = availableProjects.filter(
+    const projectFiltered = availableProjects.filter(
       (project) => project.name === (event.target.value as string),
     );
     setProject(event.target.value as string);
-    setProjectUuid(projectFiltred[0].uuid);
-    setProjectTypes(projectFiltred[0].worktypes);
+    setProjectUuid(projectFiltered[0].uuid);
+    setProjectTypes(projectFiltered[0].worktypes);
     let requestPrototyp;
     if (selectedMonth !== null) {
       requestPrototyp = {
