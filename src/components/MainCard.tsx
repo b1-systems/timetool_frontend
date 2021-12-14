@@ -21,7 +21,14 @@ import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 
 import { fetchCurrentMonthLogs, fetchProjects } from '../api';
-import { Logs, Project } from '../models';
+import { Logs, Perdiem, Project } from '../models';
+//start import only for testing without backend
+import {
+	_dummy_old_logs_1,
+	_dummy_old_logs_2,
+	_dummy_projects,
+} from './dummyData';
+//end
 import InputCard from './InputCard';
 import MonthEndDialog from './MonthEndDialog';
 import TimelogItemList from './TimelogItemList';
@@ -33,6 +40,7 @@ export default function MainCard() {
     timelogs: [],
     perdiems: [],
   });
+  // const [perdiemTypes, setPerdiemTypes] = useState<Object>({});
   const [project, setProject] = useState<string>('');
   const [projectUuid, setProjectUuid] = useState<string | null>(null);
   const [uuidLog, setUuidLog] = useState<string | null>(null);
@@ -86,21 +94,47 @@ export default function MainCard() {
     );
     setProject(event.target.value as string);
     setProjectUuid(projectFiltered[0].uuid);
-    setProjectTypes(projectFiltered[0].worktypes);
-    let requestPrototype;
-    if (selectedMonth !== null) {
-      requestPrototype = {
-        params: {
-          year: selectedMonth.getFullYear(),
-          month: selectedMonth.getMonth() + 1,
-          format: 'traditional',
-        },
-      };
-    }
+    setProjectTypes(Object.keys(projectFiltered[0].worktypes));
+    // TODO how to get perdiem Types because new logs can have types old logs dont have
+    // if (projectFiltered[0].worktypes.perdiem !== undefined) {
+    //   setPerdiemTypes(projectFiltered[0].worktypes.perdiem);
+    // }
+    //! is this still needed?
+    // let requestPrototype;
+    // if (selectedMonth !== null) {
+    //   requestPrototype = {
+    //     params: {
+    //       year: selectedMonth.getFullYear(),
+    //       month: selectedMonth.getMonth() + 1,
+    //       format: 'traditional',
+    //     },
+    //   };
+    // }
   };
 
   return (
     <Paper>
+      {/* <Card elevation={0} sx={{border: 1, borderColor: 'grey.300'}}>
+        this card only for testing without backend
+        <Button
+          onClick={() => {
+            setSelectedMonth(new Date());
+            setAvailableProjects(_dummy_projects);
+            setoldLogs(_dummy_old_logs_1);
+          }}
+        >
+          _dummy_1
+        </Button>
+        <Button
+          onClick={() => {
+            setSelectedMonth(new Date());
+            setAvailableProjects(_dummy_projects);
+            setoldLogs(_dummy_old_logs_2);
+          }}
+        >
+          _dummy_2
+        </Button>
+      </Card> */}
       <Card elevation={0} sx={{border: 1, borderColor: 'grey.300'}}>
         {endMonthOpen && (
           <MonthEndDialog
@@ -163,18 +197,17 @@ export default function MainCard() {
           </Box>
         </CardContent>
       </Card>
-      <>
-        <InputCard
-          types={projectTypes}
-          month={selectedMonth}
-          uuidProject={projectUuid}
-          uuidLog={uuidLog}
-        />
-        <TimelogItemList
-          timelogs={oldLogs.timelogs}
-          perdiems={oldLogs.perdiems}
-        />
-      </>
+      <InputCard
+        types={projectTypes}
+        month={selectedMonth}
+        uuidProject={projectUuid}
+        uuidLog={uuidLog}
+      />
+      <TimelogItemList
+        timelogs={oldLogs.timelogs}
+        perdiems={oldLogs.perdiems}
+        // perdiemTypes{perdiemTypes}
+      />
     </Paper>
   );
 }

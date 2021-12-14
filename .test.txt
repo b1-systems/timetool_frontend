@@ -277,3 +277,114 @@ export default function MainCard() {
     </Paper>
   );
 }
+
+
+mitschrift
+
+  const _dummy_old_logs_2: Logs = {
+    timelogs: [
+      {
+        uuid: '61b846d5-c33c-4751-8feb-2d0f2068c51e',
+        employee_uuid: '61b846c6-2d44-42c4-83ba-2d0f2068c51e',
+        project_uuid: '618e86a1-dfc0-4025-84f8-86516d67120b',
+        project_name: "Fix",
+        start_dt: 1625119200,
+        end_dt: 1625151600,
+        type: 'default', //default or shift
+        breaklength: 3600,//sekunden
+        travel: '0',//sekunden
+        comment: 'SAP Unicorn - Telefonica',
+        onsite: "onsite", //"onsite" or "remote"
+
+      },
+      { //bsp für shift
+        uuid: '61b846d5-c33c-4751-8feb-2d0f2068c51e',
+        employee_uuid: '61b846c6-2d44-42c4-83ba-2d0f2068c51e',
+        project_uuid: '618e86a1-dfc0-4025-84f8-86516d67120b',
+        project_name: "Fix",
+        start_dt: 1625119200,
+        end_dt: 1625151600,
+        type: 'shift', //default or shift
+        incidents: [
+          {
+          start_dt: 123,
+          end_dt: 123,
+          comment: "mitteilung"
+          }]
+        shift_model:"morning" //solte auch in log-liste angezeigt werden
+      },
+    ],
+    perdiems: [
+      {
+        uuid
+        start_dt: 1626566400,
+        employee_uuid: '61b846c6-2d44-42c4-83ba-2d0f2068c51e',
+        type: 7, //zeigt type an Ralf gibt liste
+        project_name: "Fix",
+        project_uuid: '618e86a1-dfc0-4025-84f8-86516d67120b',
+        comment: 'Dresden - Unicorn Meetings - Anreise',
+      },
+    ],
+  };
+
+----
+PUT perdiem:
+uuid uuid()
+start_dt: datepicker
+type: value zum anzeigenamen aus dropdown
+project_uuid aus dropdown
+comment aus eingabefeld (pflicht)
+
+PUT shift:
+uuid uuid()
+start_dt: datepicker
+shift_model
+type: value zum anzeigenamen aus dropdown
+project_uuid aus dropdown
+comment aus eingabefeld (pflicht)
+
+PUT timelog:
+uuid: uuid()
+project_uuid: aus dropdown
+start_dt: aus 2 datepickern
+end_dt: aus 2 datepickern
+type: 'default', //default or shift
+breaklength: 3600,//sekunden
+travel: '0',//sekunden
+comment: 'SAP Unicorn - Telefonica',
+onsite: "onsite", //"onsite" or "remote"
+
+----
+///Ausgabe für Perdiem
+start_dt
+project_name
+type->auf string gemapt
+
+comment
+----
+//Format Project
+{
+  "projects": [
+    {
+      "uuid": "618e8681-9bb8-4c26-9ae3-86516d67120b",
+      "name": "intern - TimeTool",
+      "worktypes": {
+        "perdiem": {
+          "4": "VMA Ausland",
+          "5": "32 € 24h ab 3 Mon",
+          "6": "16 € Anreise ab 3 Mon",
+          "7": "14 € VMA Anreise",
+          "8": "28 € VMA 24h"
+        },
+        "timelog": [
+          "timelog"
+        ],
+        "shift": {
+          "morning": "Frühschicht",
+          "afternoon": "Nachmittag",
+          "night": "Nachtschicht"
+        }
+      }
+    }
+  ]
+}

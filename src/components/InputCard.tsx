@@ -135,9 +135,9 @@ export default function InputCard(props: {
                       labelPlacement='start'
                     />
                     <FormControlLabel
-                      value='on Site'
+                      value='onsite'
                       control={<Radio />}
-                      label='on site'
+                      label='onsite'
                       labelPlacement='start'
                     />
                   </RadioGroup>

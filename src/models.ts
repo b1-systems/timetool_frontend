@@ -1,40 +1,38 @@
 export interface Project {
   name: string;
   uuid: string;
-  worktypes: string[];
+  worktypes: {perdiem?: Object; timelog?: Object; shift?: Object};
 }
 export interface Logs {
   timelogs: Timelog[];
   perdiems: Perdiem[];
 }
 export interface Perdiem {
-  date: number;
-  employee: string;
+  uuid: string;
+  project_uuid: string;
+  project_name: string;
+  start_dt: number;
+  employee_uuid: string;
   type: number;
-  projectUuid: string;
   comment: string;
 }
 export interface Timelog {
-  timelog_id: number;
-  timelog_uuid: string;
+  uuid: string;
   employee_uuid: string;
   project_uuid: string;
+  project_name: string;
   start_dt: number;
   end_dt: number;
-  timelog_type: string;
-  json_bag: {
-    id: number;
-    employee_uuid: string;
-    startdt: string;
-    enddt: string;
-    feiertag: string;
-    oncall: string;
-    project_id: number;
-    project_uuid: string;
-    breaklength: number;
-    travel: string;
-    comment: string;
-    onsite: number;
-    subproject: number;
-  };
+  type: string;
+  breaklength?: number;
+  travel?: string;
+  comment?: string;
+  onsite?: string;
+  incidents?: Incidents[];
+  shift_model?: string;
+}
+export interface Incidents {
+  start_dt: number;
+  end_dt: number;
+  comment: string;
 }
