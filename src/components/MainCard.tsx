@@ -88,7 +88,7 @@ export default function MainCard() {
            return response.json();
          })
          .then((LogsResponse) => {
-          setoldLogs(LogsResponse);
+            setoldLogs(LogsResponse);
          });
       }
   };
@@ -176,70 +176,14 @@ export default function MainCard() {
           </Box>
         </CardContent>
       </Card>
-        <>
+      <>
           <InputCard
             types={projectTypes}
             month={selectedMonth}
             uuidProject={projectUuid}
             uuidLog={uuidLog}
           />
-          <Card elevation={0} sx={{border: 1, borderColor: 'grey.300'}}>
-            <CardContent>
-              {
-              <div>fish</div>}
-              {
-                console.log(oldLogs)
-              /* {oldLogs.length ? (
-                      {oldLogs.map(
-                        (log) => {
-                          log.perdiems.length &&
-                            log.perdiems.forEach((perdiem) => {
-                              renderPerdiem(perdiem);
-                            });
-                          log.timelogs.length &&
-                            log.perdiems.forEach((timelog) =>
-                              renderTimelog(timelog),
-                            );
-                        },
-                        // (
-
-                        //   <TableRow key={log.uuid}>
-                        //     <TableCell>{log.project}</TableCell>
-                        //     <TableCell align='center'>{log.msg}</TableCell>
-                        //     <TableCell align='center'>{log.date.day}</TableCell>
-                        //     <TableCell align='center'>{log.typ}</TableCell>
-                        //     <TableCell align='center'>
-                        //       <ToggleButtonGroup>
-                        //         <ToggleButton value='Edit'>
-                        //           <EditIcon color='warning' />
-                        //         </ToggleButton>
-                        //         <ToggleButton value='Copy'>
-                        //           <FileCopyIcon color='info' />
-                        //         </ToggleButton>
-                        //         <ToggleButton
-                        //           onClick={() => handleDelete(log.uuid)}
-                        //           value='Delete'
-                        //         >
-                        //           <DeleteIcon color='error' />
-                        //         </ToggleButton>
-                        //       </ToggleButtonGroup>
-                        //     </TableCell>
-                        //   </TableRow>
-                        // )
-                      )}
-                    {/* </TableBody>
-                  </Table>
-                </TableContainer> */}
-              ) : (
-              <Container>
-                <Box sx={{mx: 'auto', textAlign: 'center', p: 5}}>
-                  <Alert severity='info' sx={{textAlign: 'center'}}>
-                    "No timelogs have been made yet."
-                  </Alert>
-                </Box>
-              </Container>
-            </CardContent>
-          </Card>
+          <TimelogItemList/>
         </>
     </Paper>
   );
