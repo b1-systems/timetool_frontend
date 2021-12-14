@@ -10,7 +10,7 @@ const getParams = (params?: Object) => {
       buildString.push(`?${key}=${value}`);
       continue;
     }
-    buildString.push(`$${key}=${value}`);
+    buildString.push(`&${key}=${value}`);
   }
   return buildString.join('');
 };
@@ -24,7 +24,9 @@ export const fetchProjects = async (requestPrototyp: {
   params?: Object;
 }): Promise<Response> =>
   fetch(
-    `${baseUrl()}rest/employee/me/projects${getParams(requestPrototyp.params)}`,
+    `${baseUrl()}/rest/employee/me/projects${getParams(
+      requestPrototyp.params,
+    )}`,
     {
       method: 'get',
       headers: {

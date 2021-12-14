@@ -66,7 +66,11 @@ export default function MainCard() {
     let requestPrototyp;
     if (newDate !== null) {
       requestPrototyp = {
-        params: {year: newDate.getFullYear(), month: newDate.getMonth()},
+        params: {
+          year: newDate.getFullYear(),
+          month: newDate.getMonth(),
+          scope: 'me',
+        },
       };
       fetchProjects(requestPrototyp)
         .then((response) => {
