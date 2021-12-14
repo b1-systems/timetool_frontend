@@ -15,7 +15,7 @@ import List from '@mui/material/List';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import Toolbar from '@mui/material/Toolbar';
 
-import Log from './Log';
+import MainCard from './MainCard';
 
 const drawerWidth = 240;
 
@@ -114,7 +114,7 @@ const Timelog = () => {
           }}
         >
           <Toolbar />
-          <Log />
+          <MainCard />
         </Box>
       </Box>
     </>

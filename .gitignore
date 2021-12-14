@@ -284,3 +284,5 @@ dmypy.json
 cython_debug/
 **/__diff_output__
 .info.txt
+.test.js
+.test.ts
