@@ -45,50 +45,78 @@ export default function InputCard(props: {
   const [incidents, setIncidents] = useState<Incidents[]>([]);
   const [from, setFrom] = useState<Date | null>(null);
   const [to, setTo] = useState<Date | null>(null);
+  const [typeOfPerdiem, setTypeOfPerdiem] = useState<string>('_Placeholder');
 
   const setTypeHandler = (event: SelectChangeEvent) => {
     setType(event.target.value as string);
   };
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    // event.preventDefault();
-    // let onsiteRemote = 'remote';
-    // if (remote === false) {
-    //   onsiteRemote = 'onsite';
-    // }
-    // if (type === 'timelog') {
-    //   let requestPrototype;
-    //   if (props.uuidLog === null) {
-    //     requestPrototype = {
-    //       request: {
-    //         uuid: uuidv4(),
-    //         project_uuid: props.uuidProject,
-    //         start_dt: from,
-    //         end_dt: to,
-    //         type: type,
-    //         breakTime: breakTime * 60,
-    //         travelTime: travelTime * 60,
-    //         comment: logMsg,
-    //         onsite: onsiteRemote,
-    //       }
-    //     };
-    //   } else {
-    //     requestPrototype = {
-    //       request: {
-    //         uuid: props.uuidLog,
-    //         project_uuid: props.uuidProject,
-    //         start_dt: from,
-    //         end_dt: to,
-    //         type: type,
-    //         breakTime: breakTime * 60,
-    //         travelTime: travelTime * 60,
-    //         comment: logMsg,
-    //         onsite: onsiteRemote,
-    //       }
-    //     };
-    //   }
-    //   fetchSubmit(requestPrototype)}
-    // }
+    event.preventDefault();
+    let onsiteRemote = 'remote';
+    if (remote === false) {
+      onsiteRemote = 'onsite';
+    }
+    //for type timelog
+    if (type === 'timelog') {
+      let requestPrototype;
+      if (props.uuidLog === null) {
+        requestPrototype = {
+          request: {
+            uuid: uuidv4(),
+            project_uuid: props.uuidProject,
+            start_dt: from,
+            end_dt: to,
+            type: type,
+            breakTime: breakTime * 60,
+            travelTime: travelTime * 60,
+            comment: logMsg,
+            onsite: onsiteRemote,
+          },
+        };
+      } else {
+        requestPrototype = {
+          request: {
+            uuid: props.uuidLog,
+            project_uuid: props.uuidProject,
+            start_dt: from,
+            end_dt: to,
+            type: type,
+            breakTime: breakTime * 60,
+            travelTime: travelTime * 60,
+            comment: logMsg,
+            onsite: onsiteRemote,
+          },
+        };
+        fetchSubmit(requestPrototype);
+      }
+    }
+    //for type perdiem
+    if (type === 'perdiem') {
+      let requestPrototype;
+      if (props.uuidLog === null) {
+        requestPrototype = {
+          request: {
+            uuid: uuidv4(),
+            project_uuid: props.uuidProject,
+            start_dt: selectedDay,
+            type: typeOfPerdiem,
+            comment: logMsg,
+          },
+        };
+      } else {
+        requestPrototype = {
+          request: {
+            uuid: props.uuidLog,
+            project_uuid: props.uuidProject,
+            start_dt: selectedDay,
+            type: typeOfPerdiem,
+            comment: logMsg,
+          },
+        };
+      }
+      fetchSubmit(requestPrototype);
+    }
   };
 
   const handleRemote = () => {
@@ -205,7 +233,9 @@ export default function InputCard(props: {
               setFromCard={setFrom}
             />
           )}
-          {type === 'perdiem' && <InputPerdiem />}
+          {type === 'perdiem' && (
+            <InputPerdiem setTypeOfPerdiem={setTypeOfPerdiem} />
+          )}
         </CardContent>
         <CardActions>
           <Button

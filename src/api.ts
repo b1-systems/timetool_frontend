@@ -87,20 +87,8 @@ export const fetchDelete = async (requestPrototyp: {
     }
   });
 
-export const fetchSubmit = async (requestPrototyp: {
-  request: {
-    uuid: string;
-    project_uuid: string;
-    start_dt: Date;
-    end_dt: Date;
-    type: string;
-    breakTime: number;
-    travelTime: number;
-    comment: string;
-    onsite: string;
-  };
-}): Promise<Response> =>
-  fetch(`${baseUrl()}/rest/timelog/${requestPrototyp.request.uuidLog}`, {
+export const fetchSubmit = async (requestPrototyp: any): Promise<Response> =>
+  fetch(`${baseUrl()}/rest/timelog/${requestPrototyp.request.uuid}`, {
     method: 'put',
     headers: {
       Accept: 'application/json',

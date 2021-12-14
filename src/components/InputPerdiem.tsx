@@ -22,7 +22,7 @@ import {
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 
-export default function InputPerdiem(props: {}) {
+export default function InputPerdiem(props: {setTypeOfPerdiem: Function}) {
   return (
     <Card elevation={0} sx={{border: 1, borderColor: 'grey.300'}}>
       InputPerdiem
