@@ -28,7 +28,7 @@ export default function InputCard(props: {
   uuidLog: string | null;
 }) {
   const [type, setType] = useState<string>(props.types[0]);
-  const [breakTime, setBreakTime] = useState<number>(45);
+  const [breakTime, setBreakTime] = useState<number>(0);
   const [travelTime, setTravelTime] = useState<number>(0);
   const [logMsg, setLogMsg] = useState<string>('');
   const [selectedDay, setSelectedDay] = useState<Date | null>(props.month);
