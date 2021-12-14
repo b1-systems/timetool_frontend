@@ -4,8 +4,12 @@ import './style.css';
 import React, { useState } from 'react';
 import DatePicker from 'react-datepicker';
 
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+import FileCopyIcon from '@mui/icons-material/FileCopy';
 import NoteAddIcon from '@mui/icons-material/NoteAdd';
 import {
+	Alert,
 	Button,
 	Card,
 	CardContent,
@@ -15,8 +19,17 @@ import {
 	MenuItem,
 	Select,
 	SelectChangeEvent,
+	Table,
+	TableBody,
+	TableCell,
+	TableContainer,
+	TableHead,
+	TableRow,
+	ToggleButton,
+	ToggleButtonGroup,
 } from '@mui/material';
 import Box from '@mui/material/Box';
+import Container from '@mui/material/Container';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 
@@ -24,6 +37,7 @@ import { fetchCurrentMonthLogs, fetchProjects } from '../api';
 import { Logs, Project } from '../models';
 import InputCard from './InputCard';
 import MonthEndDialog from './MonthEndDialog';
+import { StyledTableCell } from './StyledTable';
 import TimelogItemList from './TimelogItemList';
 
 export default function MainCard() {
@@ -38,6 +52,89 @@ export default function MainCard() {
   const [uuidLog, setUuidLog] = useState<string | null>(null);
   const [projectTypes, setProjectTypes] = useState<string[]>([]);
   const [endMonthOpen, setEndMonthOpen] = useState(false);
+
+  const _dummy_old_logs_1: Logs = {
+    timelogs: [
+      {
+        timelog_id: 67915,
+        timelog_uuid: '61b846d5-c33c-4751-8feb-2d0f2068c51e',
+        employee_uuid: '61b846c6-2d44-42c4-83ba-2d0f2068c51e',
+        project_uuid: '618e86a1-dfc0-4025-84f8-86516d67120b',
+        start_dt: 1625119200,
+        end_dt: 1625151600,
+        timelog_type: 'default',
+        json_bag: {
+          id: 67915,
+          employee_uuid: '61b846c6-2d44-42c4-83ba-2d0f2068c51e',
+          startdt: '2021-07-01 06:00:00',
+          enddt: '2021-07-01 15:00:00',
+          feiertag: '',
+          oncall: '',
+          project_id: 598,
+          project_uuid: '618e86a1-dfc0-4025-84f8-86516d67120b',
+          breaklength: 3600,
+          travel: '0',
+          comment: 'SAP Unicorn - Telefonica',
+          onsite: 1,
+          subproject: 0,
+        },
+      },
+    ],
+    perdiems: [
+      {
+        date: 1627344000,
+        employee: '61b846c6-2d44-42c4-83ba-2d0f2068c51e',
+        type: 8,
+        projectUuid: '618e86a1-dfc0-4025-84f8-86516d67120b',
+        comment: 'St. Leon-Rot - SAP Unicorn Workshop',
+      },
+      {
+        date: 1627344000,
+        employee: '61b846c6-2d44-42c4-83ba-2d0f2068c51e',
+        type: 8,
+        projectUuid: '618e86a1-dfc0-4025-84f8-86516d67120b',
+        comment: 'St. Leon-Rot - SAP Unicorn Workshop',
+      },
+    ],
+  };
+
+  const _dummy_old_logs_2: Logs = {
+    timelogs: [
+      {
+        timelog_id: 67915,
+        timelog_uuid: '61b846d5-c33c-4751-8feb-2d0f2068c51e',
+        employee_uuid: '61b846c6-2d44-42c4-83ba-2d0f2068c51e',
+        project_uuid: '618e86a1-dfc0-4025-84f8-86516d67120b',
+        start_dt: 1625119200,
+        end_dt: 1625151600,
+        timelog_type: 'default',
+        json_bag: {
+          id: 67915,
+          employee_uuid: '61b846c6-2d44-42c4-83ba-2d0f2068c51e',
+          startdt: '2021-07-01 06:00:00',
+          enddt: '2021-07-01 15:00:00',
+          feiertag: '',
+          oncall: '',
+          project_id: 598,
+          project_uuid: '618e86a1-dfc0-4025-84f8-86516d67120b',
+          breaklength: 3600,
+          travel: '0',
+          comment: 'SAP Unicorn - Telefonica',
+          onsite: 1,
+          subproject: 0,
+        },
+      },
+    ],
+    perdiems: [
+      {
+        date: 1626566400,
+        employee: '61b846c6-2d44-42c4-83ba-2d0f2068c51e',
+        type: 7,
+        projectUuid: '618e86a1-dfc0-4025-84f8-86516d67120b',
+        comment: 'Dresden - Unicorn Meetings - Anreise',
+      },
+    ],
+  };
 
   const monthEndHandler = () => {
     setEndMonthOpen(false);
@@ -164,6 +261,8 @@ export default function MainCard() {
         </CardContent>
       </Card>
       <>
+        <Button onClick={() => setoldLogs(_dummy_old_logs_1)}>oldLogs1</Button>
+        <Button onClick={() => setoldLogs(_dummy_old_logs_2)}>oldLogs1</Button>
         <InputCard
           types={projectTypes}
           month={selectedMonth}
