@@ -20,19 +20,23 @@ export default function InputCard(props: {
     fetchDelete(requestPrototype);
   };
 
-  //TODO show types
-  // const perdiemTypes: any = {
-  //   4: 'VMA Ausland',
-  //   5: '32 € 24h ab 3 Mon',
-  //   6: '16 € Anreise ab 3 Mon',
-  //   7: '14 € VMA Anreise',
-  //   8: '28 € VMA 24h',
-  // };
-
-  // const logTypeHandler = (type: number) => {
-  //   const typeString = 'a' + type.toString;
-  //   return perdiemTypes[typeString];
-  // };
+  const logTypeHandler = (type: number) => {
+    if (type === 4) {
+      return 'VMA Ausland';
+    }
+    if (type === 5) {
+      return '32 € 24h ab 3 Mon';
+    }
+    if (type === 6) {
+      return '16 € Anreise ab 3 Mon';
+    }
+    if (type === 7) {
+      return '14 € VMA Anreise';
+    }
+    if (type === 8) {
+      return '28 € VMA 24h';
+    }
+  };
 
   const defaultTimelogs = props.timelogs
     .filter((log) => log.type === 'default')
@@ -122,7 +126,7 @@ export default function InputCard(props: {
                   {new Date(log.start_dt * 1000).toLocaleDateString('de-DE')}
                   &ensp; Project name:&ensp;
                   {log.project_name}&ensp; Typ:&ensp;
-                  {log.type}&ensp; comment:&ensp;
+                  {logTypeHandler(log.type)}&ensp; comment:&ensp;
                   {log.comment}
                   <Button onClick={() => deleteHandler(log.uuid)}>
                     <DeleteForeverIcon />

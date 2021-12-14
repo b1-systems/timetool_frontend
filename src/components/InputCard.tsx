@@ -6,6 +6,7 @@ import NoteAddIcon from '@mui/icons-material/NoteAdd';
 import {
 	Button,
 	Card,
+	CardActions,
 	CardContent,
 	FormControl,
 	FormControlLabel,
@@ -21,71 +22,84 @@ import {
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 
+import { fetchSubmit } from '../api';
+import { Incidents } from '../models';
+import InputDefaultTimelog from './InputDefaultTimelog';
+import InputPerdiem from './InputPerdiem';
+import Inputshift from './InputShift';
+
 export default function InputCard(props: {
   types: string[];
   month: Date | null;
   uuidProject: string | null;
   uuidLog: string | null;
+  projectShiftModels: string[];
 }) {
   const [type, setType] = useState<string>(props.types[0]);
   const [breakTime, setBreakTime] = useState<number>(0);
   const [travelTime, setTravelTime] = useState<number>(0);
   const [logMsg, setLogMsg] = useState<string>('');
   const [selectedDay, setSelectedDay] = useState<Date | null>(props.month);
+  const [remote, setRemote] = useState<boolean>(true);
+  const [shift, setShift] = useState<string>('');
+  const [incidents, setIncidents] = useState<Incidents[]>([]);
+  const [from, setFrom] = useState<Date | null>(null);
+  const [to, setTo] = useState<Date | null>(null);
 
-  // const handleTest = () => {
-  //   console.log(props.month);
-  //   console.log(props.types);
-  //   console.log(props.uuid);
-  //   console.log(breakTime);
-  //   console.log(travelTime);
-  //   console.log(logMsg);
-  //   console.log(type);
-  // };
   const setTypeHandler = (event: SelectChangeEvent) => {
     setType(event.target.value as string);
   };
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    let request;
-    if (props.uuidLog === null) {
-      request = {
-        uuidProject: props.uuidProject,
-        uuidLog: uuidv4(),
-        type: type,
-        breakTime: breakTime,
-        travelTime: travelTime,
-        logMsg: logMsg,
-        selectedDay: selectedDay,
-      };
-    } else {
-      request = {
-        uuidProject: props.uuidProject,
-        uuidLog: props.uuidLog,
-        type: type,
-        breakTime: breakTime,
-        travelTime: travelTime,
-        logMsg: logMsg,
-        selectedDay: selectedDay,
-      };
-    }
-    console.log(
-      'prototyp API call',
-      'PUT',
-      '/rest/timelog/:loguuid',
-      'Body json:',
-      request,
-    );
+    // event.preventDefault();
+    // let onsiteRemote = 'remote';
+    // if (remote === false) {
+    //   onsiteRemote = 'onsite';
+    // }
+    // if (type === 'timelog') {
+    //   let requestPrototype;
+    //   if (props.uuidLog === null) {
+    //     requestPrototype = {
+    //       request: {
+    //         uuid: uuidv4(),
+    //         project_uuid: props.uuidProject,
+    //         start_dt: from,
+    //         end_dt: to,
+    //         type: type,
+    //         breakTime: breakTime * 60,
+    //         travelTime: travelTime * 60,
+    //         comment: logMsg,
+    //         onsite: onsiteRemote,
+    //       }
+    //     };
+    //   } else {
+    //     requestPrototype = {
+    //       request: {
+    //         uuid: props.uuidLog,
+    //         project_uuid: props.uuidProject,
+    //         start_dt: from,
+    //         end_dt: to,
+    //         type: type,
+    //         breakTime: breakTime * 60,
+    //         travelTime: travelTime * 60,
+    //         comment: logMsg,
+    //         onsite: onsiteRemote,
+    //       }
+    //     };
+    //   }
+    //   fetchSubmit(requestPrototype)}
+    // }
   };
 
-  const handleRemote = () => {};
+  const handleRemote = () => {
+    setRemote(!remote);
+  };
+
   return (
     <Card elevation={0} sx={{border: 1, borderColor: 'grey.300'}}>
-      <CardContent>
-        {/* <Button onClick={handleTest}>Test</Button> */}
-        <Box sx={{mx: 'auto', textAlign: 'start', p: 3}}>
-          <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit}>
+        <CardContent>
+          <Box sx={{mx: 'auto', textAlign: 'start', p: 3}}>
             <Grid container spacing={3}>
               <div className='picker'>
                 <Typography style={{color: '#838282'}}>Select day</Typography>
@@ -103,17 +117,18 @@ export default function InputCard(props: {
               </div>
               <Grid item xs={4}>
                 <FormControl fullWidth>
-                  <InputLabel id='select-label-typState'>Typ</InputLabel>
+                  <InputLabel id='select-label-typeState'>Type</InputLabel>
                   <Select
-                    labelId='select-label-typ'
-                    id='demo-simple-select-typ'
+                    labelId='select-label-type'
+                    id='demo-simple-select-type'
                     value={type}
-                    label='Typ'
+                    label='Type'
+                    disabled={!props.types.length}
                     onChange={setTypeHandler}
                   >
-                    {props.types.map((typ, idx) => (
-                      <MenuItem key={idx} value={typ}>
-                        {typ}
+                    {props.types.map((singleType, idx) => (
+                      <MenuItem key={idx} value={singleType}>
+                        {singleType}
                       </MenuItem>
                     ))}
                   </Select>
@@ -170,21 +185,40 @@ export default function InputCard(props: {
                   onChange={(e) => setLogMsg(e.target.value)}
                 />
               </Grid>
-              <Grid item xs={3}>
-                <Button
-                  sx={{mt: 1, width: 250}}
-                  size='large'
-                  variant='contained'
-                  startIcon={<NoteAddIcon />}
-                  type='submit'
-                >
-                  commit
-                </Button>
-              </Grid>
+              <Grid item xs={3}></Grid>
             </Grid>
-          </form>
-        </Box>
-      </CardContent>
+          </Box>
+          {type === 'shift' && (
+            <Inputshift
+              shiftModels={props.projectShiftModels}
+              setShift={setShift}
+              setIncidents={setIncidents}
+              day={selectedDay}
+            />
+          )}
+          {type === 'timelog' && (
+            <InputDefaultTimelog
+              day={selectedDay}
+              to={to}
+              from={from}
+              setToCard={setTo}
+              setFromCard={setFrom}
+            />
+          )}
+          {type === 'perdiem' && <InputPerdiem />}
+        </CardContent>
+        <CardActions>
+          <Button
+            sx={{mt: 1, width: 250}}
+            size='large'
+            variant='contained'
+            startIcon={<NoteAddIcon />}
+            type='submit'
+          >
+            commit
+          </Button>
+        </CardActions>
+      </form>
     </Card>
   );
 }

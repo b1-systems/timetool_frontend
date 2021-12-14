@@ -23,18 +23,13 @@ const baseUrl = () =>
 export const fetchProjects = async (requestPrototyp: {
   params?: Object;
 }): Promise<Response> =>
-  fetch(
-    `${baseUrl()}/rest/project${getParams(
-      requestPrototyp.params,
-    )}`,
-    {
-      method: 'get',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
+  fetch(`${baseUrl()}/rest/project${getParams(requestPrototyp.params)}`, {
+    method: 'get',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
     },
-  ).then((response) => {
+  }).then((response) => {
     if (response.ok) {
       return response;
     } else {
@@ -46,14 +41,16 @@ export const fetchProjects = async (requestPrototyp: {
 
 /**
  * Get logs to display for the current month selected
- * @param newDate 
- * 
+ * @param newDate
+ *
  */
 export const fetchCurrentMonthLogs = async (requestPrototyp: {
   params?: Object;
 }): Promise<Response> =>
   fetch(
-    `${baseUrl()}/rest/employee/me/timelogs${getParams(requestPrototyp.params)}`,
+    `${baseUrl()}/rest/employee/me/timelogs${getParams(
+      requestPrototyp.params,
+    )}`,
     {
       method: 'get',
       headers: {
@@ -92,13 +89,15 @@ export const fetchDelete = async (requestPrototyp: {
 
 export const fetchSubmit = async (requestPrototyp: {
   request: {
-    uuidProject: string;
-    uuidLog: string;
+    uuid: string;
+    project_uuid: string;
+    start_dt: Date;
+    end_dt: Date;
     type: string;
     breakTime: number;
     travelTime: number;
-    logMsg: string;
-    selectedDay: number;
+    comment: string;
+    onsite: string;
   };
 }): Promise<Response> =>
   fetch(`${baseUrl()}/rest/timelog/${requestPrototyp.request.uuidLog}`, {

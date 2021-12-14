@@ -46,17 +46,10 @@ export default function MainCard() {
   const [uuidLog, setUuidLog] = useState<string | null>(null);
   const [projectTypes, setProjectTypes] = useState<string[]>([]);
   const [endMonthOpen, setEndMonthOpen] = useState(false);
+  const [projectShiftModels, setProjectShiftModels] = useState<string[]>([]);
 
   const monthEndHandler = () => {
     setEndMonthOpen(false);
-  };
-
-  const handleDelete = (uuid: string) => {
-    const request = {
-      uuid: uuid,
-    };
-    console.log('prototyp API call', 'DELETE', '/rest/timelog/:loguuid');
-    console.log('uuid:', request.uuid);
   };
 
   const setMonthGetProjectsHandler = (newDate: Date | null) => {
@@ -95,6 +88,9 @@ export default function MainCard() {
     setProject(event.target.value as string);
     setProjectUuid(projectFiltered[0].uuid);
     setProjectTypes(Object.keys(projectFiltered[0].worktypes));
+    if (projectFiltered[0].worktypes.shift !== undefined) {
+      setProjectShiftModels(Object.values(projectFiltered[0].worktypes.shift));
+    }
     // TODO how to get perdiem Types because new logs can have types old logs dont have
     // if (projectFiltered[0].worktypes.perdiem !== undefined) {
     //   setPerdiemTypes(projectFiltered[0].worktypes.perdiem);
@@ -114,7 +110,7 @@ export default function MainCard() {
 
   return (
     <Paper>
-      {/* <Card elevation={0} sx={{border: 1, borderColor: 'grey.300'}}>
+      <Card elevation={0} sx={{border: 1, borderColor: 'grey.300'}}>
         this card only for testing without backend
         <Button
           onClick={() => {
@@ -134,7 +130,7 @@ export default function MainCard() {
         >
           _dummy_2
         </Button>
-      </Card> */}
+      </Card>
       <Card elevation={0} sx={{border: 1, borderColor: 'grey.300'}}>
         {endMonthOpen && (
           <MonthEndDialog
@@ -202,6 +198,7 @@ export default function MainCard() {
         month={selectedMonth}
         uuidProject={projectUuid}
         uuidLog={uuidLog}
+        projectShiftModels={projectShiftModels}
       />
       <TimelogItemList
         timelogs={oldLogs.timelogs}
