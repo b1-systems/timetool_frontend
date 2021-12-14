@@ -72,6 +72,7 @@ export default function MainCard() {
         params: {
           year: newDate.getFullYear(),
           month: newDate.getMonth() + 1,
+          format: 'traditional',
           scope: 'me',
         },
       };
@@ -175,7 +176,6 @@ export default function MainCard() {
           </Box>
         </CardContent>
       </Card>
-      {projectUuid && (
         <>
           <InputCard
             types={projectTypes}
@@ -185,7 +185,9 @@ export default function MainCard() {
           />
           <Card elevation={0} sx={{border: 1, borderColor: 'grey.300'}}>
             <CardContent>
-              {/* {oldLogs.length ? (
+              {
+              <div>{oldLogs.timelogs.length}</div>
+              /* {oldLogs.length ? (
                       {oldLogs.map(
                         (log) => {
                           log.perdiems.length &&
@@ -237,7 +239,6 @@ export default function MainCard() {
             </CardContent>
           </Card>
         </>
-      )}
     </Paper>
   );
 }
