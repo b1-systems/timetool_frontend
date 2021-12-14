@@ -53,7 +53,7 @@ export default function MainCard() {
     setEndMonthOpen(false);
   };
 
-  const handleDelte = (uuid: string) => {
+  const handleDelete = (uuid: string) => {
     const request = {
       uuid: uuid,
     };
@@ -114,7 +114,7 @@ export default function MainCard() {
           <Box sx={{mx: 'auto', textAlign: 'start', p: 3}}>
             <Grid container spacing={3}>
               <div className='picker'>
-                <Typography style={{color: '#838282'}}>Selcet month</Typography>
+                <Typography style={{color: '#838282'}}>Select month</Typography>
                 <DatePicker
                   id='datePicker'
                   wrapperClassName='datePicker'
@@ -203,7 +203,7 @@ export default function MainCard() {
                         //           <FileCopyIcon color='info' />
                         //         </ToggleButton>
                         //         <ToggleButton
-                        //           onClick={() => handleDelte(log.uuid)}
+                        //           onClick={() => handleDelete(log.uuid)}
                         //           value='Delete'
                         //         >
                         //           <DeleteIcon color='error' />

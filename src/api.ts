@@ -66,7 +66,7 @@ export const fetchOldLogs = async (requestPrototyp: {
     }
   });
 
-export const fetchDelte = async (requestPrototyp: {
+export const fetchDelete = async (requestPrototyp: {
   request: {uuid: string};
 }): Promise<Response> =>
   fetch(`${baseUrl()}/rest/timelog/${requestPrototyp.request.uuid}`, {
