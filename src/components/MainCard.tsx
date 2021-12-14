@@ -88,7 +88,7 @@ export default function MainCard() {
            return response.json();
          })
          .then((LogsResponse) => {
-         setoldLogs(LogsResponse.projects);
+          setoldLogs(LogsResponse);
          });
       }
   };
@@ -186,7 +186,9 @@ export default function MainCard() {
           <Card elevation={0} sx={{border: 1, borderColor: 'grey.300'}}>
             <CardContent>
               {
-              <div>{oldLogs.timelogs.length}</div>
+              <div>fish</div>}
+              {
+                console.log(oldLogs)
               /* {oldLogs.length ? (
                       {oldLogs.map(
                         (log) => {
