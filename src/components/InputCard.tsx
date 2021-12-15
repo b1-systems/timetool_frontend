@@ -77,6 +77,7 @@ export default function InputCard(props: {
         start_dt: Math.round(selectedDay.getTime() / 1000),
         type: typeOfPerdiem,
         comment: logMsg,
+        isPerdiem: true,
       });
     }
   };

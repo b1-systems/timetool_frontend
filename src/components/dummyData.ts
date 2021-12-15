@@ -136,18 +136,18 @@ export const _dummy_old_logs_2: Logs = {
       type: 'shift',
       incidents: [
         {
-          start_dt: 123,
-          end_dt: 123666,
+          start_dt: 1625110200,
+          end_dt: 1625110300,
           comment: 'mitteilung1',
         },
         {
-          start_dt: 123234,
-          end_dt: 123234666,
+          start_dt: 1625110350,
+          end_dt: 1625110400,
           comment: 'mitteilung1',
         },
         {
-          start_dt: 1232345,
-          end_dt: 123234666,
+          start_dt: 1625110300,
+          end_dt: 1625110400,
           comment: 'mitteilung1',
         },
       ],

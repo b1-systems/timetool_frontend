@@ -21,7 +21,7 @@ import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 
 import { fetchCurrentMonthLogs, fetchProjects } from '../api';
-import { Logs, Perdiem, Project } from '../models';
+import { Logs, Perdiem, Project, Timelog } from '../models';
 //start import only for testing without backend
 import {
 	_dummy_old_logs_1,
@@ -36,10 +36,8 @@ import TimelogItemList from './TimelogItemList';
 export default function MainCard() {
   const [selectedMonth, setSelectedMonth] = useState<Date | null>(null);
   const [availableProjects, setAvailableProjects] = useState<Project[]>([]);
-  const [oldLogs, setoldLogs] = useState<Logs>({
-    timelogs: [],
-    perdiems: [],
-  });
+  const [oldTimelogs, setOldTimelogs] = useState<Timelog[]>([]);
+  const [oldPerdiems, setOldPerdiems] = useState<Perdiem[]>([]);
   // const [perdiemTypes, setPerdiemTypes] = useState<Object>({});
   const [project, setProject] = useState<string>('');
   const [projectUuid, setProjectUuid] = useState<string | null>(null);
@@ -47,6 +45,10 @@ export default function MainCard() {
   const [projectTypes, setProjectTypes] = useState<string[]>([]);
   const [endMonthOpen, setEndMonthOpen] = useState(false);
   const [projectShiftModels, setProjectShiftModels] = useState<string[]>([]);
+
+  const deleteTimelog = (uuid: string) => {
+    setOldTimelogs(oldTimelogs.filter((log) => log.uuid !== uuid));
+  };
 
   const monthEndHandler = () => {
     setEndMonthOpen(false);
@@ -75,8 +77,9 @@ export default function MainCard() {
         .then((response) => {
           return response.json();
         })
-        .then((LogsResponse) => {
-          setoldLogs(LogsResponse);
+        .then((LogsResponse: Logs) => {
+          setOldTimelogs(LogsResponse.timelogs);
+          setOldPerdiems(LogsResponse.perdiems);
         });
     }
   };
@@ -101,7 +104,8 @@ export default function MainCard() {
           onClick={() => {
             setSelectedMonth(new Date());
             setAvailableProjects(_dummy_projects);
-            setoldLogs(_dummy_old_logs_1);
+            setOldTimelogs(_dummy_old_logs_1.timelogs);
+            setOldPerdiems(_dummy_old_logs_1.perdiems);
           }}
         >
           _dummy_1
@@ -110,7 +114,8 @@ export default function MainCard() {
           onClick={() => {
             setSelectedMonth(new Date());
             setAvailableProjects(_dummy_projects);
-            setoldLogs(_dummy_old_logs_2);
+            setOldTimelogs(_dummy_old_logs_2.timelogs);
+            setOldPerdiems(_dummy_old_logs_2.perdiems);
           }}
         >
           _dummy_2
@@ -186,8 +191,9 @@ export default function MainCard() {
         projectShiftModels={projectShiftModels}
       />
       <TimelogItemList
-        timelogs={oldLogs.timelogs}
-        perdiems={oldLogs.perdiems}
+        deleteTimelog={deleteTimelog}
+        timelogs={oldTimelogs}
+        perdiems={oldPerdiems}
         // perdiemTypes{perdiemTypes}
       />
     </Paper>

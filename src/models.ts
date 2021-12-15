@@ -74,4 +74,5 @@ export interface requestPerdiem {
   start_dt: number;
   type: number;
   comment: string;
+  isPerdiem: boolean;
 }

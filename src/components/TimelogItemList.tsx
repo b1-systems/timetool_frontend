@@ -1,5 +1,5 @@
 import { timeLog } from 'console';
-import React from 'react';
+import React, { useState } from 'react';
 
 import DeleteIcon from '@mui/icons-material/Delete';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
@@ -8,51 +8,30 @@ import Box from '@mui/material/Box';
 
 import { fetchDelete } from '../api';
 import { Perdiem, Timelog } from '../models';
+import OutputPerdiem from './OutputPerdiem';
+import OutputShift from './OutputShift';
+import OutputTimelogs from './OutputTimelog';
 
 export default function InputCard(props: {
   timelogs: Timelog[];
   perdiems: Perdiem[];
+  deleteTimelog(uuid: string): void;
 }) {
-  const deleteHandler = (uuid: string) => {
-    const requestPrototype = {
-      request: {uuid: uuid},
-    };
-    fetchDelete(requestPrototype);
-  };
-
-  const logTypeHandler = (type: number) => {
-    switch (type) {
-      case 4:
-        return 'VMA Ausland';
-      case 5:
-        return '32 € 24h ab 3 Mon';
-      case 6:
-        return '16 € Anreise ab 3 Mon';
-      case 7:
-        return '16 € Anreise ab 3 Mon';
-      case 8:
-        return '16 € Anreise ab 3 Mon';
-      default:
-        return 'unkown type';
-    }
-  };
-
-  const defaultTimelogs = props.timelogs
+  let defaultTimelogs = props.timelogs
     .filter((log) => log.type === 'default')
     .sort(function (x, y) {
       return x.start_dt - y.start_dt;
     });
 
-  const shiftTimelogs = props.timelogs
+  let shiftTimelogs = props.timelogs
     .filter((log) => log.type === 'shift')
     .sort(function (x, y) {
       return x.start_dt - y.start_dt;
     });
 
-  const perdiems = props.perdiems.sort(function (x, y) {
+  let perdiems = props.perdiems.sort(function (x, y) {
     return x.start_dt - y.start_dt;
   });
-
   return (
     <Card elevation={0} sx={{border: 1, borderColor: 'grey.300'}}>
       <CardContent>
@@ -60,18 +39,11 @@ export default function InputCard(props: {
           <ul>
             <h3>Timelogs</h3>
             {defaultTimelogs.map((log) => (
-              <>
-                <li>
-                  Date:&ensp;
-                  {new Date(log.start_dt * 1000).toLocaleDateString('de-DE')}
-                  &ensp; Project name:&ensp;
-                  {log.project_name}&ensp; comment:&ensp;{log.comment}&ensp;
-                  onsite:&ensp;{log.onsite}
-                  <Button onClick={() => deleteHandler(log.uuid)}>
-                    <DeleteForeverIcon />
-                  </Button>
-                </li>
-              </>
+              <OutputTimelogs
+                log={log}
+                key={log.uuid}
+                deleteTimelog={props.deleteTimelog}
+              />
             ))}
           </ul>
         )}
@@ -79,39 +51,7 @@ export default function InputCard(props: {
           <ul>
             <h3>Shifts</h3>
             {shiftTimelogs.map((log) => (
-              <>
-                <li>
-                  Date:&ensp;
-                  {new Date(log.start_dt * 1000).toLocaleDateString('de-DE')}
-                  &ensp; Project name:&ensp;
-                  {log.project_name}&ensp;
-                  <Button onClick={() => deleteHandler(log.uuid)}>
-                    <DeleteForeverIcon />
-                  </Button>
-                </li>
-                {!!log.incidents &&
-                  log.incidents?.map((incident) => (
-                    <>
-                      <div>
-                        from:&ensp;
-                        {new Date(incident.start_dt * 1000).toLocaleDateString(
-                          'de-DE',
-                        )}
-                        &ensp;at:&ensp;
-                        {new Date(incident.start_dt * 1000).toLocaleTimeString(
-                          'de-DE',
-                        )}
-                        &ensp;to:&ensp;
-                        {new Date(incident.end_dt).toLocaleDateString('de-DE')}
-                        &ensp;at:&ensp;
-                        {new Date(incident.end_dt * 1000).toLocaleTimeString(
-                          'de-DE',
-                        )}
-                      </div>
-                      <div>comment:&ensp;{incident.comment}</div>
-                    </>
-                  ))}
-              </>
+              <OutputShift log={log} key={log.uuid} />
             ))}
           </ul>
         )}
@@ -119,19 +59,7 @@ export default function InputCard(props: {
           <ul>
             <h3>Perdiems</h3>
             {perdiems.map((log) => (
-              <>
-                <li>
-                  Date:&ensp;
-                  {new Date(log.start_dt * 1000).toLocaleDateString('de-DE')}
-                  &ensp; Project name:&ensp;
-                  {log.project_name}&ensp; Typ:&ensp;
-                  {logTypeHandler(log.type)}&ensp; comment:&ensp;
-                  {log.comment}
-                  <Button onClick={() => deleteHandler(log.uuid)}>
-                    <DeleteForeverIcon />
-                  </Button>
-                </li>
-              </>
+              <OutputPerdiem log={log} key={log.uuid} />
             ))}
           </ul>
         )}
