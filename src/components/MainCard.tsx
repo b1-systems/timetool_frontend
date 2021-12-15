@@ -99,32 +99,33 @@ export default function MainCard() {
       setProjectShiftModels(Object.values(projectFiltered[0].worktypes.shift));
     }
   };
-
   return (
     <Paper>
-      <Card elevation={0} sx={{border: 1, borderColor: 'grey.300'}}>
-        this card only for testing without backend
-        <Button
-          onClick={() => {
-            setSelectedMonth(new Date());
-            setAvailableProjects(_dummy_projects);
-            setOldTimelogs(_dummy_old_logs_1.timelogs);
-            setOldPerdiems(_dummy_old_logs_1.perdiems);
-          }}
-        >
-          _dummy_1
-        </Button>
-        <Button
-          onClick={() => {
-            setSelectedMonth(new Date());
-            setAvailableProjects(_dummy_projects);
-            setOldTimelogs(_dummy_old_logs_2.timelogs);
-            setOldPerdiems(_dummy_old_logs_2.perdiems);
-          }}
-        >
-          _dummy_2
-        </Button>
-      </Card>
+      {process.env.NODE_ENV === 'development' && (
+        <Card elevation={0} sx={{border: 1, borderColor: 'grey.300'}}>
+          this card only for testing without backend
+          <Button
+            onClick={() => {
+              setSelectedMonth(new Date());
+              setAvailableProjects(_dummy_projects);
+              setOldTimelogs(_dummy_old_logs_1.timelogs);
+              setOldPerdiems(_dummy_old_logs_1.perdiems);
+            }}
+          >
+            _dummy_1
+          </Button>
+          <Button
+            onClick={() => {
+              setSelectedMonth(new Date());
+              setAvailableProjects(_dummy_projects);
+              setOldTimelogs(_dummy_old_logs_2.timelogs);
+              setOldPerdiems(_dummy_old_logs_2.perdiems);
+            }}
+          >
+            _dummy_2
+          </Button>
+        </Card>
+      )}
       <Card elevation={0} sx={{border: 1, borderColor: 'grey.300'}}>
         {endMonthOpen && (
           <MonthEndDialog

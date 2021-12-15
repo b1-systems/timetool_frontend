@@ -22,7 +22,7 @@ import {
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 
-import { Incidents } from '../models';
+import { Incident } from '../models';
 
 export default function InputShift(props: {
   shiftModels: string[];
@@ -31,7 +31,7 @@ export default function InputShift(props: {
   day: Date | null;
 }) {
   const [shift, setShift] = useState<string>(props.shiftModels[0]);
-  const [length, setLength] = useState<number>(0);
+  const [incidents, setIncidents] = useState<Incident[]>([]);
   // incidents: [
   //     {
   //     start_dt: 123,
@@ -47,7 +47,10 @@ export default function InputShift(props: {
   };
 
   const addHandler = () => {
-    setLength(length + 1);
+    setIncidents([
+      ...incidents,
+      {start_dt: 123123, end_dt: 123123, comment: 'test'},
+    ]);
   };
 
   return (
@@ -70,8 +73,8 @@ export default function InputShift(props: {
           </Select>
         </FormControl>
         <Button onClick={addHandler}>Add Entry</Button>
-        {Array(length).fill(
-          <Grid item xs={4}>
+        {incidents.map((incident, index) => (
+          <Grid key={index} item xs={4}>
             <div className='picker'>
               <Typography style={{color: '#838282'}}>From:</Typography>
               <DatePicker
@@ -80,8 +83,14 @@ export default function InputShift(props: {
                 dateFormat='dd/MM/yy'
                 required={true}
                 minDate={props.day}
-                selected={from}
-                onChange={(newDate: Date | null) => setFrom(newDate)}
+                selected={new Date(incident.start_dt)}
+                onChange={(newDate: Date | null) =>
+                  setIncidents([
+                    ...incidents.slice(0, index),
+                    {...incident, start_dt: newDate?.getTime() || 0},
+                    ...incidents.slice(index + 1),
+                  ])
+                }
               ></DatePicker>
               <Typography style={{color: '#838282'}}>To:</Typography>
               <DatePicker
@@ -90,12 +99,12 @@ export default function InputShift(props: {
                 dateFormat='dd/MM/yy'
                 required={true}
                 minDate={props.day}
-                selected={to}
-                onChange={(newDate: Date | null) => setTo(newDate)}
+                selected={new Date(incident.end_dt)}
+                onChange={(newDate: Date | null) => newDate}
               ></DatePicker>
             </div>
-          </Grid>,
-        )}
+          </Grid>
+        ))}
       </Grid>
     </>
   );

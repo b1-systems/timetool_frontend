@@ -1,8 +1,8 @@
 import React, { FormEvent, useState } from 'react';
-import DatePicker from 'react-datepicker';
 import { v4 as uuidv4 } from 'uuid';
 
 import NoteAddIcon from '@mui/icons-material/NoteAdd';
+import DatePicker from '@mui/lab/DatePicker';
 import {
 	Button,
 	Card,
@@ -23,7 +23,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 
 import { fetchSubmit } from '../api';
-import { Incidents } from '../models';
+import { Incident } from '../models';
 import InputDefaultTimelog from './InputDefaultTimelog';
 import InputPerdiem from './InputPerdiem';
 import Inputshift from './InputShift';
@@ -42,7 +42,7 @@ export default function InputCard(props: {
   const [selectedDay, setSelectedDay] = useState<Date | null>(props.month);
   const [remote, setRemote] = useState<boolean>(true);
   const [shift, setShift] = useState<string>('');
-  const [incidents, setIncidents] = useState<Incidents[]>([]);
+  const [incidents, setIncidents] = useState<Incident[]>([]);
   const [from, setFrom] = useState<Date | null>(null);
   const [to, setTo] = useState<Date | null>(null);
   const [typeOfPerdiem, setTypeOfPerdiem] = useState<number>(-1);
@@ -77,7 +77,7 @@ export default function InputCard(props: {
         start_dt: Math.round(selectedDay.getTime() / 1000),
         type: typeOfPerdiem,
         comment: logMsg,
-        isPerdiem: true,
+        is_perdiem: true,
       });
     }
   };
@@ -96,7 +96,7 @@ export default function InputCard(props: {
         <CardContent>
           <Box sx={{mx: 'auto', textAlign: 'start', p: 3}}>
             <Grid container spacing={3}>
-              <div className='picker'>
+              {/* <div className='picker'>
                 <Typography style={{color: '#838282'}}>Select day</Typography>
                 <DatePicker
                   id='datePicker'
@@ -109,7 +109,20 @@ export default function InputCard(props: {
                   scrollableMonthYearDropdown={!!props.uuidLog}
                   onChange={(newDate: Date | null) => setSelectedDay(newDate)}
                 ></DatePicker>
-              </div>
+              </div> */}
+              <DatePicker
+                views={['year', 'month']}
+                label='Year and Month'
+                //minDate={new Date(props.month)}
+                // maxDate={new Date('2099-01-01')}
+                value={selectedDay}
+                onChange={(newValue) => {
+                  setSelectedDay(newValue);
+                }}
+                renderInput={(params) => (
+                  <TextField {...params} helperText={null} />
+                )}
+              />
               <Grid item xs={4}>
                 <FormControl fullWidth>
                   <InputLabel id='select-label-typeState'>Type</InputLabel>

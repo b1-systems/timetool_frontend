@@ -47,10 +47,10 @@ export interface Timelog {
   travel?: string;
   comment?: string;
   onsite?: string;
-  incidents?: Incidents[];
+  incidents?: Incident[];
   shift_model?: string;
 }
-export interface Incidents {
+export interface Incident {
   start_dt: number;
   end_dt: number;
   comment: string;

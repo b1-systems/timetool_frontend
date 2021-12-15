@@ -51,12 +51,7 @@ const Timelog = () => {
           <Toolbar />
           <Box sx={{overflow: 'auto'}}>
             <List>
-              <Link
-                color='inherit'
-                component={RouterLink}
-                to='/'
-                underline='hover'
-              >
+              <Link color='inherit' href='/' underline='hover'>
                 <ListItemButton>
                   <ListItemIcon>
                     <CalendarTodayIcon fontSize='large' />
@@ -66,8 +61,7 @@ const Timelog = () => {
               </Link>
               <Link
                 color='inherit'
-                component={RouterLink}
-                to='/employee/projects'
+                href={`${globalThis.horde.appWebroot}/employee/projects`}
                 underline='hover'
               >
                 <ListItemButton>
@@ -79,8 +73,7 @@ const Timelog = () => {
               </Link>
               <Link
                 color='inherit'
-                component={RouterLink}
-                to='/'
+                href={`${globalThis.horde.appWebroot}/result/`}
                 underline='hover'
               >
                 <ListItemButton>
@@ -92,8 +85,7 @@ const Timelog = () => {
               </Link>
               <Link
                 color='inherit'
-                component={RouterLink}
-                to='/'
+                href={`${globalThis.horde.appWebroot}/admin/`}
                 underline='hover'
               >
                 <ListItemButton>
