@@ -45,7 +45,7 @@ export default function InputCard(props: {
   const [incidents, setIncidents] = useState<Incidents[]>([]);
   const [from, setFrom] = useState<Date | null>(null);
   const [to, setTo] = useState<Date | null>(null);
-  const [typeOfPerdiem, setTypeOfPerdiem] = useState<string>('_Placeholder');
+  const [typeOfPerdiem, setTypeOfPerdiem] = useState<number>(-1);
 
   const setTypeHandler = (event: SelectChangeEvent) => {
     setType(event.target.value as string);
@@ -57,67 +57,33 @@ export default function InputCard(props: {
     if (remote === false) {
       onsiteRemote = 'onsite';
     }
-    //for type timelog
-    if (type === 'timelog') {
-      let requestPrototype;
-      if (props.uuidLog === null) {
-        requestPrototype = {
-          request: {
-            uuid: uuidv4(),
-            project_uuid: props.uuidProject,
-            start_dt: from,
-            end_dt: to,
-            type: type,
-            breakTime: breakTime * 60,
-            travelTime: travelTime * 60,
-            comment: logMsg,
-            onsite: onsiteRemote,
-          },
-        };
-      } else {
-        requestPrototype = {
-          request: {
-            uuid: props.uuidLog,
-            project_uuid: props.uuidProject,
-            start_dt: from,
-            end_dt: to,
-            type: type,
-            breakTime: breakTime * 60,
-            travelTime: travelTime * 60,
-            comment: logMsg,
-            onsite: onsiteRemote,
-          },
-        };
-        fetchSubmit(requestPrototype);
-      }
+    if (type === 'timelog' && props.uuidProject && from && to) {
+      fetchSubmit({
+        uuid: props.uuidLog || uuidv4(),
+        project_uuid: props.uuidProject,
+        start_dt: Math.round(from.getTime() / 1000),
+        end_dt: Math.round(to.getTime() / 1000),
+        type: type,
+        breakTime: breakTime * 60,
+        travelTime: travelTime * 60,
+        comment: logMsg,
+        onsite: onsiteRemote,
+      });
     }
-    //for type perdiem
-    if (type === 'perdiem') {
-      let requestPrototype;
-      if (props.uuidLog === null) {
-        requestPrototype = {
-          request: {
-            uuid: uuidv4(),
-            project_uuid: props.uuidProject,
-            start_dt: selectedDay,
-            type: typeOfPerdiem,
-            comment: logMsg,
-          },
-        };
-      } else {
-        requestPrototype = {
-          request: {
-            uuid: props.uuidLog,
-            project_uuid: props.uuidProject,
-            start_dt: selectedDay,
-            type: typeOfPerdiem,
-            comment: logMsg,
-          },
-        };
-      }
-      fetchSubmit(requestPrototype);
+    if (type === 'perdiem' && props.uuidProject && selectedDay) {
+      fetchSubmit({
+        uuid: props.uuidLog || uuidv4(),
+        project_uuid: props.uuidProject,
+        start_dt: Math.round(selectedDay.getTime() / 1000),
+        type: typeOfPerdiem,
+        comment: logMsg,
+      });
     }
   };
+
+  //typy sie nenne einzel, fetch direct mit werten
+  //luxon luxon adap, mui datepicker
+  //in eigene comp die cards für ausgabe
 
   const handleRemote = () => {
     setRemote(!remote);

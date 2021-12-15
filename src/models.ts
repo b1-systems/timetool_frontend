@@ -1,7 +1,26 @@
 export interface Project {
   name: string;
   uuid: string;
-  worktypes: {perdiem?: Object; timelog?: Object; shift?: Object};
+  worktypes: {
+    perdiem?: {
+      1?: string;
+      2?: string;
+      3?: string;
+      4?: string;
+      5?: string;
+      6?: string;
+      7?: string;
+      8?: string;
+    };
+    timelog?: {
+      timelog?: string;
+    };
+    shift?: {
+      morning?: string;
+      afternoon?: string;
+      night?: string;
+    };
+  };
 }
 export interface Logs {
   timelogs: Timelog[];
@@ -34,5 +53,25 @@ export interface Timelog {
 export interface Incidents {
   start_dt: number;
   end_dt: number;
+  comment: string;
+}
+
+export interface requestTimelog {
+  uuid: string;
+  project_uuid: string;
+  start_dt: number;
+  end_dt: number;
+  type: string;
+  breakTime: number;
+  travelTime: number;
+  comment: string;
+  onsite: string;
+}
+
+export interface requestPerdiem {
+  uuid: string;
+  project_uuid: string;
+  start_dt: number;
+  type: number;
   comment: string;
 }

@@ -21,20 +21,19 @@ export default function InputCard(props: {
   };
 
   const logTypeHandler = (type: number) => {
-    if (type === 4) {
-      return 'VMA Ausland';
-    }
-    if (type === 5) {
-      return '32 € 24h ab 3 Mon';
-    }
-    if (type === 6) {
-      return '16 € Anreise ab 3 Mon';
-    }
-    if (type === 7) {
-      return '14 € VMA Anreise';
-    }
-    if (type === 8) {
-      return '28 € VMA 24h';
+    switch (type) {
+      case 4:
+        return 'VMA Ausland';
+      case 5:
+        return '32 € 24h ab 3 Mon';
+      case 6:
+        return '16 € Anreise ab 3 Mon';
+      case 7:
+        return '16 € Anreise ab 3 Mon';
+      case 8:
+        return '16 € Anreise ab 3 Mon';
+      default:
+        return 'unkown type';
     }
   };
 

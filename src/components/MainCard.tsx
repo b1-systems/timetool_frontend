@@ -91,21 +91,6 @@ export default function MainCard() {
     if (projectFiltered[0].worktypes.shift !== undefined) {
       setProjectShiftModels(Object.values(projectFiltered[0].worktypes.shift));
     }
-    // TODO how to get perdiem Types because new logs can have types old logs dont have
-    // if (projectFiltered[0].worktypes.perdiem !== undefined) {
-    //   setPerdiemTypes(projectFiltered[0].worktypes.perdiem);
-    // }
-    //! is this still needed?
-    // let requestPrototype;
-    // if (selectedMonth !== null) {
-    //   requestPrototype = {
-    //     params: {
-    //       year: selectedMonth.getFullYear(),
-    //       month: selectedMonth.getMonth() + 1,
-    //       format: 'traditional',
-    //     },
-    //   };
-    // }
   };
 
   return (

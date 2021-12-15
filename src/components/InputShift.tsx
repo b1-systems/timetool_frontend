@@ -83,7 +83,6 @@ export default function InputShift(props: {
                 selected={from}
                 onChange={(newDate: Date | null) => setFrom(newDate)}
               ></DatePicker>
-
               <Typography style={{color: '#838282'}}>To:</Typography>
               <DatePicker
                 id='datePicker'
