@@ -1,66 +1,111 @@
-import React, { FormEvent, useState } from 'react';
-import DatePicker from 'react-datepicker';
-import { v4 as uuidv4 } from 'uuid';
+import { DateTime } from 'luxon';
+import React from 'react';
 
-import NoteAddIcon from '@mui/icons-material/NoteAdd';
+import { TimePicker } from '@mui/lab';
 import {
-	Button,
-	Card,
-	CardActions,
-	CardContent,
 	FormControl,
 	FormControlLabel,
 	Grid,
-	InputLabel,
-	MenuItem,
 	Radio,
 	RadioGroup,
-	Select,
-	SelectChangeEvent,
 	TextField,
 } from '@mui/material';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
 
 export default function InputDefaultTimelog(props: {
-  day: Date | null;
-  to: Date | null;
-  from: Date | null;
-  setToCard: Function;
-  setFromCard: Function;
+  day: DateTime;
+  to: DateTime;
+  from: DateTime;
+  setToCard(time: DateTime): void;
+  setFromCard(time: DateTime): void;
+  handleRemote(): void;
+  setBreakTime(time: number): void;
+  breakTime: number;
+  setTravelTime(time: number): void;
+  travelTime: number;
+  setLogMsg(msg: string): void;
+  logMsg: string;
 }) {
   return (
-    <Grid item xs={4}>
-      <div className='picker'>
-        <Typography style={{color: '#838282'}}>From:</Typography>
-        <DatePicker
-          id='datePicker'
-          wrapperClassName='datePicker'
+    <Grid container spacing={1} sx={{mt: 1}}>
+      <Grid item xs={3}>
+        <TextField
+          sx={{width: '50%'}}
+          label='Break time (Minutes)'
+          value={props.breakTime}
+          onChange={(e) => props.setBreakTime(parseInt(e.target.value))}
+          type='number'
+          inputProps={{min: '0', max: '1000'}}
+        />
+        <TextField
+          sx={{width: '50%'}}
+          label='Travel time (Minutes)'
+          value={props.travelTime}
+          onChange={(e) => props.setTravelTime(parseInt(e.target.value))}
+          type='number'
+          inputProps={{min: '0'}}
+        />
+      </Grid>
+      <Grid item xs={5}>
+        <TextField
+          fullWidth
+          label='Comment'
           required={true}
-          minDate={props.day}
-          selected={props.from}
-          showTimeSelect
-          showTimeSelectOnly
-          timeIntervals={15}
-          timeCaption='Time'
-          dateFormat='h:mm'
-          onChange={(newDate: Date | null) => props.setFromCard(newDate)}
-        ></DatePicker>
-        <Typography style={{color: '#838282'}}>To:</Typography>
-        <DatePicker
-          id='datePicker'
-          wrapperClassName='datePicker'
-          showTimeSelect
-          showTimeSelectOnly
-          timeIntervals={15}
-          timeCaption='Time'
-          dateFormat='h:mm'
-          required={true}
-          minDate={props.day}
-          selected={props.to}
-          onChange={(newDate: Date | null) => props.setToCard(newDate)}
-        ></DatePicker>
-      </div>
+          value={props.logMsg}
+          onChange={(e) => props.setLogMsg(e.target.value)}
+        />
+      </Grid>
+      <Grid item xs={3}>
+        <FormControl component='fieldset'>
+          <RadioGroup
+            row
+            aria-label='position'
+            name='position'
+            defaultValue='remote'
+            onChange={props.handleRemote}
+          >
+            <FormControlLabel
+              value='remote'
+              control={<Radio />}
+              label='remote'
+              labelPlacement='start'
+            />
+            <FormControlLabel
+              value='onsite'
+              control={<Radio />}
+              label='onsite'
+              labelPlacement='start'
+            />
+          </RadioGroup>
+        </FormControl>
+      </Grid>
+      <Grid item xs={3}>
+        <TimePicker
+          label='From'
+          value={props.from}
+          ampm={false}
+          ampmInClock={false}
+          onChange={(newValue) => {
+            if (newValue) {
+              props.setFromCard(newValue);
+            }
+          }}
+          renderInput={(params) => <TextField {...params} />}
+        />
+      </Grid>
+      <Grid item xs={3}>
+        <TimePicker
+          label='To'
+          ampm={false}
+          ampmInClock={false}
+          value={props.to}
+          onChange={(newValue) => {
+            if (newValue) {
+              props.setToCard(newValue);
+            }
+          }}
+          renderInput={(params) => <TextField {...params} />}
+        />
+      </Grid>
     </Grid>
   );
 }

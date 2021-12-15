@@ -58,6 +58,7 @@
     ]
   },
   "devDependencies": {
+    "@types/luxon": "^2.0.8",
     "@types/qrcode.react": "^1.0.2",
     "@types/uuid": "^8.3.3"
   }

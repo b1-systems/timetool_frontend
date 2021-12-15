@@ -1,3 +1,4 @@
+import { DateTime } from 'luxon';
 import React, { FormEvent, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import { v4 as uuidv4 } from 'uuid';
@@ -28,7 +29,7 @@ export default function InputShift(props: {
   shiftModels: string[];
   setShift: Function;
   setIncidents: Function;
-  day: Date | null;
+  day: DateTime;
 }) {
   const [shift, setShift] = useState<string>(props.shiftModels[0]);
   const [incidents, setIncidents] = useState<Incident[]>([]);
@@ -39,8 +40,6 @@ export default function InputShift(props: {
   //     comment: "mitteilung"
   //     }]
   //   shift_model:"morning" //solte auch in log-liste angezeigt werden
-  const [from, setFrom] = useState<Date | null>(props.day);
-  const [to, setTo] = useState<Date | null>(props.day);
   const setShiftModelHandler = (event: SelectChangeEvent) => {
     setShift(event.target.value as string);
     props.setShift(event.target.value as string);
@@ -77,7 +76,8 @@ export default function InputShift(props: {
           <Grid key={index} item xs={4}>
             <div className='picker'>
               <Typography style={{color: '#838282'}}>From:</Typography>
-              <DatePicker
+              {/* datpicker examples by tilamn for this special component */}
+              {/* <DatePicker
                 id='datePicker'
                 wrapperClassName='datePicker'
                 dateFormat='dd/MM/yy'
@@ -101,7 +101,7 @@ export default function InputShift(props: {
                 minDate={props.day}
                 selected={new Date(incident.end_dt)}
                 onChange={(newDate: Date | null) => newDate}
-              ></DatePicker>
+              ></DatePicker> */}
             </div>
           </Grid>
         ))}

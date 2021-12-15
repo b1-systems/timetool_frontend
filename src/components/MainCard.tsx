@@ -1,13 +1,15 @@
 import 'react-datepicker/dist/react-datepicker.css';
 import './style.css';
 
+import { DateTime } from 'luxon';
 import React, { useState } from 'react';
-import DatePicker from 'react-datepicker';
 
 import NoteAddIcon from '@mui/icons-material/NoteAdd';
+import DatePicker from '@mui/lab/DatePicker';
 import {
 	Button,
 	Card,
+	CardActions,
 	CardContent,
 	FormControl,
 	Grid,
@@ -15,6 +17,7 @@ import {
 	MenuItem,
 	Select,
 	SelectChangeEvent,
+	TextField,
 } from '@mui/material';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
@@ -34,7 +37,7 @@ import MonthEndDialog from './MonthEndDialog';
 import TimelogItemList from './TimelogItemList';
 
 export default function MainCard() {
-  const [selectedMonth, setSelectedMonth] = useState<Date | null>(null);
+  const [selectedMonth, setSelectedMonth] = useState<DateTime>(DateTime.now());
   const [availableProjects, setAvailableProjects] = useState<Project[]>([]);
   const [oldTimelogs, setOldTimelogs] = useState<Timelog[]>([]);
   const [oldPerdiems, setOldPerdiems] = useState<Perdiem[]>([]);
@@ -58,14 +61,14 @@ export default function MainCard() {
     setEndMonthOpen(false);
   };
 
-  const setMonthGetProjectsHandler = (newDate: Date | null) => {
+  const setMonthGetProjectsHandler = (newDate: DateTime) => {
     setSelectedMonth(newDate);
     let requestPrototype;
     if (newDate !== null) {
       requestPrototype = {
         params: {
-          year: newDate.getFullYear(),
-          month: newDate.getMonth() + 1,
+          year: newDate.year,
+          month: newDate.month,
           format: 'traditional',
           scope: 'me',
         },
@@ -106,7 +109,7 @@ export default function MainCard() {
           this card only for testing without backend
           <Button
             onClick={() => {
-              setSelectedMonth(new Date());
+              setSelectedMonth(DateTime.fromISO('2001-01-01T00:00'));
               setAvailableProjects(_dummy_projects);
               setOldTimelogs(_dummy_old_logs_1.timelogs);
               setOldPerdiems(_dummy_old_logs_1.perdiems);
@@ -116,13 +119,20 @@ export default function MainCard() {
           </Button>
           <Button
             onClick={() => {
-              setSelectedMonth(new Date());
+              setSelectedMonth(DateTime.fromISO('2002-02-02T00:00'));
               setAvailableProjects(_dummy_projects);
               setOldTimelogs(_dummy_old_logs_2.timelogs);
               setOldPerdiems(_dummy_old_logs_2.perdiems);
             }}
           >
             _dummy_2
+          </Button>
+          <Button
+            onClick={() => {
+              setSelectedMonth(DateTime.fromISO('2001-01-01T00:00'));
+            }}
+          >
+            _dummy_set_Month_1_1_2001
           </Button>
         </Card>
       )}
@@ -135,22 +145,24 @@ export default function MainCard() {
         )}
         <CardContent>
           <Box sx={{mx: 'auto', textAlign: 'start', p: 3}}>
-            <Grid container spacing={3}>
-              <div className='picker'>
-                <Typography style={{color: '#838282'}}>Select month</Typography>
+            <Grid container spacing={1}>
+              <Grid item xs={4}>
                 <DatePicker
-                  id='datePicker'
-                  wrapperClassName='datePicker'
-                  dateFormat='LLLL    yyyy'
-                  selected={selectedMonth}
-                  showMonthYearPicker
-                  showFullMonthYearPicker
-                  showTwoColumnMonthYearPicker
-                  onChange={(newDate: Date | null) =>
-                    setMonthGetProjectsHandler(newDate)
-                  }
-                ></DatePicker>
-              </div>
+                  views={['year', 'month']}
+                  label='Year and Month'
+                  minDate={DateTime.fromISO('2000-01-01T00:00')}
+                  maxDate={DateTime.fromISO('2100-01-01T00:00')}
+                  value={selectedMonth}
+                  onChange={(newValue) => {
+                    if (newValue) {
+                      setMonthGetProjectsHandler(newValue);
+                    }
+                  }}
+                  renderInput={(params) => (
+                    <TextField {...params} helperText={null} />
+                  )}
+                />
+              </Grid>
               <Grid item xs={6}>
                 <FormControl fullWidth>
                   <InputLabel id='select-label-projectState'>
@@ -172,21 +184,21 @@ export default function MainCard() {
                   </Select>
                 </FormControl>
               </Grid>
-              <Grid item xs={3}>
-                <Button
-                  sx={{mt: 1, width: 250}}
-                  size='large'
-                  variant='contained'
-                  startIcon={<NoteAddIcon />}
-                  disabled={!selectedMonth}
-                  onClick={() => setEndMonthOpen(true)}
-                >
-                  end month
-                </Button>
-              </Grid>
             </Grid>
           </Box>
         </CardContent>
+        <CardActions>
+          <Button
+            sx={{mt: 1, width: 250}}
+            size='large'
+            variant='contained'
+            startIcon={<NoteAddIcon />}
+            disabled={!selectedMonth}
+            onClick={() => setEndMonthOpen(true)}
+          >
+            end month
+          </Button>
+        </CardActions>
       </Card>
       <InputCard
         types={projectTypes}

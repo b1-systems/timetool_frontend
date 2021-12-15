@@ -1,3 +1,5 @@
+import { DateTime } from 'luxon';
+
 import AddIcon from '@mui/icons-material/Add';
 import ClearIcon from '@mui/icons-material/Clear';
 import {
@@ -11,7 +13,7 @@ import {
 
 const MonthEndDialog = (props: {
   close: () => void;
-  selectedMonth: Date | null;
+  selectedMonth: DateTime;
 }) => {
   const cancelHandler = async () => {
     props.close();

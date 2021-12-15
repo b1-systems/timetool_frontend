@@ -1,3 +1,4 @@
+import { DateTime } from 'luxon';
 import React, { FormEvent, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -30,7 +31,7 @@ import Inputshift from './InputShift';
 
 export default function InputCard(props: {
   types: string[];
-  month: Date | null;
+  month: DateTime;
   uuidProject: string | null;
   uuidLog: string | null;
   projectShiftModels: string[];
@@ -39,12 +40,12 @@ export default function InputCard(props: {
   const [breakTime, setBreakTime] = useState<number>(0);
   const [travelTime, setTravelTime] = useState<number>(0);
   const [logMsg, setLogMsg] = useState<string>('');
-  const [selectedDay, setSelectedDay] = useState<Date | null>(props.month);
+  const [selectedDay, setSelectedDay] = useState<DateTime>(props.month);
   const [remote, setRemote] = useState<boolean>(true);
   const [shift, setShift] = useState<string>('');
   const [incidents, setIncidents] = useState<Incident[]>([]);
-  const [from, setFrom] = useState<Date | null>(null);
-  const [to, setTo] = useState<Date | null>(null);
+  const [from, setFrom] = useState<DateTime>(props.month);
+  const [to, setTo] = useState<DateTime>(props.month);
   const [typeOfPerdiem, setTypeOfPerdiem] = useState<number>(-1);
 
   const setTypeHandler = (event: SelectChangeEvent) => {
@@ -61,8 +62,8 @@ export default function InputCard(props: {
       fetchSubmit({
         uuid: props.uuidLog || uuidv4(),
         project_uuid: props.uuidProject,
-        start_dt: Math.round(from.getTime() / 1000),
-        end_dt: Math.round(to.getTime() / 1000),
+        start_dt: Math.round(from.valueOf() / 1000),
+        end_dt: Math.round(to.valueOf() / 1000),
         type: type,
         breakTime: breakTime * 60,
         travelTime: travelTime * 60,
@@ -74,7 +75,7 @@ export default function InputCard(props: {
       fetchSubmit({
         uuid: props.uuidLog || uuidv4(),
         project_uuid: props.uuidProject,
-        start_dt: Math.round(selectedDay.getTime() / 1000),
+        start_dt: Math.round(selectedDay.valueOf() / 1000),
         type: typeOfPerdiem,
         comment: logMsg,
         is_perdiem: true,
@@ -95,35 +96,27 @@ export default function InputCard(props: {
       <form onSubmit={handleSubmit}>
         <CardContent>
           <Box sx={{mx: 'auto', textAlign: 'start', p: 3}}>
-            <Grid container spacing={3}>
-              {/* <div className='picker'>
-                <Typography style={{color: '#838282'}}>Select day</Typography>
+            <Grid container spacing={1}>
+              <Grid item xs={3}>
                 <DatePicker
-                  id='datePicker'
-                  wrapperClassName='datePicker'
-                  dateFormat='dd/MM/yy'
-                  required={true}
+                  views={['day']}
+                  label='Day'
                   minDate={props.month}
-                  selected={selectedDay}
-                  showYearDropdown={!!props.uuidLog}
-                  scrollableMonthYearDropdown={!!props.uuidLog}
-                  onChange={(newDate: Date | null) => setSelectedDay(newDate)}
-                ></DatePicker>
-              </div> */}
-              <DatePicker
-                views={['year', 'month']}
-                label='Year and Month'
-                //minDate={new Date(props.month)}
-                // maxDate={new Date('2099-01-01')}
-                value={selectedDay}
-                onChange={(newValue) => {
-                  setSelectedDay(newValue);
-                }}
-                renderInput={(params) => (
-                  <TextField {...params} helperText={null} />
-                )}
-              />
-              <Grid item xs={4}>
+                  maxDate={props.month.plus({months: 1})}
+                  value={selectedDay}
+                  onChange={(newValue) => {
+                    if (newValue) {
+                      setSelectedDay(newValue);
+                      setFrom(newValue);
+                      setTo(newValue);
+                    }
+                  }}
+                  renderInput={(params) => (
+                    <TextField {...params} helperText={null} />
+                  )}
+                />
+              </Grid>
+              <Grid item xs={5}>
                 <FormControl fullWidth>
                   <InputLabel id='select-label-typeState'>Type</InputLabel>
                   <Select
@@ -142,80 +135,37 @@ export default function InputCard(props: {
                   </Select>
                 </FormControl>
               </Grid>
-              <Grid item xs={3}>
-                <FormControl component='fieldset'>
-                  <RadioGroup
-                    row
-                    aria-label='position'
-                    name='position'
-                    defaultValue='remote'
-                    onChange={handleRemote}
-                  >
-                    <FormControlLabel
-                      value='remote'
-                      control={<Radio />}
-                      label='remote'
-                      labelPlacement='start'
-                    />
-                    <FormControlLabel
-                      value='onsite'
-                      control={<Radio />}
-                      label='onsite'
-                      labelPlacement='start'
-                    />
-                  </RadioGroup>
-                </FormControl>
-              </Grid>
             </Grid>
-            <Grid container spacing={3} sx={{textAlign: 'start', mt: 0}}>
-              <TextField
-                sx={{mt: 3, width: 150}}
-                label='Break time (Minutes)'
-                value={breakTime}
-                onChange={(e) => setBreakTime(parseInt(e.target.value))}
-                type='number'
-                inputProps={{min: '0', max: '1000'}}
+            {type === 'shift' && (
+              <Inputshift
+                shiftModels={props.projectShiftModels}
+                setShift={setShift}
+                setIncidents={setIncidents}
+                day={selectedDay}
               />
-              <TextField
-                sx={{mt: 3, width: 150}}
-                label='Travel time (Minutes)'
-                value={travelTime}
-                onChange={(e) => setTravelTime(parseInt(e.target.value))}
-                type='number'
-                inputProps={{min: '0'}}
+            )}
+
+            {type === 'timelog' && (
+              <InputDefaultTimelog
+                day={selectedDay}
+                to={to}
+                from={from}
+                setToCard={setTo}
+                setFromCard={setFrom}
+                handleRemote={handleRemote}
+                setBreakTime={setBreakTime}
+                breakTime={breakTime}
+                setTravelTime={setTravelTime}
+                travelTime={travelTime}
+                setLogMsg={setLogMsg}
+                logMsg={logMsg}
               />
-              <Grid item xs={5}>
-                <TextField
-                  fullWidth
-                  label='Comment'
-                  required={true}
-                  value={logMsg}
-                  onChange={(e) => setLogMsg(e.target.value)}
-                />
-              </Grid>
-              <Grid item xs={3}></Grid>
-            </Grid>
+            )}
+
+            {type === 'perdiem' && (
+              <InputPerdiem setTypeOfPerdiem={setTypeOfPerdiem} />
+            )}
           </Box>
-          {type === 'shift' && (
-            <Inputshift
-              shiftModels={props.projectShiftModels}
-              setShift={setShift}
-              setIncidents={setIncidents}
-              day={selectedDay}
-            />
-          )}
-          {type === 'timelog' && (
-            <InputDefaultTimelog
-              day={selectedDay}
-              to={to}
-              from={from}
-              setToCard={setTo}
-              setFromCard={setFrom}
-            />
-          )}
-          {type === 'perdiem' && (
-            <InputPerdiem setTypeOfPerdiem={setTypeOfPerdiem} />
-          )}
         </CardContent>
         <CardActions>
           <Button
