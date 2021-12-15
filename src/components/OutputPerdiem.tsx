@@ -26,12 +26,16 @@ import Typography from '@mui/material/Typography';
 import { fetchDelete } from '../api';
 import { Perdiem } from '../models';
 
-export default function OutputPerdiem(props: {log: Perdiem}) {
+export default function OutputPerdiem(props: {
+  log: Perdiem;
+  deletePerdiem(uuid: string): void;
+}) {
   const deleteHandler = (uuid: string) => {
     const requestPrototype = {
       request: {uuid: uuid},
     };
     fetchDelete(requestPrototype);
+    props.deletePerdiem(uuid);
   };
   const logTypeHandler = (type: number) => {
     switch (type) {

@@ -26,12 +26,16 @@ import Typography from '@mui/material/Typography';
 import { fetchDelete } from '../api';
 import { Timelog } from '../models';
 
-export default function OutputShift(props: {log: Timelog}) {
+export default function OutputShift(props: {
+  log: Timelog;
+  deleteTimelog(uuid: string): void;
+}) {
   const deleteHandler = (uuid: string) => {
     const requestPrototype = {
       request: {uuid: uuid},
     };
     fetchDelete(requestPrototype);
+    props.deleteTimelog(uuid);
   };
 
   return (

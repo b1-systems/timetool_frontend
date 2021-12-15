@@ -16,6 +16,7 @@ export default function InputCard(props: {
   timelogs: Timelog[];
   perdiems: Perdiem[];
   deleteTimelog(uuid: string): void;
+  deletePerdiem(uuid: string): void;
 }) {
   let defaultTimelogs = props.timelogs
     .filter((log) => log.type === 'default')
@@ -51,7 +52,11 @@ export default function InputCard(props: {
           <ul>
             <h3>Shifts</h3>
             {shiftTimelogs.map((log) => (
-              <OutputShift log={log} key={log.uuid} />
+              <OutputShift
+                log={log}
+                key={log.uuid}
+                deleteTimelog={props.deleteTimelog}
+              />
             ))}
           </ul>
         )}
@@ -59,7 +64,11 @@ export default function InputCard(props: {
           <ul>
             <h3>Perdiems</h3>
             {perdiems.map((log) => (
-              <OutputPerdiem log={log} key={log.uuid} />
+              <OutputPerdiem
+                log={log}
+                key={log.uuid}
+                deletePerdiem={props.deletePerdiem}
+              />
             ))}
           </ul>
         )}

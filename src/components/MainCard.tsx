@@ -50,6 +50,10 @@ export default function MainCard() {
     setOldTimelogs(oldTimelogs.filter((log) => log.uuid !== uuid));
   };
 
+  const deletePerdiem = (uuid: string) => {
+    setOldPerdiems(oldPerdiems.filter((log) => log.uuid !== uuid));
+  };
+
   const monthEndHandler = () => {
     setEndMonthOpen(false);
   };
@@ -192,6 +196,7 @@ export default function MainCard() {
       />
       <TimelogItemList
         deleteTimelog={deleteTimelog}
+        deletePerdiem={deletePerdiem}
         timelogs={oldTimelogs}
         perdiems={oldPerdiems}
         // perdiemTypes{perdiemTypes}
