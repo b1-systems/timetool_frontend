@@ -161,7 +161,7 @@ export default function InputCard(props: {
                 value={breakTime}
                 onChange={(e) => setBreakTime(parseInt(e.target.value))}
                 type='number'
-                inputProps={{min: '0', max: '180', step: '15'}}
+                inputProps={{min: '0', max: '1000'}}
               />
               <TextField
                 sx={{mt: 3, width: 150}}
@@ -169,7 +169,7 @@ export default function InputCard(props: {
                 value={travelTime}
                 onChange={(e) => setTravelTime(parseInt(e.target.value))}
                 type='number'
-                inputProps={{min: '0', step: '15'}}
+                inputProps={{min: '0'}}
               />
               <Grid item xs={5}>
                 <TextField
