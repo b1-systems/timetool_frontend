@@ -73,6 +73,7 @@ export default function InputCard(props: {
         type: type,
         incidents: incidents,
         shift_model: shiftModel,
+        timezone: window.Intl.DateTimeFormat().resolvedOptions().timeZone,
       });
     }
     if (type === 'timelog' && props.uuidProject && from && to) {
@@ -92,10 +93,11 @@ export default function InputCard(props: {
       fetchSubmit({
         uuid: props.uuidLog || uuidv4(),
         project_uuid: props.uuidProject,
-        start_dt: Math.round(selectedDay.toUTC().valueOf() / 1000),
+        start_dt: Math.round(selectedDay.valueOf() / 1000),
         type: typeOfPerdiem,
         comment: logMsg,
         is_perdiem: true,
+        timezone: window.Intl.DateTimeFormat().resolvedOptions().timeZone,
       });
     }
     props.fetchAfterSubmitHandler();

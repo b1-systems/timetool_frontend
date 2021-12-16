@@ -76,6 +76,7 @@ export interface requestShift {
   type: string;
   incidents: Incident[];
   shift_model: string;
+  timezone: string;
 }
 
 export interface requestPerdiem {
@@ -85,4 +86,5 @@ export interface requestPerdiem {
   type: number;
   comment: string;
   is_perdiem: boolean;
+  timezone: string;
 }

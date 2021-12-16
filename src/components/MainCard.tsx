@@ -166,6 +166,9 @@ export default function MainCard() {
           <Button
             onClick={() => {
               setSelectedMonth(DateTime.fromISO('2001-01-01T00:00'));
+              console.log(
+                window.Intl.DateTimeFormat().resolvedOptions().timeZone,
+              );
             }}
           >
             _dummy_set_Month
