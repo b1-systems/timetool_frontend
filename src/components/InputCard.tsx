@@ -30,6 +30,7 @@ import InputPerdiem from './InputPerdiem';
 import Inputshift from './InputShift';
 
 export default function InputCard(props: {
+  projectShiftModelsAsObject: Object;
   types: string[];
   month: DateTime;
   uuidProject: string | null;
@@ -148,6 +149,7 @@ export default function InputCard(props: {
             </Grid>
             {type === 'shift' && (
               <Inputshift
+                projectShiftModelsAsObject={props.projectShiftModelsAsObject}
                 shiftModels={props.projectShiftModels}
                 setShift={setShift}
                 shift={shift}

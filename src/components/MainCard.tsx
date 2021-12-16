@@ -50,11 +50,13 @@ export default function MainCard() {
   const [projectTypes, setProjectTypes] = useState<string[]>([]);
   const [endMonthOpen, setEndMonthOpen] = useState(false);
   const [projectShiftModels, setProjectShiftModels] = useState<string[]>([]);
+  const [projectShiftModelsAsObject, setProjectShiftModelsAsObject] =
+    useState<Object>({});
 
-  // useEffect(() => {
-  //   setMonthGetProjectsHandler(selectedMonth);
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, []);
+  useEffect(() => {
+    setMonthGetProjectsHandler(selectedMonth);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const deleteTimelog = (uuid: string) => {
     setOldTimelogs(oldTimelogs.filter((log) => log.uuid !== uuid));
@@ -107,6 +109,7 @@ export default function MainCard() {
     setProjectTypes(Object.keys(projectFiltered[0].worktypes));
     if (projectFiltered[0].worktypes.shift !== undefined) {
       setProjectShiftModels(Object.values(projectFiltered[0].worktypes.shift));
+      setProjectShiftModelsAsObject(projectFiltered[0].worktypes.shift);
     }
   };
 
@@ -209,6 +212,7 @@ export default function MainCard() {
         </CardActions>
       </Card>
       <InputCard
+        projectShiftModelsAsObject={projectShiftModelsAsObject}
         types={projectTypes}
         month={selectedMonth}
         uuidProject={projectUuid}

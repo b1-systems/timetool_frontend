@@ -27,6 +27,7 @@ import Typography from '@mui/material/Typography';
 import { Incident } from '../models';
 
 export default function InputShift(props: {
+  projectShiftModelsAsObject: Object;
   shiftModels: string[];
   shift: string;
   setShift(shiftModel: string): void;
@@ -37,11 +38,14 @@ export default function InputShift(props: {
 }) {
   const setShiftModelHandler = (event: SelectChangeEvent) => {
     props.setShift(event.target.value as string);
-    props.setShiftModel(
-      Object.keys(props.shiftModels).find(
-        (key: any) => props.shiftModels[key] === event.target.value,
-      ) || 'unkown key',
-    );
+
+    for (const [key, value] of Object.entries(
+      props.projectShiftModelsAsObject,
+    )) {
+      if (value === (event.target.value as string)) {
+        props.setShiftModel(key);
+      }
+    }
   };
 
   const addHandler = () => {
@@ -86,7 +90,7 @@ export default function InputShift(props: {
           <Grid item xs={2}>
             <TimePicker
               label='From'
-              value={DateTime.fromSeconds(incident.start_dt).toUTC()}
+              value={DateTime.fromSeconds(incident.start_dt)}
               ampm={false}
               ampmInClock={false}
               onChange={(newValue) => {
@@ -98,7 +102,7 @@ export default function InputShift(props: {
                       start_dt:
                         newValue
                           .set({second: 0, millisecond: 0})
-                          .toUTC()
+
                           .valueOf() / 1000,
                     },
                     ...props.incidents.slice(index + 1),
@@ -113,7 +117,7 @@ export default function InputShift(props: {
               label='To'
               ampm={false}
               ampmInClock={false}
-              value={DateTime.fromSeconds(incident.end_dt).toUTC()}
+              value={DateTime.fromSeconds(incident.end_dt)}
               onChange={(newValue) => {
                 if (newValue) {
                   props.setIncidents([
@@ -123,7 +127,7 @@ export default function InputShift(props: {
                       end_dt:
                         newValue
                           .set({second: 0, millisecond: 0})
-                          .toUTC()
+
                           .valueOf() / 1000,
                     },
                     ...props.incidents.slice(index + 1),
