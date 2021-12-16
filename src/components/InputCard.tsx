@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon';
-import React, { FormEvent, useState } from 'react';
+import React, { FormEvent, useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
 import NoteAddIcon from '@mui/icons-material/NoteAdd';
@@ -43,13 +43,19 @@ export default function InputCard(props: {
   const [breakTime, setBreakTime] = useState<number>(0);
   const [travelTime, setTravelTime] = useState<number>(0);
   const [logMsg, setLogMsg] = useState<string>('');
-  const [selectedDay, setSelectedDay] = useState<DateTime>(props.month);
+  const [selectedDay, setSelectedDay] = useState<DateTime>(
+    props.month.set({day: 1, hour: 0, minute: 0, second: 0, millisecond: 0}),
+  );
   const [remote, setRemote] = useState<boolean>(true);
   const [shift, setShift] = useState<string>('');
   const [shiftModel, setShiftModel] = useState<string>('');
   const [incidents, setIncidents] = useState<Incident[]>([]);
-  const [from, setFrom] = useState<DateTime>(props.month);
-  const [to, setTo] = useState<DateTime>(props.month);
+  const [from, setFrom] = useState<DateTime>(
+    props.month.set({day: 1, hour: 0, minute: 0, second: 0, millisecond: 0}),
+  );
+  const [to, setTo] = useState<DateTime>(
+    props.month.set({day: 1, hour: 0, minute: 0, second: 0, millisecond: 0}),
+  );
   const [typeOfPerdiem, setTypeOfPerdiem] = useState<number>(-1);
 
   const setTypeHandler = (event: SelectChangeEvent) => {

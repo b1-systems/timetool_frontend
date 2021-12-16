@@ -145,7 +145,7 @@ export default function MainCard() {
           this card only for testing without backend
           <Button
             onClick={() => {
-              setSelectedMonth(selectedMonth);
+              //setSelectedMonth(selectedMonth);
               setAvailableProjects(_dummy_projects);
               setOldTimelogs(_dummy_old_logs_1.timelogs);
               setOldPerdiems(_dummy_old_logs_1.perdiems);
@@ -155,7 +155,7 @@ export default function MainCard() {
           </Button>
           <Button
             onClick={() => {
-              setSelectedMonth(selectedMonth);
+              //setSelectedMonth(selectedMonth);
               setAvailableProjects(_dummy_projects);
               setOldTimelogs(_dummy_old_logs_2.timelogs);
               setOldPerdiems(_dummy_old_logs_2.perdiems);
