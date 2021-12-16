@@ -52,9 +52,13 @@ export default function MainCard() {
   const [projectShiftModels, setProjectShiftModels] = useState<string[]>([]);
   const [projectShiftModelsAsObject, setProjectShiftModelsAsObject] =
     useState<Object>({});
+  const [projectPerdiemtModelsAsObject, setProjectPerdiemtModelsAsObject] =
+    useState<Object>({});
 
   useEffect(() => {
-    setMonthGetProjectsHandler(selectedMonth);
+    if (process.env.NODE_ENV !== 'development') {
+      setMonthGetProjectsHandler(selectedMonth);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -110,6 +114,9 @@ export default function MainCard() {
     if (projectFiltered[0].worktypes.shift !== undefined) {
       setProjectShiftModels(Object.values(projectFiltered[0].worktypes.shift));
       setProjectShiftModelsAsObject(projectFiltered[0].worktypes.shift);
+    }
+    if (projectFiltered[0].worktypes.perdiem !== undefined) {
+      setProjectPerdiemtModelsAsObject(projectFiltered[0].worktypes.perdiem);
     }
   };
 
@@ -212,6 +219,7 @@ export default function MainCard() {
         </CardActions>
       </Card>
       <InputCard
+        projectPerdiemtModelsAsObject={projectPerdiemtModelsAsObject}
         projectShiftModelsAsObject={projectShiftModelsAsObject}
         types={projectTypes}
         month={selectedMonth}

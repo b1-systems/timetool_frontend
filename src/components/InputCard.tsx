@@ -36,6 +36,7 @@ export default function InputCard(props: {
   uuidProject: string | null;
   uuidLog: string | null;
   projectShiftModels: string[];
+  projectPerdiemtModelsAsObject: Object;
 }) {
   const [type, setType] = useState<string>(props.types[0]);
   const [breakTime, setBreakTime] = useState<number>(0);
@@ -178,7 +179,14 @@ export default function InputCard(props: {
             )}
 
             {type === 'perdiem' && (
-              <InputPerdiem setTypeOfPerdiem={setTypeOfPerdiem} />
+              <InputPerdiem
+                projectPerdiemtModelsAsObject={
+                  props.projectPerdiemtModelsAsObject
+                }
+                setTypeOfPerdiem={setTypeOfPerdiem}
+                setLogMsg={setLogMsg}
+                logMsg={logMsg}
+              />
             )}
           </Box>
         </CardContent>
