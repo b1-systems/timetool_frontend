@@ -28,6 +28,7 @@ import { Timelog } from '../models';
 
 export default function OutputShift(props: {
   log: Timelog;
+  monthIsClosed: boolean;
   deleteTimelog(uuid: string): void;
 }) {
   const deleteHandler = (uuid: string) => {
@@ -45,7 +46,10 @@ export default function OutputShift(props: {
         {new Date(props.log.start_dt * 1000).toLocaleDateString('de-DE')}
         &ensp; Project name:&ensp;
         {props.log.project_name}&ensp;
-        <Button onClick={() => deleteHandler(props.log.uuid)}>
+        <Button
+          onClick={() => deleteHandler(props.log.uuid)}
+          disabled={props.monthIsClosed}
+        >
           <DeleteForeverIcon />
         </Button>
       </li>

@@ -27,6 +27,7 @@ import { fetchDelete } from '../api';
 import { Perdiem } from '../models';
 
 export default function OutputPerdiem(props: {
+  monthIsClosed: boolean;
   log: Perdiem;
   deletePerdiem(uuid: string): void;
 }) {
@@ -62,7 +63,10 @@ export default function OutputPerdiem(props: {
         {props.log.project_name}&ensp; Typ:&ensp;
         {logTypeHandler(props.log.type)}&ensp; comment:&ensp;
         {props.log.comment}
-        <Button onClick={() => deleteHandler(props.log.uuid)}>
+        <Button
+          onClick={() => deleteHandler(props.log.uuid)}
+          disabled={props.monthIsClosed}
+        >
           <DeleteForeverIcon />
         </Button>
       </li>

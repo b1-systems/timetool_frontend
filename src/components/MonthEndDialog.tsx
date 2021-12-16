@@ -11,6 +11,8 @@ import {
 	Typography,
 } from '@mui/material';
 
+import { fetchCloseMonth } from '../api';
+
 const MonthEndDialog = (props: {
   close: () => void;
   selectedMonth: DateTime;
@@ -20,16 +22,14 @@ const MonthEndDialog = (props: {
   };
 
   const handleEndMonth = () => {
-    const request = {
-      date: props.selectedMonth,
-    };
-    console.log(
-      'prototyp API call',
-      'POST',
-      '/rest/:date/:project',
-      'Body json:',
-      request,
-    );
+    fetchCloseMonth({
+      params: {
+        year: props.selectedMonth.year,
+        month: props.selectedMonth.month,
+        format: 'traditional',
+        scope: 'me',
+      },
+    });
     cancelHandler();
   };
 
@@ -54,7 +54,6 @@ const MonthEndDialog = (props: {
           <Button
             onClick={cancelHandler}
             sx={{mr: 1, mb: 2, mt: 2}}
-            size='small'
             startIcon={<ClearIcon />}
             data-testid='KeyDialog_close-btn'
           >
@@ -62,7 +61,6 @@ const MonthEndDialog = (props: {
           </Button>
           <Button
             sx={{ml: 1, mb: 2, mt: 2}}
-            size='small'
             startIcon={<AddIcon />}
             onClick={handleEndMonth}
             data-testid='KeyDialog_next-btn'

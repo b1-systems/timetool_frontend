@@ -30,6 +30,7 @@ import InputPerdiem from './InputPerdiem';
 import Inputshift from './InputShift';
 
 export default function InputCard(props: {
+  monthIsClosed: boolean;
   fetchAfterSubmitHandler(): void;
   projectShiftModelsAsObject: Object;
   types: string[];
@@ -208,6 +209,7 @@ export default function InputCard(props: {
             variant='contained'
             startIcon={<NoteAddIcon />}
             type='submit'
+            disabled={props.monthIsClosed}
           >
             commit
           </Button>

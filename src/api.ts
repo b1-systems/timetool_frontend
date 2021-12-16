@@ -125,3 +125,21 @@ export const fetchCloseMonth = async (requestPrototyp: {
       );
     }
   });
+
+export const fetchIsMonthClosed = async (requestPrototyp: {
+  params?: Object;
+}): Promise<Response> =>
+  fetch(`${baseUrl()}/rest/lockedperiod${getParams(requestPrototyp.params)}`, {
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+  }).then((response) => {
+    if (response.ok) {
+      return response;
+    } else {
+      throw new Error(
+        `Could not fetch auditlogs. Backend response code: ${response.status}`,
+      );
+    }
+  });

@@ -27,6 +27,7 @@ import { fetchDelete } from '../api';
 import { Timelog } from '../models';
 
 export default function OutputTimelogs(props: {
+  monthIsClosed: boolean;
   log: Timelog;
   deleteTimelog(uuid: string): void;
 }) {
@@ -46,7 +47,10 @@ export default function OutputTimelogs(props: {
         &ensp; Project name:&ensp;
         {props.log.project_name}&ensp; comment:&ensp;{props.log.comment}&ensp;
         onsite:&ensp;{props.log.onsite}
-        <Button onClick={() => deleteHandler(props.log.uuid)}>
+        <Button
+          onClick={() => deleteHandler(props.log.uuid)}
+          disabled={props.monthIsClosed}
+        >
           <DeleteForeverIcon />
         </Button>
       </li>

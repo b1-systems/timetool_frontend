@@ -13,6 +13,7 @@ import OutputShift from './OutputShift';
 import OutputTimelogs from './OutputTimelog';
 
 export default function InputCard(props: {
+  monthIsClosed: boolean;
   timelogs: Timelog[];
   perdiems: Perdiem[];
   deleteTimelog(uuid: string): void;
@@ -41,6 +42,7 @@ export default function InputCard(props: {
             <h3>Timelogs</h3>
             {defaultTimelogs.map((log) => (
               <OutputTimelogs
+                monthIsClosed={props.monthIsClosed}
                 log={log}
                 key={log.uuid}
                 deleteTimelog={props.deleteTimelog}
@@ -53,6 +55,7 @@ export default function InputCard(props: {
             <h3>Shifts</h3>
             {shiftTimelogs.map((log) => (
               <OutputShift
+                monthIsClosed={props.monthIsClosed}
                 log={log}
                 key={log.uuid}
                 deleteTimelog={props.deleteTimelog}
@@ -65,6 +68,7 @@ export default function InputCard(props: {
             <h3>Perdiems</h3>
             {perdiems.map((log) => (
               <OutputPerdiem
+                monthIsClosed={props.monthIsClosed}
                 log={log}
                 key={log.uuid}
                 deletePerdiem={props.deletePerdiem}

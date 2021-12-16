@@ -23,7 +23,11 @@ import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 
-import { fetchCurrentMonthLogs, fetchProjects } from '../api';
+import {
+	fetchCurrentMonthLogs,
+	fetchIsMonthClosed,
+	fetchProjects,
+} from '../api';
 import { Logs, Perdiem, Project, Timelog } from '../models';
 //start import only for testing without backend
 import {
@@ -50,6 +54,7 @@ export default function MainCard() {
   const [projectTypes, setProjectTypes] = useState<string[]>([]);
   const [endMonthOpen, setEndMonthOpen] = useState(false);
   const [projectShiftModels, setProjectShiftModels] = useState<string[]>([]);
+  const [monthIsClosed, setMonthIsClosed] = useState<boolean>(true);
   const [projectShiftModelsAsObject, setProjectShiftModelsAsObject] =
     useState<Object>({});
   const [projectPerdiemtModelsAsObject, setProjectPerdiemtModelsAsObject] =
@@ -58,6 +63,24 @@ export default function MainCard() {
   useEffect(() => {
     if (process.env.NODE_ENV !== 'development') {
       setMonthGetProjectsHandler(selectedMonth);
+      fetchIsMonthClosed({
+        params: {
+          year: selectedMonth.year,
+          month: selectedMonth.month,
+          format: 'traditional',
+          scope: 'me',
+        },
+      })
+        .then((response) => {
+          return response.json();
+        })
+        .then((response) => {
+          if (response.locks === []) {
+            setMonthIsClosed(false);
+          } else {
+            setMonthIsClosed(true);
+          }
+        });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -100,6 +123,24 @@ export default function MainCard() {
         .then((LogsResponse: Logs) => {
           setOldTimelogs(LogsResponse.timelogs);
           setOldPerdiems(LogsResponse.perdiems);
+        });
+      fetchIsMonthClosed({
+        params: {
+          year: selectedMonth.year,
+          month: selectedMonth.month,
+          format: 'traditional',
+          scope: 'me',
+        },
+      })
+        .then((response) => {
+          return response.json();
+        })
+        .then((response) => {
+          if (response.locks === []) {
+            setMonthIsClosed(false);
+          } else {
+            setMonthIsClosed(true);
+          }
         });
     }
   };
@@ -232,7 +273,7 @@ export default function MainCard() {
             size='large'
             variant='contained'
             startIcon={<NoteAddIcon />}
-            disabled={!selectedMonth}
+            disabled={monthIsClosed}
             onClick={() => setEndMonthOpen(true)}
           >
             end month
@@ -240,6 +281,7 @@ export default function MainCard() {
         </CardActions>
       </Card>
       <InputCard
+        monthIsClosed={monthIsClosed}
         fetchAfterSubmitHandler={fetchAfterSubmitHandler}
         projectPerdiemtModelsAsObject={projectPerdiemtModelsAsObject}
         projectShiftModelsAsObject={projectShiftModelsAsObject}
@@ -250,6 +292,7 @@ export default function MainCard() {
         projectShiftModels={projectShiftModels}
       />
       <TimelogItemList
+        monthIsClosed={monthIsClosed}
         deleteTimelog={deleteTimelog}
         deletePerdiem={deletePerdiem}
         timelogs={oldTimelogs}
