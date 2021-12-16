@@ -120,6 +120,24 @@ export default function MainCard() {
     }
   };
 
+  const fetchAfterSubmitHandler = () => {
+    fetchCurrentMonthLogs({
+      params: {
+        year: selectedMonth.year,
+        month: selectedMonth.month,
+        format: 'traditional',
+        scope: 'me',
+      },
+    })
+      .then((response) => {
+        return response.json();
+      })
+      .then((LogsResponse: Logs) => {
+        setOldTimelogs(LogsResponse.timelogs);
+        setOldPerdiems(LogsResponse.perdiems);
+      });
+  };
+
   return (
     <Paper>
       {process.env.NODE_ENV === 'development' && (
@@ -219,6 +237,7 @@ export default function MainCard() {
         </CardActions>
       </Card>
       <InputCard
+        fetchAfterSubmitHandler={fetchAfterSubmitHandler}
         projectPerdiemtModelsAsObject={projectPerdiemtModelsAsObject}
         projectShiftModelsAsObject={projectShiftModelsAsObject}
         types={projectTypes}

@@ -30,6 +30,7 @@ import InputPerdiem from './InputPerdiem';
 import Inputshift from './InputShift';
 
 export default function InputCard(props: {
+  fetchAfterSubmitHandler(): void;
   projectShiftModelsAsObject: Object;
   types: string[];
   month: DateTime;
@@ -91,12 +92,13 @@ export default function InputCard(props: {
       fetchSubmit({
         uuid: props.uuidLog || uuidv4(),
         project_uuid: props.uuidProject,
-        start_dt: Math.round(selectedDay.valueOf() / 1000),
+        start_dt: Math.round(selectedDay.toUTC().valueOf() / 1000),
         type: typeOfPerdiem,
         comment: logMsg,
         is_perdiem: true,
       });
     }
+    props.fetchAfterSubmitHandler();
   };
 
   const handleRemote = () => {
