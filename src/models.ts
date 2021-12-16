@@ -66,6 +66,7 @@ export interface requestTimelog {
   travelTime: number;
   comment: string;
   onsite: string;
+  timezone: string;
 }
 
 export interface requestShift {

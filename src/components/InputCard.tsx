@@ -87,6 +87,7 @@ export default function InputCard(props: {
         travelTime: travelTime * 60,
         comment: logMsg,
         onsite: onsiteRemote,
+        timezone: window.Intl.DateTimeFormat().resolvedOptions().timeZone,
       });
     }
     if (type === 'perdiem' && props.uuidProject && selectedDay) {
