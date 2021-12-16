@@ -68,6 +68,16 @@ export interface requestTimelog {
   onsite: string;
 }
 
+export interface requestShift {
+  uuid: string;
+  project_uuid: string;
+  start_dt: number;
+  end_dt: number;
+  type: string;
+  incidents: Incident[];
+  shift_model: string;
+}
+
 export interface requestPerdiem {
   uuid: string;
   project_uuid: string;

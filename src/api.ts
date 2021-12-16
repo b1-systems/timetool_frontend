@@ -1,4 +1,4 @@
-import { requestPerdiem, requestTimelog } from './models';
+import { requestPerdiem, requestShift, requestTimelog } from './models';
 
 const getParams = (params?: Object) => {
   if (params === undefined) {
@@ -88,7 +88,7 @@ export const fetchDelete = async (requestPrototyp: {
   });
 
 export const fetchSubmit = async (
-  request: requestTimelog | requestPerdiem,
+  request: requestTimelog | requestPerdiem | requestShift,
 ): Promise<Response> =>
   fetch(`${baseUrl()}/rest/timelog/${request.uuid}`, {
     method: 'put',

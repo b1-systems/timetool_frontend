@@ -58,6 +58,19 @@ export default function InputCard(props: {
     if (remote === false) {
       onsiteRemote = 'onsite';
     }
+    if (type === 'shift' && props.uuidProject && from && to) {
+      fetchSubmit({
+        uuid: props.uuidLog || uuidv4(),
+        project_uuid: props.uuidProject,
+        start_dt: Math.round(selectedDay.valueOf() / 1000),
+        end_dt: Math.round(
+          selectedDay.plus({hours: 23, minutes: 59}).valueOf() / 1000,
+        ),
+        type: type,
+        incidents: incidents,
+        shift_model: shift,
+      });
+    }
     if (type === 'timelog' && props.uuidProject && from && to) {
       fetchSubmit({
         uuid: props.uuidLog || uuidv4(),
@@ -136,6 +149,8 @@ export default function InputCard(props: {
               <Inputshift
                 shiftModels={props.projectShiftModels}
                 setShift={setShift}
+                shift={shift}
+                incidents={incidents}
                 setIncidents={setIncidents}
                 day={selectedDay}
               />
