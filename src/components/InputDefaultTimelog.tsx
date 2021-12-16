@@ -86,7 +86,7 @@ export default function InputDefaultTimelog(props: {
           ampmInClock={false}
           onChange={(newValue) => {
             if (newValue) {
-              props.setFromCard(newValue);
+              props.setFromCard(newValue.set({second: 0, millisecond: 0}));
             }
           }}
           renderInput={(params) => <TextField {...params} />}
@@ -100,7 +100,7 @@ export default function InputDefaultTimelog(props: {
           value={props.to}
           onChange={(newValue) => {
             if (newValue) {
-              props.setToCard(newValue);
+              props.setToCard(newValue.set({second: 0, millisecond: 0}));
             }
           }}
           renderInput={(params) => <TextField {...params} />}

@@ -83,10 +83,6 @@ export default function InputCard(props: {
     }
   };
 
-  //typy sie nenne einzel, fetch direct mit werten
-  //luxon luxon adap, mui datepicker
-  //in eigene comp die cards für ausgabe
-
   const handleRemote = () => {
     setRemote(!remote);
   };
@@ -102,7 +98,7 @@ export default function InputCard(props: {
                   views={['day']}
                   label='Day'
                   minDate={props.month}
-                  maxDate={props.month.plus({months: 1})}
+                  maxDate={props.month.plus({months: 1}).minus({day: 1})}
                   value={selectedDay}
                   onChange={(newValue) => {
                     if (newValue) {

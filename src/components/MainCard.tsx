@@ -2,7 +2,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import './style.css';
 
 import { DateTime } from 'luxon';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import NoteAddIcon from '@mui/icons-material/NoteAdd';
 import DatePicker from '@mui/lab/DatePicker';
@@ -37,7 +37,9 @@ import MonthEndDialog from './MonthEndDialog';
 import TimelogItemList from './TimelogItemList';
 
 export default function MainCard() {
-  const [selectedMonth, setSelectedMonth] = useState<DateTime>(DateTime.now());
+  const [selectedMonth, setSelectedMonth] = useState<DateTime>(
+    DateTime.now().set({day: 1, hour: 0, minute: 0, second: 0, millisecond: 0}),
+  );
   const [availableProjects, setAvailableProjects] = useState<Project[]>([]);
   const [oldTimelogs, setOldTimelogs] = useState<Timelog[]>([]);
   const [oldPerdiems, setOldPerdiems] = useState<Perdiem[]>([]);
@@ -48,6 +50,11 @@ export default function MainCard() {
   const [projectTypes, setProjectTypes] = useState<string[]>([]);
   const [endMonthOpen, setEndMonthOpen] = useState(false);
   const [projectShiftModels, setProjectShiftModels] = useState<string[]>([]);
+
+  useEffect(() => {
+    setMonthGetProjectsHandler(selectedMonth);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const deleteTimelog = (uuid: string) => {
     setOldTimelogs(oldTimelogs.filter((log) => log.uuid !== uuid));
@@ -102,6 +109,7 @@ export default function MainCard() {
       setProjectShiftModels(Object.values(projectFiltered[0].worktypes.shift));
     }
   };
+
   return (
     <Paper>
       {process.env.NODE_ENV === 'development' && (
@@ -109,7 +117,7 @@ export default function MainCard() {
           this card only for testing without backend
           <Button
             onClick={() => {
-              setSelectedMonth(DateTime.fromISO('2001-01-01T00:00'));
+              setSelectedMonth(selectedMonth);
               setAvailableProjects(_dummy_projects);
               setOldTimelogs(_dummy_old_logs_1.timelogs);
               setOldPerdiems(_dummy_old_logs_1.perdiems);
@@ -119,7 +127,7 @@ export default function MainCard() {
           </Button>
           <Button
             onClick={() => {
-              setSelectedMonth(DateTime.fromISO('2002-02-02T00:00'));
+              setSelectedMonth(selectedMonth);
               setAvailableProjects(_dummy_projects);
               setOldTimelogs(_dummy_old_logs_2.timelogs);
               setOldPerdiems(_dummy_old_logs_2.perdiems);
@@ -132,7 +140,7 @@ export default function MainCard() {
               setSelectedMonth(DateTime.fromISO('2001-01-01T00:00'));
             }}
           >
-            _dummy_set_Month_1_1_2001
+            _dummy_set_Month
           </Button>
         </Card>
       )}
