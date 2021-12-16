@@ -75,7 +75,7 @@ export default function MainCard() {
           return response.json();
         })
         .then((response) => {
-          if (response.locks === []) {
+          if (response.locks.length == 0) {
             setMonthIsClosed(false);
           } else {
             setMonthIsClosed(true);
@@ -136,7 +136,7 @@ export default function MainCard() {
           return response.json();
         })
         .then((response) => {
-          if (response.locks === []) {
+          if (response.locks.length == 0) {
             setMonthIsClosed(false);
           } else {
             setMonthIsClosed(true);
