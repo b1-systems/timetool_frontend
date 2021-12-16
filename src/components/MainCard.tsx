@@ -51,10 +51,10 @@ export default function MainCard() {
   const [endMonthOpen, setEndMonthOpen] = useState(false);
   const [projectShiftModels, setProjectShiftModels] = useState<string[]>([]);
 
-  useEffect(() => {
-    setMonthGetProjectsHandler(selectedMonth);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  // useEffect(() => {
+  //   setMonthGetProjectsHandler(selectedMonth);
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, []);
 
   const deleteTimelog = (uuid: string) => {
     setOldTimelogs(oldTimelogs.filter((log) => log.uuid !== uuid));

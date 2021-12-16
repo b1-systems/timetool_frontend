@@ -43,6 +43,7 @@ export default function InputCard(props: {
   const [selectedDay, setSelectedDay] = useState<DateTime>(props.month);
   const [remote, setRemote] = useState<boolean>(true);
   const [shift, setShift] = useState<string>('');
+  const [shiftModel, setShiftModel] = useState<string>('');
   const [incidents, setIncidents] = useState<Incident[]>([]);
   const [from, setFrom] = useState<DateTime>(props.month);
   const [to, setTo] = useState<DateTime>(props.month);
@@ -58,7 +59,7 @@ export default function InputCard(props: {
     if (remote === false) {
       onsiteRemote = 'onsite';
     }
-    if (type === 'shift' && props.uuidProject && from && to) {
+    if (type === 'shift' && props.uuidProject) {
       fetchSubmit({
         uuid: props.uuidLog || uuidv4(),
         project_uuid: props.uuidProject,
@@ -68,7 +69,7 @@ export default function InputCard(props: {
         ),
         type: type,
         incidents: incidents,
-        shift_model: shift,
+        shift_model: shiftModel,
       });
     }
     if (type === 'timelog' && props.uuidProject && from && to) {
@@ -153,6 +154,7 @@ export default function InputCard(props: {
                 incidents={incidents}
                 setIncidents={setIncidents}
                 day={selectedDay}
+                setShiftModel={setShiftModel}
               />
             )}
 
