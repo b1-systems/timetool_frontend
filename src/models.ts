@@ -89,3 +89,10 @@ export interface requestPerdiem {
   is_perdiem: boolean;
   timezone: string;
 }
+
+export interface requestCloseMonth {
+  month: string;
+  year: string;
+  format: string;
+  scope: string;
+}

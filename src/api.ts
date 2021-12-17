@@ -1,4 +1,9 @@
-import { requestPerdiem, requestShift, requestTimelog } from './models';
+import {
+	requestCloseMonth,
+	requestPerdiem,
+	requestShift,
+	requestTimelog,
+} from './models';
 
 const getParams = (params?: Object) => {
   if (params === undefined) {
@@ -108,14 +113,15 @@ export const fetchSubmit = async (
   });
 
 export const fetchCloseMonth = async (requestPrototyp: {
-  params?: Object;
+  request: requestCloseMonth;
 }): Promise<Response> =>
-  fetch(`${baseUrl()}/rest/timelog/${getParams(requestPrototyp.params)}`, {
+  fetch(`${baseUrl()}/rest/lockedperiod`, {
     method: 'post',
     headers: {
       Accept: 'application/json',
       'Content-Type': 'application/json',
     },
+    body: JSON.stringify(requestPrototyp.request),
   }).then((response) => {
     if (response.ok) {
       return response;

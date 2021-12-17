@@ -61,32 +61,40 @@ export default function InputShift(props: {
 
   return (
     <>
-      <FormControl fullWidth>
-        <InputLabel id='select-label-shiftModelState'>Shift model</InputLabel>
-        <Select
-          labelId='select-label-shiftModel'
-          id='demo-simple-select-shiftModel'
-          value={props.shift}
-          label='shiftModel'
-          onChange={setShiftModelHandler}
-        >
-          {props.shiftModels.map((singleType, idx) => (
-            <MenuItem key={idx} value={singleType}>
-              {singleType}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-      <Button
-        sx={{mt: 1}}
-        onClick={addHandler}
-        variant='contained'
-        startIcon={<NoteAddIcon />}
-      >
-        Add Entry
-      </Button>
+      <Grid container spacing={1} sx={{mt: 1}}>
+        <Grid item xs={4}>
+          <FormControl fullWidth sx={{mt: 2}}>
+            <InputLabel id='select-label-shiftModelState'>
+              Shift model
+            </InputLabel>
+            <Select
+              labelId='select-label-shiftModel'
+              id='demo-simple-select-shiftModel'
+              value={props.shift}
+              label='shiftModel'
+              onChange={setShiftModelHandler}
+            >
+              {props.shiftModels.map((singleType, idx) => (
+                <MenuItem key={idx} value={singleType}>
+                  {singleType}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Grid>
+        <Grid item xs={2}>
+          <Button
+            sx={{mt: 3, ml: 2}}
+            onClick={addHandler}
+            variant='contained'
+            startIcon={<NoteAddIcon />}
+          >
+            Add Entry
+          </Button>
+        </Grid>
+      </Grid>
       {props.incidents.map((incident, index) => (
-        <Grid container spacing={1} sx={{mt: 1}}>
+        <Grid container spacing={4} sx={{mt: 0}}>
           <Grid item xs={2}>
             <TimePicker
               label='From'
@@ -137,7 +145,7 @@ export default function InputShift(props: {
               renderInput={(params) => <TextField {...params} />}
             />
           </Grid>
-          <Grid item xs={5}>
+          <Grid item xs={4}>
             <TextField
               fullWidth
               label='Comment'
@@ -157,6 +165,7 @@ export default function InputShift(props: {
           </Grid>
           <Grid item xs={1}>
             <Button
+              sx={{mt: 1, ml: 2}}
               color='error'
               variant='contained'
               onClick={() => {

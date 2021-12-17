@@ -190,6 +190,7 @@ export default function MainCard() {
               setAvailableProjects(_dummy_projects);
               setOldTimelogs(_dummy_old_logs_1.timelogs);
               setOldPerdiems(_dummy_old_logs_1.perdiems);
+              setMonthIsClosed(false);
             }}
           >
             _dummy_1
@@ -200,6 +201,7 @@ export default function MainCard() {
               setAvailableProjects(_dummy_projects);
               setOldTimelogs(_dummy_old_logs_2.timelogs);
               setOldPerdiems(_dummy_old_logs_2.perdiems);
+              setMonthIsClosed(false);
             }}
           >
             _dummy_2
@@ -207,9 +209,7 @@ export default function MainCard() {
           <Button
             onClick={() => {
               setSelectedMonth(DateTime.fromISO('2001-01-01T00:00'));
-              console.log(
-                window.Intl.DateTimeFormat().resolvedOptions().timeZone,
-              );
+              setMonthIsClosed(false);
             }}
           >
             _dummy_set_Month
@@ -223,53 +223,47 @@ export default function MainCard() {
             selectedMonth={selectedMonth}
           />
         )}
-        <CardContent>
-          <Box sx={{mx: 'auto', textAlign: 'start', p: 3}}>
-            <Grid container spacing={1}>
-              <Grid item xs={4}>
-                <DatePicker
-                  views={['year', 'month']}
-                  label='Year and Month'
-                  minDate={DateTime.fromISO('2000-01-01T00:00')}
-                  maxDate={DateTime.fromISO('2100-01-01T00:00')}
-                  value={selectedMonth}
-                  onChange={(newValue) => {
-                    if (newValue) {
-                      setMonthGetProjectsHandler(newValue);
-                    }
-                  }}
-                  renderInput={(params) => (
-                    <TextField {...params} helperText={null} />
-                  )}
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <FormControl fullWidth>
-                  <InputLabel id='select-label-projectState'>
-                    Project
-                  </InputLabel>
-                  <Select
-                    labelId='select-label-project'
-                    id='demo-simple-select-project'
-                    value={project}
-                    label='Project'
-                    onChange={setProjectGetLogsHandler}
-                    disabled={!selectedMonth}
-                  >
-                    {availableProjects.map((project) => (
-                      <MenuItem key={project.uuid} value={project.name}>
-                        {project.name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Grid>
-            </Grid>
-          </Box>
-        </CardContent>
+        <Grid container>
+          <Grid item xs={3} sx={{ml: 4, mt: 6}}>
+            <DatePicker
+              views={['year', 'month']}
+              label='Year and Month'
+              minDate={DateTime.fromISO('2000-01-01T00:00')}
+              maxDate={DateTime.fromISO('2100-01-01T00:00')}
+              value={selectedMonth}
+              onChange={(newValue) => {
+                if (newValue) {
+                  setMonthGetProjectsHandler(newValue);
+                }
+              }}
+              renderInput={(params) => (
+                <TextField {...params} helperText={null} />
+              )}
+            />
+          </Grid>
+          <Grid item xs={4}>
+            <FormControl fullWidth sx={{mt: 6}}>
+              <InputLabel id='select-label-projectState'>Project</InputLabel>
+              <Select
+                labelId='select-label-project'
+                id='demo-simple-select-project'
+                value={project}
+                label='Project'
+                onChange={setProjectGetLogsHandler}
+                disabled={!selectedMonth}
+              >
+                {availableProjects.map((project) => (
+                  <MenuItem key={project.uuid} value={project.name}>
+                    {project.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
+        </Grid>
         <CardActions>
           <Button
-            sx={{mt: 1, width: 250}}
+            sx={{mt: 5, width: 250}}
             size='large'
             variant='contained'
             startIcon={<NoteAddIcon />}

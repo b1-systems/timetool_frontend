@@ -23,9 +23,9 @@ const MonthEndDialog = (props: {
 
   const handleEndMonth = () => {
     fetchCloseMonth({
-      params: {
-        year: props.selectedMonth.year,
-        month: props.selectedMonth.month,
+      request: {
+        year: props.selectedMonth.year.toString(),
+        month: props.selectedMonth.month.toString(),
         format: 'traditional',
         scope: 'me',
       },
