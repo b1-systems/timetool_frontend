@@ -61,7 +61,7 @@ export default function InputShift(props: {
 
   return (
     <>
-      <Grid item sm={4} md={3} lg={2}>
+      <Grid item xs={12} sm={4} md={3} lg={2}>
         <FormControl fullWidth>
           <InputLabel id='select-label-shiftModelState'>Shift model</InputLabel>
           <Select
@@ -79,7 +79,7 @@ export default function InputShift(props: {
           </Select>
         </FormControl>
       </Grid>
-      <Grid item sm={6} md={3} lg={2} sx={{mt: 1}}>
+      <Grid item xs={12} sm={6} md={3} lg={2} sx={{mt: 1}}>
         <Button
           disabled={!props.shift}
           fullWidth
@@ -93,7 +93,7 @@ export default function InputShift(props: {
       </Grid>
       {props.incidents.map((incident, index) => (
         <Grid container spacing={3} item xs={12}>
-          <Grid item sm={3} md={2} lg={1}>
+          <Grid item xs={12} sm={3} md={2} lg={1}>
             <FormControl fullWidth>
               <TimePicker
                 label='From'
@@ -120,7 +120,7 @@ export default function InputShift(props: {
               />
             </FormControl>
           </Grid>
-          <Grid item sm={3} md={2} lg={1}>
+          <Grid item xs={12} sm={3} md={2} lg={1}>
             <FormControl fullWidth>
               <TimePicker
                 label='To'
@@ -147,7 +147,7 @@ export default function InputShift(props: {
               />
             </FormControl>
           </Grid>
-          <Grid item sm={5} md={3} lg={2}>
+          <Grid item xs={10} sm={5} md={3} lg={2}>
             <TextField
               fullWidth
               label='Comment'

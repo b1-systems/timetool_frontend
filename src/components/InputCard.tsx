@@ -128,7 +128,7 @@ export default function InputCard(props: {
         <CardHeader></CardHeader>
         <CardContent>
           <Grid container spacing={3}>
-            <Grid item sm={4} md={3} lg={2}>
+            <Grid item xs={12} sm={4} md={3} lg={2}>
               <FormControl fullWidth>
                 <DatePicker
                   views={['day']}
@@ -150,7 +150,7 @@ export default function InputCard(props: {
                 />
               </FormControl>
             </Grid>
-            <Grid item sm={7} md={6} lg={4}>
+            <Grid item xs={12} sm={7} md={6} lg={4}>
               <FormControl fullWidth>
                 <InputLabel id='select-label-typeState'>Type</InputLabel>
                 <Select
@@ -215,10 +215,10 @@ export default function InputCard(props: {
         </CardContent>
         <CardActions>
           <Grid container>
-            <Grid item sm={6} md={3} lg={2}>
+            <Grid item xs={12} sm={6} md={3} lg={2}>
               <Button
                 fullWidth
-                sx={{mt: 3, mb: 2, ml: 1}}
+                sx={{mt: 3, mb: 2, ml: 1, mr: 1}}
                 size='large'
                 variant='contained'
                 startIcon={<NoteAddIcon />}
