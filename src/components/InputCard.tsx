@@ -119,88 +119,86 @@ export default function InputCard(props: {
     <Card elevation={0} sx={{border: 1, borderColor: 'grey.300'}}>
       <form onSubmit={handleSubmit}>
         <CardContent>
-          <Box sx={{mx: 'auto', textAlign: 'start', p: 3}}>
-            <Grid container spacing={1}>
-              <Grid item xs={3}>
-                <DatePicker
-                  views={['day']}
-                  label='Day'
-                  minDate={props.month}
-                  maxDate={props.month.plus({months: 1}).minus({day: 1})}
-                  value={selectedDay}
-                  onChange={(newValue) => {
-                    if (newValue) {
-                      setSelectedDay(newValue);
-                      setFrom(newValue);
-                      setTo(newValue);
-                    }
-                  }}
-                  renderInput={(params) => (
-                    <TextField {...params} helperText={null} />
-                  )}
-                />
-              </Grid>
-              <Grid item xs={5}>
-                <FormControl fullWidth>
-                  <InputLabel id='select-label-typeState'>Type</InputLabel>
-                  <Select
-                    labelId='select-label-type'
-                    id='demo-simple-select-type'
-                    value={type}
-                    label='Type'
-                    disabled={!props.types.length}
-                    onChange={setTypeHandler}
-                  >
-                    {props.types.map((singleType, idx) => (
-                      <MenuItem key={idx} value={singleType}>
-                        {singleType}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Grid>
+          <Grid container spacing={1}>
+            <Grid item xs={3}>
+              <DatePicker
+                views={['day']}
+                label='Day'
+                minDate={props.month}
+                maxDate={props.month.plus({months: 1}).minus({day: 1})}
+                value={selectedDay}
+                onChange={(newValue) => {
+                  if (newValue) {
+                    setSelectedDay(newValue);
+                    setFrom(newValue);
+                    setTo(newValue);
+                  }
+                }}
+                renderInput={(params) => (
+                  <TextField {...params} helperText={null} />
+                )}
+              />
             </Grid>
-            {type === 'shift' && (
-              <Inputshift
-                projectShiftModelsAsObject={props.projectShiftModelsAsObject}
-                shiftModels={props.projectShiftModels}
-                setShift={setShift}
-                shift={shift}
-                incidents={incidents}
-                setIncidents={setIncidents}
-                day={selectedDay}
-                setShiftModel={setShiftModel}
-              />
-            )}
+            <Grid item xs={5}>
+              <FormControl fullWidth>
+                <InputLabel id='select-label-typeState'>Type</InputLabel>
+                <Select
+                  labelId='select-label-type'
+                  id='demo-simple-select-type'
+                  value={type}
+                  label='Type'
+                  disabled={!props.types.length}
+                  onChange={setTypeHandler}
+                >
+                  {props.types.map((singleType, idx) => (
+                    <MenuItem key={idx} value={singleType}>
+                      {singleType}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+          </Grid>
+          {type === 'shift' && (
+            <Inputshift
+              projectShiftModelsAsObject={props.projectShiftModelsAsObject}
+              shiftModels={props.projectShiftModels}
+              setShift={setShift}
+              shift={shift}
+              incidents={incidents}
+              setIncidents={setIncidents}
+              day={selectedDay}
+              setShiftModel={setShiftModel}
+            />
+          )}
 
-            {type === 'timelog' && (
-              <InputDefaultTimelog
-                day={selectedDay}
-                to={to}
-                from={from}
-                setToCard={setTo}
-                setFromCard={setFrom}
-                handleRemote={handleRemote}
-                setBreakTime={setBreakTime}
-                breakTime={breakTime}
-                setTravelTime={setTravelTime}
-                travelTime={travelTime}
-                setLogMsg={setLogMsg}
-                logMsg={logMsg}
-              />
-            )}
+          {type === 'timelog' && (
+            <InputDefaultTimelog
+              day={selectedDay}
+              to={to}
+              from={from}
+              setToCard={setTo}
+              setFromCard={setFrom}
+              handleRemote={handleRemote}
+              setBreakTime={setBreakTime}
+              breakTime={breakTime}
+              setTravelTime={setTravelTime}
+              travelTime={travelTime}
+              setLogMsg={setLogMsg}
+              logMsg={logMsg}
+            />
+          )}
 
-            {type === 'perdiem' && (
-              <InputPerdiem
-                projectPerdiemtModelsAsObject={
-                  props.projectPerdiemtModelsAsObject
-                }
-                setTypeOfPerdiem={setTypeOfPerdiem}
-                setLogMsg={setLogMsg}
-                logMsg={logMsg}
-              />
-            )}
-          </Box>
+          {type === 'perdiem' && (
+            <InputPerdiem
+              projectPerdiemtModelsAsObject={
+                props.projectPerdiemtModelsAsObject
+              }
+              setTypeOfPerdiem={setTypeOfPerdiem}
+              setLogMsg={setLogMsg}
+              logMsg={logMsg}
+            />
+          )}
         </CardContent>
         <CardActions>
           <Button

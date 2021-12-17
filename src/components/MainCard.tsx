@@ -223,44 +223,46 @@ export default function MainCard() {
             selectedMonth={selectedMonth}
           />
         )}
-        <Grid container>
-          <Grid item xs={3} sx={{ml: 4, mt: 6}}>
-            <DatePicker
-              views={['year', 'month']}
-              label='Year and Month'
-              minDate={DateTime.fromISO('2000-01-01T00:00')}
-              maxDate={DateTime.fromISO('2100-01-01T00:00')}
-              value={selectedMonth}
-              onChange={(newValue) => {
-                if (newValue) {
-                  setMonthGetProjectsHandler(newValue);
-                }
-              }}
-              renderInput={(params) => (
-                <TextField {...params} helperText={null} />
-              )}
-            />
+        <CardContent>
+          <Grid container>
+            <Grid item xs={3}>
+              <DatePicker
+                views={['year', 'month']}
+                label='Year and Month'
+                minDate={DateTime.fromISO('2000-01-01T00:00')}
+                maxDate={DateTime.fromISO('2100-01-01T00:00')}
+                value={selectedMonth}
+                onChange={(newValue) => {
+                  if (newValue) {
+                    setMonthGetProjectsHandler(newValue);
+                  }
+                }}
+                renderInput={(params) => (
+                  <TextField {...params} helperText={null} />
+                )}
+              />
+            </Grid>
+            <Grid item xs={4}>
+              <FormControl fullWidth>
+                <InputLabel id='select-label-projectState'>Project</InputLabel>
+                <Select
+                  labelId='select-label-project'
+                  id='demo-simple-select-project'
+                  value={project}
+                  label='Project'
+                  onChange={setProjectGetLogsHandler}
+                  disabled={!selectedMonth}
+                >
+                  {availableProjects.map((project) => (
+                    <MenuItem key={project.uuid} value={project.name}>
+                      {project.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
           </Grid>
-          <Grid item xs={4}>
-            <FormControl fullWidth sx={{mt: 6}}>
-              <InputLabel id='select-label-projectState'>Project</InputLabel>
-              <Select
-                labelId='select-label-project'
-                id='demo-simple-select-project'
-                value={project}
-                label='Project'
-                onChange={setProjectGetLogsHandler}
-                disabled={!selectedMonth}
-              >
-                {availableProjects.map((project) => (
-                  <MenuItem key={project.uuid} value={project.name}>
-                    {project.name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Grid>
-        </Grid>
+        </CardContent>
         <CardActions>
           <Button
             sx={{mt: 5, width: 250}}

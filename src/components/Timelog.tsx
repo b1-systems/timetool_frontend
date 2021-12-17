@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 
 import { TopBar } from '@b1-systems/react-components';
@@ -6,7 +6,12 @@ import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import FeedIcon from '@mui/icons-material/Feed';
 import PersonIcon from '@mui/icons-material/Person';
-import { ListItemButton, ListItemText } from '@mui/material';
+import {
+	ListItemButton,
+	ListItemText,
+	useMediaQuery,
+	useTheme,
+} from '@mui/material';
 import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
 import Drawer from '@mui/material/Drawer';
@@ -20,7 +25,11 @@ import MainCard from './MainCard';
 const drawerWidth = 240;
 
 const Timelog = () => {
+  const theme = useTheme();
   const [drawerOpen, setDrawerOpen] = useState(true);
+  const mediumOrLargerDisplay = useMediaQuery(theme.breakpoints.up('sm'));
+  const extraLargeDisplay = useMediaQuery(theme.breakpoints.up('xl'));
+
   return (
     <>
       <Box
@@ -36,9 +45,15 @@ const Timelog = () => {
           //todo languageMenu={[]}
         />
         <Drawer
-          open={drawerOpen}
-          onClose={() => setDrawerOpen(false)}
-          variant='persistent'
+          variant={
+            extraLargeDisplay
+              ? drawerOpen
+                ? 'permanent'
+                : 'temporary'
+              : 'temporary'
+          }
+          open={extraLargeDisplay ? drawerOpen : !drawerOpen}
+          onClose={() => setDrawerOpen(!drawerOpen)}
           sx={{
             width: drawerWidth,
             flexShrink: 0,
