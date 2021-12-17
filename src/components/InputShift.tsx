@@ -61,91 +61,93 @@ export default function InputShift(props: {
 
   return (
     <>
-      <Grid container spacing={1} sx={{mt: 1}}>
-        <Grid item xs={4}>
-          <FormControl fullWidth sx={{mt: 2}}>
-            <InputLabel id='select-label-shiftModelState'>
-              Shift model
-            </InputLabel>
-            <Select
-              labelId='select-label-shiftModel'
-              id='demo-simple-select-shiftModel'
-              value={props.shift}
-              label='shiftModel'
-              onChange={setShiftModelHandler}
-            >
-              {props.shiftModels.map((singleType, idx) => (
-                <MenuItem key={idx} value={singleType}>
-                  {singleType}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </Grid>
-        <Grid item xs={2}>
-          <Button
-            sx={{mt: 3, ml: 2}}
-            onClick={addHandler}
-            variant='contained'
-            startIcon={<NoteAddIcon />}
+      <Grid item sm={4} md={3} lg={2}>
+        <FormControl fullWidth>
+          <InputLabel id='select-label-shiftModelState'>Shift model</InputLabel>
+          <Select
+            labelId='select-label-shiftModel'
+            id='demo-simple-select-shiftModel'
+            value={props.shift}
+            label='shiftModel'
+            onChange={setShiftModelHandler}
           >
-            Add Entry
-          </Button>
-        </Grid>
+            {props.shiftModels.map((singleType, idx) => (
+              <MenuItem key={idx} value={singleType}>
+                {singleType}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      </Grid>
+      <Grid item sm={6} md={3} lg={2} sx={{mt: 1}}>
+        <Button
+          disabled={!props.shift}
+          fullWidth
+          size='large'
+          onClick={addHandler}
+          variant='contained'
+          startIcon={<NoteAddIcon />}
+        >
+          Add Entry
+        </Button>
       </Grid>
       {props.incidents.map((incident, index) => (
-        <Grid container spacing={4} sx={{mt: 0}}>
-          <Grid item xs={2}>
-            <TimePicker
-              label='From'
-              value={DateTime.fromSeconds(incident.start_dt)}
-              ampm={false}
-              ampmInClock={false}
-              onChange={(newValue) => {
-                if (newValue) {
-                  props.setIncidents([
-                    ...props.incidents.slice(0, index),
-                    {
-                      ...incident,
-                      start_dt:
-                        newValue
-                          .set({second: 0, millisecond: 0})
+        <Grid container spacing={3} item xs={12}>
+          <Grid item sm={3} md={2} lg={1}>
+            <FormControl fullWidth>
+              <TimePicker
+                label='From'
+                value={DateTime.fromSeconds(incident.start_dt)}
+                ampm={false}
+                ampmInClock={false}
+                onChange={(newValue) => {
+                  if (newValue) {
+                    props.setIncidents([
+                      ...props.incidents.slice(0, index),
+                      {
+                        ...incident,
+                        start_dt:
+                          newValue
+                            .set({second: 0, millisecond: 0})
 
-                          .valueOf() / 1000,
-                    },
-                    ...props.incidents.slice(index + 1),
-                  ]);
-                }
-              }}
-              renderInput={(params) => <TextField {...params} />}
-            />
+                            .valueOf() / 1000,
+                      },
+                      ...props.incidents.slice(index + 1),
+                    ]);
+                  }
+                }}
+                renderInput={(params) => <TextField {...params} />}
+              />
+            </FormControl>
           </Grid>
-          <Grid item xs={2}>
-            <TimePicker
-              label='To'
-              ampm={false}
-              ampmInClock={false}
-              value={DateTime.fromSeconds(incident.end_dt)}
-              onChange={(newValue) => {
-                if (newValue) {
-                  props.setIncidents([
-                    ...props.incidents.slice(0, index),
-                    {
-                      ...incident,
-                      end_dt:
-                        newValue
-                          .set({second: 0, millisecond: 0})
+          <Grid item sm={3} md={2} lg={1}>
+            <FormControl fullWidth>
+              <TimePicker
+                label='To'
+                ampm={false}
+                ampmInClock={false}
+                value={DateTime.fromSeconds(incident.end_dt)}
+                onChange={(newValue) => {
+                  if (newValue) {
+                    props.setIncidents([
+                      ...props.incidents.slice(0, index),
+                      {
+                        ...incident,
+                        end_dt:
+                          newValue
+                            .set({second: 0, millisecond: 0})
 
-                          .valueOf() / 1000,
-                    },
-                    ...props.incidents.slice(index + 1),
-                  ]);
-                }
-              }}
-              renderInput={(params) => <TextField {...params} />}
-            />
+                            .valueOf() / 1000,
+                      },
+                      ...props.incidents.slice(index + 1),
+                    ]);
+                  }
+                }}
+                renderInput={(params) => <TextField {...params} />}
+              />
+            </FormControl>
           </Grid>
-          <Grid item xs={4}>
+          <Grid item sm={5} md={3} lg={2}>
             <TextField
               fullWidth
               label='Comment'
@@ -165,7 +167,7 @@ export default function InputShift(props: {
           </Grid>
           <Grid item xs={1}>
             <Button
-              sx={{mt: 1, ml: 2}}
+              sx={{mt: 1}}
               color='error'
               variant='contained'
               onClick={() => {

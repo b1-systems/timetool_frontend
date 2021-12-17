@@ -9,6 +9,7 @@ import {
 	Card,
 	CardActions,
 	CardContent,
+	CardHeader,
 	FormControl,
 	FormControlLabel,
 	Grid,
@@ -19,6 +20,8 @@ import {
 	Select,
 	SelectChangeEvent,
 	TextField,
+	useMediaQuery,
+	useTheme,
 } from '@mui/material';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -40,6 +43,10 @@ export default function InputCard(props: {
   projectShiftModels: string[];
   projectPerdiemtModelsAsObject: Object;
 }) {
+  const theme = useTheme();
+  const mediumOrLargerDisplay = useMediaQuery(theme.breakpoints.up('sm'));
+  const extraLargeDisplay = useMediaQuery(theme.breakpoints.up('xl'));
+
   const [type, setType] = useState<string>(props.types[0]);
   const [breakTime, setBreakTime] = useState<number>(0);
   const [travelTime, setTravelTime] = useState<number>(0);
@@ -116,30 +123,34 @@ export default function InputCard(props: {
   };
 
   return (
-    <Card elevation={0} sx={{border: 1, borderColor: 'grey.300'}}>
+    <Card elevation={0} sx={{border: 1, borderColor: 'grey.300', ml: 1, mr: 1}}>
       <form onSubmit={handleSubmit}>
+        <CardHeader></CardHeader>
         <CardContent>
-          <Grid container spacing={1}>
-            <Grid item xs={3}>
-              <DatePicker
-                views={['day']}
-                label='Day'
-                minDate={props.month}
-                maxDate={props.month.plus({months: 1}).minus({day: 1})}
-                value={selectedDay}
-                onChange={(newValue) => {
-                  if (newValue) {
-                    setSelectedDay(newValue);
-                    setFrom(newValue);
-                    setTo(newValue);
-                  }
-                }}
-                renderInput={(params) => (
-                  <TextField {...params} helperText={null} />
-                )}
-              />
+          <Grid container spacing={3}>
+            <Grid item sm={4} md={3} lg={2}>
+              <FormControl fullWidth>
+                <DatePicker
+                  views={['day']}
+                  label='Day'
+                  disabled={!props.uuidProject}
+                  minDate={props.month}
+                  maxDate={props.month.plus({months: 1}).minus({day: 1})}
+                  value={selectedDay}
+                  onChange={(newValue) => {
+                    if (newValue) {
+                      setSelectedDay(newValue);
+                      setFrom(newValue);
+                      setTo(newValue);
+                    }
+                  }}
+                  renderInput={(params) => (
+                    <TextField {...params} helperText={null} />
+                  )}
+                />
+              </FormControl>
             </Grid>
-            <Grid item xs={5}>
+            <Grid item sm={7} md={6} lg={4}>
               <FormControl fullWidth>
                 <InputLabel id='select-label-typeState'>Type</InputLabel>
                 <Select
@@ -159,58 +170,65 @@ export default function InputCard(props: {
               </FormControl>
             </Grid>
           </Grid>
-          {type === 'shift' && (
-            <Inputshift
-              projectShiftModelsAsObject={props.projectShiftModelsAsObject}
-              shiftModels={props.projectShiftModels}
-              setShift={setShift}
-              shift={shift}
-              incidents={incidents}
-              setIncidents={setIncidents}
-              day={selectedDay}
-              setShiftModel={setShiftModel}
-            />
-          )}
+          <Grid container spacing={3} sx={{mt: 1}}>
+            {type === 'shift' && (
+              <Inputshift
+                projectShiftModelsAsObject={props.projectShiftModelsAsObject}
+                shiftModels={props.projectShiftModels}
+                setShift={setShift}
+                shift={shift}
+                incidents={incidents}
+                setIncidents={setIncidents}
+                day={selectedDay}
+                setShiftModel={setShiftModel}
+              />
+            )}
 
-          {type === 'timelog' && (
-            <InputDefaultTimelog
-              day={selectedDay}
-              to={to}
-              from={from}
-              setToCard={setTo}
-              setFromCard={setFrom}
-              handleRemote={handleRemote}
-              setBreakTime={setBreakTime}
-              breakTime={breakTime}
-              setTravelTime={setTravelTime}
-              travelTime={travelTime}
-              setLogMsg={setLogMsg}
-              logMsg={logMsg}
-            />
-          )}
+            {type === 'timelog' && (
+              <InputDefaultTimelog
+                day={selectedDay}
+                to={to}
+                from={from}
+                setToCard={setTo}
+                setFromCard={setFrom}
+                handleRemote={handleRemote}
+                setBreakTime={setBreakTime}
+                breakTime={breakTime}
+                setTravelTime={setTravelTime}
+                travelTime={travelTime}
+                setLogMsg={setLogMsg}
+                logMsg={logMsg}
+              />
+            )}
 
-          {type === 'perdiem' && (
-            <InputPerdiem
-              projectPerdiemtModelsAsObject={
-                props.projectPerdiemtModelsAsObject
-              }
-              setTypeOfPerdiem={setTypeOfPerdiem}
-              setLogMsg={setLogMsg}
-              logMsg={logMsg}
-            />
-          )}
+            {type === 'perdiem' && (
+              <InputPerdiem
+                projectPerdiemtModelsAsObject={
+                  props.projectPerdiemtModelsAsObject
+                }
+                setTypeOfPerdiem={setTypeOfPerdiem}
+                setLogMsg={setLogMsg}
+                logMsg={logMsg}
+              />
+            )}
+          </Grid>
         </CardContent>
         <CardActions>
-          <Button
-            sx={{mt: 1, width: 250}}
-            size='large'
-            variant='contained'
-            startIcon={<NoteAddIcon />}
-            type='submit'
-            disabled={props.monthIsClosed}
-          >
-            commit
-          </Button>
+          <Grid container>
+            <Grid item sm={6} md={3} lg={2}>
+              <Button
+                fullWidth
+                sx={{mt: 3, mb: 2, ml: 1}}
+                size='large'
+                variant='contained'
+                startIcon={<NoteAddIcon />}
+                type='submit'
+                disabled={props.monthIsClosed}
+              >
+                commit
+              </Button>
+            </Grid>
+          </Grid>
         </CardActions>
       </form>
     </Card>

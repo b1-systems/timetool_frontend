@@ -26,18 +26,52 @@ export default function InputDefaultTimelog(props: {
   logMsg: string;
 }) {
   return (
-    <Grid container spacing={1} sx={{mt: 1}}>
-      <Grid item xs={3}>
+    <>
+      <Grid item sm={11} md={6} lg={3}>
+        <FormControl fullWidth>
+          <TimePicker
+            label='From'
+            value={props.from}
+            ampm={false}
+            ampmInClock={false}
+            onChange={(newValue) => {
+              if (newValue) {
+                props.setFromCard(newValue.set({second: 0, millisecond: 0}));
+              }
+            }}
+            renderInput={(params) => <TextField {...params} />}
+          />
+        </FormControl>
+      </Grid>
+      <Grid item sm={11} md={6} lg={3}>
+        <FormControl fullWidth>
+          <TimePicker
+            label='To'
+            ampm={false}
+            ampmInClock={false}
+            value={props.to}
+            onChange={(newValue) => {
+              if (newValue) {
+                props.setToCard(newValue.set({second: 0, millisecond: 0}));
+              }
+            }}
+            renderInput={(params) => <TextField {...params} />}
+          />
+        </FormControl>
+      </Grid>
+      <Grid item sm={11} md={6} lg={3}>
         <TextField
-          sx={{width: '50%'}}
+          fullWidth
           label='Break time (Minutes)'
           value={props.breakTime}
           onChange={(e) => props.setBreakTime(parseInt(e.target.value))}
           type='number'
           inputProps={{min: '0', max: '1000'}}
         />
+      </Grid>
+      <Grid item sm={11} md={6} lg={3}>
         <TextField
-          sx={{width: '50%'}}
+          fullWidth
           label='Travel time (Minutes)'
           value={props.travelTime}
           onChange={(e) => props.setTravelTime(parseInt(e.target.value))}
@@ -45,7 +79,7 @@ export default function InputDefaultTimelog(props: {
           inputProps={{min: '0'}}
         />
       </Grid>
-      <Grid item xs={5}>
+      <Grid item sm={11} md={6} lg={3}>
         <TextField
           fullWidth
           label='Comment'
@@ -54,7 +88,7 @@ export default function InputDefaultTimelog(props: {
           onChange={(e) => props.setLogMsg(e.target.value)}
         />
       </Grid>
-      <Grid item xs={3}>
+      <Grid item sm={11} md={6} lg={3}>
         <FormControl component='fieldset'>
           <RadioGroup
             row
@@ -78,34 +112,6 @@ export default function InputDefaultTimelog(props: {
           </RadioGroup>
         </FormControl>
       </Grid>
-      <Grid item xs={3}>
-        <TimePicker
-          label='From'
-          value={props.from}
-          ampm={false}
-          ampmInClock={false}
-          onChange={(newValue) => {
-            if (newValue) {
-              props.setFromCard(newValue.set({second: 0, millisecond: 0}));
-            }
-          }}
-          renderInput={(params) => <TextField {...params} />}
-        />
-      </Grid>
-      <Grid item xs={3}>
-        <TimePicker
-          label='To'
-          ampm={false}
-          ampmInClock={false}
-          value={props.to}
-          onChange={(newValue) => {
-            if (newValue) {
-              props.setToCard(newValue.set({second: 0, millisecond: 0}));
-            }
-          }}
-          renderInput={(params) => <TextField {...params} />}
-        />
-      </Grid>
-    </Grid>
+    </>
   );
 }

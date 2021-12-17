@@ -8,6 +8,7 @@ export const _dummy_projects: Project[] = [
     name: 'test1',
     worktypes: {
       perdiem: {
+        3: 'GAAAAANZ LANGER STRING 1234567890 16 € Anreise ab 3 Mon',
         4: 'VMA Ausland',
         5: '32 € 24h ab 3 Mon',
         6: '16 € Anreise ab 3 Mon',

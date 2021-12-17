@@ -11,6 +11,7 @@ import {
 	Card,
 	CardActions,
 	CardContent,
+	CardHeader,
 	FormControl,
 	Grid,
 	InputLabel,
@@ -18,6 +19,8 @@ import {
 	Select,
 	SelectChangeEvent,
 	TextField,
+	useMediaQuery,
+	useTheme,
 } from '@mui/material';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
@@ -41,6 +44,7 @@ import MonthEndDialog from './MonthEndDialog';
 import TimelogItemList from './TimelogItemList';
 
 export default function MainCard() {
+  const theme = useTheme();
   const [selectedMonth, setSelectedMonth] = useState<DateTime>(
     DateTime.now().set({day: 1, hour: 0, minute: 0, second: 0, millisecond: 0}),
   );
@@ -59,7 +63,8 @@ export default function MainCard() {
     useState<Object>({});
   const [projectPerdiemtModelsAsObject, setProjectPerdiemtModelsAsObject] =
     useState<Object>({});
-
+  const mediumOrLargerDisplay = useMediaQuery(theme.breakpoints.up('sm'));
+  const extraLargeDisplay = useMediaQuery(theme.breakpoints.up('xl'));
   useEffect(() => {
     if (process.env.NODE_ENV !== 'development') {
       setMonthGetProjectsHandler(selectedMonth);
@@ -180,121 +185,145 @@ export default function MainCard() {
   };
 
   return (
-    <Paper>
+    <Grid container spacing={3}>
       {process.env.NODE_ENV === 'development' && (
-        <Card elevation={0} sx={{border: 1, borderColor: 'grey.300'}}>
-          this card only for testing without backend
-          <Button
-            onClick={() => {
-              //setSelectedMonth(selectedMonth);
-              setAvailableProjects(_dummy_projects);
-              setOldTimelogs(_dummy_old_logs_1.timelogs);
-              setOldPerdiems(_dummy_old_logs_1.perdiems);
-              setMonthIsClosed(false);
-            }}
+        <Grid item xs={12}>
+          <Card
+            elevation={0}
+            sx={{border: 1, borderColor: 'grey.300', ml: 1, mr: 1}}
           >
-            _dummy_1
-          </Button>
-          <Button
-            onClick={() => {
-              //setSelectedMonth(selectedMonth);
-              setAvailableProjects(_dummy_projects);
-              setOldTimelogs(_dummy_old_logs_2.timelogs);
-              setOldPerdiems(_dummy_old_logs_2.perdiems);
-              setMonthIsClosed(false);
-            }}
-          >
-            _dummy_2
-          </Button>
-          <Button
-            onClick={() => {
-              setSelectedMonth(DateTime.fromISO('2001-01-01T00:00'));
-              setMonthIsClosed(false);
-            }}
-          >
-            _dummy_set_Month
-          </Button>
-        </Card>
+            this card only for testing without backend
+            <Button
+              onClick={() => {
+                //setSelectedMonth(selectedMonth);
+                setAvailableProjects(_dummy_projects);
+                setOldTimelogs(_dummy_old_logs_1.timelogs);
+                setOldPerdiems(_dummy_old_logs_1.perdiems);
+                setMonthIsClosed(false);
+              }}
+            >
+              _dummy_1
+            </Button>
+            <Button
+              onClick={() => {
+                //setSelectedMonth(selectedMonth);
+                setAvailableProjects(_dummy_projects);
+                setOldTimelogs(_dummy_old_logs_2.timelogs);
+                setOldPerdiems(_dummy_old_logs_2.perdiems);
+                setMonthIsClosed(false);
+              }}
+            >
+              _dummy_2
+            </Button>
+            <Button
+              onClick={() => {
+                setSelectedMonth(DateTime.fromISO('2001-01-01T00:00'));
+                setMonthIsClosed(false);
+              }}
+            >
+              _dummy_set_Month
+            </Button>
+          </Card>
+        </Grid>
       )}
-      <Card elevation={0} sx={{border: 1, borderColor: 'grey.300'}}>
-        {endMonthOpen && (
-          <MonthEndDialog
-            close={monthEndHandler}
-            selectedMonth={selectedMonth}
-          />
-        )}
-        <CardContent>
-          <Grid container>
-            <Grid item xs={3}>
-              <DatePicker
-                views={['year', 'month']}
-                label='Year and Month'
-                minDate={DateTime.fromISO('2000-01-01T00:00')}
-                maxDate={DateTime.fromISO('2100-01-01T00:00')}
-                value={selectedMonth}
-                onChange={(newValue) => {
-                  if (newValue) {
-                    setMonthGetProjectsHandler(newValue);
-                  }
-                }}
-                renderInput={(params) => (
-                  <TextField {...params} helperText={null} />
-                )}
-              />
+      <Grid item xs={12}>
+        <Card
+          elevation={0}
+          sx={{border: 1, borderColor: 'grey.300', ml: 1, mr: 1}}
+        >
+          {endMonthOpen && (
+            <MonthEndDialog
+              close={monthEndHandler}
+              selectedMonth={selectedMonth}
+            />
+          )}
+          <CardHeader></CardHeader>
+          <CardContent>
+            <Grid container spacing={3}>
+              <Grid item sm={4} md={3} lg={2}>
+                <FormControl fullWidth>
+                  <DatePicker
+                    views={['year', 'month']}
+                    label='Year and Month'
+                    minDate={DateTime.fromISO('2000-01-01T00:00')}
+                    maxDate={DateTime.fromISO('2100-01-01T00:00')}
+                    value={selectedMonth}
+                    onChange={(newValue) => {
+                      if (newValue) {
+                        setMonthGetProjectsHandler(newValue);
+                      }
+                    }}
+                    renderInput={(params) => (
+                      <TextField {...params} helperText={null} />
+                    )}
+                  />
+                </FormControl>
+              </Grid>
+              <Grid item sm={7} md={6} lg={4}>
+                <FormControl fullWidth>
+                  <InputLabel id='select-label-projectState'>
+                    Project
+                  </InputLabel>
+                  <Select
+                    labelId='select-label-project'
+                    id='demo-simple-select-project'
+                    value={project}
+                    label='Project'
+                    onChange={setProjectGetLogsHandler}
+                    disabled={!selectedMonth}
+                  >
+                    {availableProjects.map((project) => (
+                      <MenuItem key={project.uuid} value={project.name}>
+                        {project.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
             </Grid>
-            <Grid item xs={4}>
-              <FormControl fullWidth>
-                <InputLabel id='select-label-projectState'>Project</InputLabel>
-                <Select
-                  labelId='select-label-project'
-                  id='demo-simple-select-project'
-                  value={project}
-                  label='Project'
-                  onChange={setProjectGetLogsHandler}
-                  disabled={!selectedMonth}
+          </CardContent>
+          <CardActions>
+            <Grid container>
+              <Grid item sm={6} md={3} lg={2}>
+                <Button
+                  fullWidth
+                  sx={{mt: 3, mb: 2, ml: 1}}
+                  size='large'
+                  variant='contained'
+                  startIcon={<NoteAddIcon />}
+                  disabled={monthIsClosed}
+                  onClick={() => setEndMonthOpen(true)}
                 >
-                  {availableProjects.map((project) => (
-                    <MenuItem key={project.uuid} value={project.name}>
-                      {project.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+                  end month
+                </Button>
+              </Grid>
             </Grid>
-          </Grid>
-        </CardContent>
-        <CardActions>
-          <Button
-            sx={{mt: 5, width: 250}}
-            size='large'
-            variant='contained'
-            startIcon={<NoteAddIcon />}
-            disabled={monthIsClosed}
-            onClick={() => setEndMonthOpen(true)}
-          >
-            end month
-          </Button>
-        </CardActions>
-      </Card>
-      <InputCard
-        monthIsClosed={monthIsClosed}
-        fetchAfterSubmitHandler={fetchAfterSubmitHandler}
-        projectPerdiemtModelsAsObject={projectPerdiemtModelsAsObject}
-        projectShiftModelsAsObject={projectShiftModelsAsObject}
-        types={projectTypes}
-        month={selectedMonth}
-        uuidProject={projectUuid}
-        uuidLog={uuidLog}
-        projectShiftModels={projectShiftModels}
-      />
-      <TimelogItemList
-        monthIsClosed={monthIsClosed}
-        deleteTimelog={deleteTimelog}
-        deletePerdiem={deletePerdiem}
-        timelogs={oldTimelogs}
-        perdiems={oldPerdiems}
-        // perdiemTypes{perdiemTypes}
-      />
-    </Paper>
+          </CardActions>
+        </Card>
+      </Grid>
+      <Grid item xs={12}>
+        <InputCard
+          monthIsClosed={monthIsClosed}
+          fetchAfterSubmitHandler={fetchAfterSubmitHandler}
+          projectPerdiemtModelsAsObject={projectPerdiemtModelsAsObject}
+          projectShiftModelsAsObject={projectShiftModelsAsObject}
+          types={projectTypes}
+          month={selectedMonth}
+          uuidProject={projectUuid}
+          uuidLog={uuidLog}
+          projectShiftModels={projectShiftModels}
+        />
+      </Grid>
+      <Grid item xs={12}>
+        <TimelogItemList
+          monthIsClosed={monthIsClosed}
+          deleteTimelog={deleteTimelog}
+          deletePerdiem={deletePerdiem}
+          timelogs={oldTimelogs}
+          perdiems={oldPerdiems}
+          // perdiemTypes{perdiemTypes}
+        />
+      </Grid>
+    </Grid>
   );
 }

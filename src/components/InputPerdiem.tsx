@@ -66,17 +66,8 @@ export default function InputPerdiem(props: {
   };
 
   return (
-    <Grid container spacing={1} sx={{mt: 1}}>
-      <Grid item xs={5}>
-        <TextField
-          fullWidth
-          label='Comment'
-          required={true}
-          value={props.logMsg}
-          onChange={(e) => props.setLogMsg(e.target.value)}
-        />
-      </Grid>
-      <Grid item xs={5}>
+    <>
+      <Grid item sm={4} md={3} lg={2}>
         <FormControl fullWidth>
           <InputLabel id='select-label-modelState'>Model</InputLabel>
           <Select
@@ -96,6 +87,15 @@ export default function InputPerdiem(props: {
           </Select>
         </FormControl>
       </Grid>
-    </Grid>
+      <Grid item sm={7} md={6} lg={4}>
+        <TextField
+          fullWidth
+          label='Comment'
+          required={true}
+          value={props.logMsg}
+          onChange={(e) => props.setLogMsg(e.target.value)}
+        />
+      </Grid>
+    </>
   );
 }

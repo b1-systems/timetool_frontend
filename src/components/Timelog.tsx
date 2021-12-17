@@ -27,7 +27,6 @@ const drawerWidth = 240;
 const Timelog = () => {
   const theme = useTheme();
   const [drawerOpen, setDrawerOpen] = useState(true);
-  const mediumOrLargerDisplay = useMediaQuery(theme.breakpoints.up('sm'));
   const extraLargeDisplay = useMediaQuery(theme.breakpoints.up('xl'));
 
   return (

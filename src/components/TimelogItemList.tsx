@@ -35,7 +35,7 @@ export default function InputCard(props: {
     return x.start_dt - y.start_dt;
   });
   return (
-    <Card elevation={0} sx={{border: 1, borderColor: 'grey.300'}}>
+    <Card elevation={0} sx={{border: 1, borderColor: 'grey.300', ml: 1, mr: 1}}>
       <CardContent>
         {!!defaultTimelogs.length && (
           <ul>
