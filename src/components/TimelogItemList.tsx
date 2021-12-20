@@ -3,7 +3,16 @@ import React, { useState } from 'react';
 
 import DeleteIcon from '@mui/icons-material/Delete';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import { Alert, Button, Card, CardContent, Container } from '@mui/material';
+import NoteAddIcon from '@mui/icons-material/NoteAdd';
+import {
+	Alert,
+	Button,
+	Card,
+	CardActions,
+	CardContent,
+	Container,
+	Grid,
+} from '@mui/material';
 import Box from '@mui/material/Box';
 
 import { fetchDelete } from '../api';
@@ -13,6 +22,7 @@ import OutputShift from './OutputShift';
 import OutputTimelogs from './OutputTimelog';
 
 export default function InputCard(props: {
+  setEndMonthOpen(open: boolean): void;
   monthIsClosed: boolean;
   timelogs: Timelog[];
   perdiems: Perdiem[];
@@ -87,6 +97,24 @@ export default function InputCard(props: {
           </Container>
         )}
       </CardContent>
+      <CardActions>
+        <Grid container>
+          <Grid item xs={12} sm={6} md={3} lg={2}>
+            {' '}
+            <Button
+              fullWidth
+              sx={{mt: 3, mb: 2, ml: 1, mr: 1}}
+              size='large'
+              variant='contained'
+              startIcon={<NoteAddIcon />}
+              disabled={props.monthIsClosed}
+              onClick={() => props.setEndMonthOpen(true)}
+            >
+              end month
+            </Button>
+          </Grid>
+        </Grid>
+      </CardActions>
     </Card>
   );
 }

@@ -11,9 +11,10 @@ import {
 	Typography,
 } from '@mui/material';
 
-import { fetchCloseMonth } from '../api';
+import { fetchCloseMonth, fetchIsMonthClosed } from '../api';
 
 const MonthEndDialog = (props: {
+  setMonthIsClosed(isClosed: boolean): void;
   close: () => void;
   selectedMonth: DateTime;
 }) => {
@@ -30,6 +31,24 @@ const MonthEndDialog = (props: {
         scope: 'me',
       },
     });
+    fetchIsMonthClosed({
+      params: {
+        year: props.selectedMonth.year,
+        month: props.selectedMonth.month,
+        format: 'traditional',
+        scope: 'me',
+      },
+    })
+      .then((response) => {
+        return response.json();
+      })
+      .then((response) => {
+        if (response.locks.length === 0) {
+          props.setMonthIsClosed(false);
+        } else {
+          props.setMonthIsClosed(true);
+        }
+      });
     cancelHandler();
   };
 

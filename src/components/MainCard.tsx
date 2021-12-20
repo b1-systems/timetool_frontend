@@ -65,6 +65,7 @@ export default function MainCard() {
     useState<Object>({});
   const mediumOrLargerDisplay = useMediaQuery(theme.breakpoints.up('sm'));
   const extraLargeDisplay = useMediaQuery(theme.breakpoints.up('xl'));
+
   useEffect(() => {
     if (process.env.NODE_ENV !== 'development') {
       setMonthGetProjectsHandler(selectedMonth);
@@ -80,7 +81,7 @@ export default function MainCard() {
           return response.json();
         })
         .then((response) => {
-          if (response.locks.length == 0) {
+          if (response.locks.length === 0) {
             setMonthIsClosed(false);
           } else {
             setMonthIsClosed(true);
@@ -141,7 +142,7 @@ export default function MainCard() {
           return response.json();
         })
         .then((response) => {
-          if (response.locks.length == 0) {
+          if (response.locks.length === 0) {
             setMonthIsClosed(false);
           } else {
             setMonthIsClosed(true);
@@ -235,6 +236,7 @@ export default function MainCard() {
             <MonthEndDialog
               close={monthEndHandler}
               selectedMonth={selectedMonth}
+              setMonthIsClosed={setMonthIsClosed}
             />
           )}
           <CardHeader></CardHeader>
@@ -284,19 +286,7 @@ export default function MainCard() {
           </CardContent>
           <CardActions>
             <Grid container>
-              <Grid item xs={12} sm={6} md={3} lg={2}>
-                <Button
-                  fullWidth
-                  sx={{mt: 3, mb: 2, ml: 1, mr: 1}}
-                  size='large'
-                  variant='contained'
-                  startIcon={<NoteAddIcon />}
-                  disabled={monthIsClosed}
-                  onClick={() => setEndMonthOpen(true)}
-                >
-                  end month
-                </Button>
-              </Grid>
+              <Grid item xs={12} sm={6} md={3} lg={2}></Grid>
             </Grid>
           </CardActions>
         </Card>
@@ -321,7 +311,7 @@ export default function MainCard() {
           deletePerdiem={deletePerdiem}
           timelogs={oldTimelogs}
           perdiems={oldPerdiems}
-          // perdiemTypes{perdiemTypes}
+          setEndMonthOpen={setEndMonthOpen}
         />
       </Grid>
     </Grid>
