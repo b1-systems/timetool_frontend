@@ -96,6 +96,29 @@ export const _dummy_old_logs_1: Logs = {
       ],
       shift_model: "morning",
     },
+    {
+      //e.g. default
+      uuid: "61b846d5-c33c-4751-8feb-2d0f2068c52e",
+      employee_uuid: "61b846c6-2d44-42c4-83ba-2f0f2068c51e",
+      project_uuid: "618e86a1-dfc0-4025-84f8-86616d67120b",
+      project_name: "test1  - shift - no inc",
+      start_dt: 1625110200,
+      end_dt: 1625150600,
+      type: "shift",
+      shift_model: "morning",
+    },
+    {
+      //e.g. default
+      uuid: "61b846d5-c33c-4751-8feb-2d0f2068c52e",
+      employee_uuid: "61b846c6-2d44-42c4-83ba-2f0f2068c51e",
+      project_uuid: "618e86a1-dfc0-4025-84f8-86616d67120b",
+      project_name: "test2 - shift - incidents: [],",
+      start_dt: 1625110200,
+      end_dt: 1625150600,
+      type: "shift",
+      incidents: [],
+      shift_model: "morning",
+    },
   ],
   perdiems: [
     {

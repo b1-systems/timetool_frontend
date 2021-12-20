@@ -12,14 +12,14 @@
   "end_month": "End month",
   "from": "From",
   "keypoint": {
-    "at": "at: ",
-    "comment": "comment: ",
-    "date": "date: ",
+    "comment": "Comment: ",
+    "date": "Date: ",
+    "entries": "Entries",
     "from": "from: ",
-    "onsite": "onsite: ",
-    "project_name": "project name: ",
+    "onsite": "Onsite: ",
+    "project_name": "Project name: ",
     "to": "to: ",
-    "typ": "typ: "
+    "typ": "Typ: "
   },
   "model": "Model",
   "my_projects": "My Projects",
