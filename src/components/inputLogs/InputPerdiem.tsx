@@ -1,26 +1,14 @@
-import React, { FormEvent, useState } from 'react';
-import DatePicker from 'react-datepicker';
-import { v4 as uuidv4 } from 'uuid';
-
-import NoteAddIcon from '@mui/icons-material/NoteAdd';
 import {
-	Button,
-	Card,
-	CardActions,
-	CardContent,
-	FormControl,
-	FormControlLabel,
-	Grid,
-	InputLabel,
-	MenuItem,
-	Radio,
-	RadioGroup,
-	Select,
-	SelectChangeEvent,
-	TextField,
-} from '@mui/material';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
+  FormControl,
+  Grid,
+  InputLabel,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+  TextField,
+} from "@mui/material";
+import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 export default function InputPerdiem(props: {
   projectPerdiemtModelsAsObject: Object;
@@ -28,36 +16,30 @@ export default function InputPerdiem(props: {
   setLogMsg(msg: string): void;
   logMsg: string;
 }) {
+  const { t } = useTranslation();
   const [model, setModel] = useState<string>(
     Object.values(props.projectPerdiemtModelsAsObject)[0],
   );
   const perdiemModelHandler = (model: string) => {
     switch (model) {
-      case 'VMA Ausland':
+      case "VMA Ausland":
         props.setTypeOfPerdiem(4);
         break;
-      case '32 € 24h ab 3 Mon':
+      case "32 € 24h ab 3 Mon":
         props.setTypeOfPerdiem(5);
         break;
-      case '16 € Anreise ab 3 Mon':
+      case "16 € Anreise ab 3 Mon":
         props.setTypeOfPerdiem(6);
         break;
-      case '14 € VMA Anreise':
+      case "14 € VMA Anreise":
         props.setTypeOfPerdiem(7);
         break;
-      case '28 € VMA 24h':
+      case "28 € VMA 24h":
         props.setTypeOfPerdiem(8);
         break;
       default:
         props.setTypeOfPerdiem(-1);
     }
-  };
-  const _test = {
-    4: 'VMA Ausland',
-    5: '32 € 24h ab 3 Mon',
-    6: '16 € Anreise ab 3 Mon',
-    7: '14 € VMA Anreise',
-    8: '28 € VMA 24h',
   };
 
   const setModelHandler = (event: SelectChangeEvent) => {
@@ -69,12 +51,12 @@ export default function InputPerdiem(props: {
     <>
       <Grid item xs={12} sm={4} md={3} lg={2}>
         <FormControl fullWidth>
-          <InputLabel id='select-label-modelState'>Model</InputLabel>
+          <InputLabel id="select-label-modelState">{t("model")}</InputLabel>
           <Select
-            labelId='select-label-model'
-            id='demo-simple-select-model'
+            labelId="select-label-model"
+            id="demo-simple-select-model"
             value={model}
-            label='Model'
+            label={t("model")}
             onChange={setModelHandler}
           >
             {Object.values(props.projectPerdiemtModelsAsObject).map(
@@ -90,7 +72,7 @@ export default function InputPerdiem(props: {
       <Grid item xs={12} sm={7} md={6} lg={4}>
         <TextField
           fullWidth
-          label='Comment'
+          label={t("comment")}
           required={true}
           value={props.logMsg}
           onChange={(e) => props.setLogMsg(e.target.value)}

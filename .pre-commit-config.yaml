@@ -1,0 +1,34 @@
+---
+fail_fast: true
+repos:
+  - repo: local
+    hooks:
+      - id: format
+        name: Code formatting
+        entry: make format
+        pass_filenames: false
+        language: system
+      - id: lint
+        name: Run linters
+        entry: make lint
+        pass_filenames: false
+        language: system
+      - id: tsc
+        name: Typescript check
+        entry: make ts-check
+        pass_filenames: false
+        language: system
+      - id: translations
+        name: Detect and add missing translations
+        entry: make translations-check
+        pass_filenames: false
+        language: system
+  - repo: https://github.com/codespell-project/codespell
+    rev: v2.1.0
+    hooks:
+      - id: codespell
+        name: codespell
+        description: Checks for common misspellings in text files.
+        entry: codespell
+        files: ^src/
+        types_or: [ts, tsx, javascript]

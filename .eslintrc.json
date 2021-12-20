@@ -1,0 +1,69 @@
+{
+  "env": {
+    "browser": true,
+    "es2021": true,
+    "node": true
+  },
+  "extends": [
+    "react-app",
+    "plugin:react/recommended",
+    "eslint:recommended"
+  ],
+  "overrides": [
+    {
+      "files": [
+        ".eslintrc.json",
+        "tsconfig.json",
+        "package.json"
+      ],
+      "rules": {
+        "sort-keys": "error"
+      }
+    },
+    {
+      "files": [
+        "*.json"
+      ],
+      "rules": {
+        "no-unused-expressions": "off"
+      }
+    }
+  ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
+    },
+    "ecmaVersion": 12,
+    "sourceType": "module"
+  },
+  "plugins": [
+    "react",
+    "@typescript-eslint",
+    "react-hooks",
+    "jest"
+  ],
+  "root": true,
+  "rules": {
+    "@typescript-eslint/no-unused-vars": [
+      "warn"
+    ],
+    "jest/no-large-snapshots": "error",
+    "no-unused-vars": [
+      "warn"
+    ],
+    "react-hooks/exhaustive-deps": [
+      "warn",
+      {
+        "additionalHooks": "useRecoilCallback"
+      }
+    ],
+    "react-hooks/rules-of-hooks": "error",
+    "react/react-in-jsx-scope": "off"
+  },
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
+  }
+}

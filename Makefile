@@ -20,8 +20,8 @@ SRC_FILES = $(shell find src -type f \
 						\( -name '*.ts' -or -name '*.tsx' -or -name '*.js' \)\
 				)
 
-#I18NEXT_PARSER_CONFIG = i18next-parser.config.js
-#FALLBACK_TRANSLATIONS = src/fallbackTranslations/translation.json
+I18NEXT_PARSER_CONFIG = i18next-parser.config.js
+FALLBACK_TRANSLATIONS = src/fallbackTranslations/translation.json
 
 .PHONY: help
 help: ## Display this help message
@@ -84,7 +84,7 @@ ${HORDE_BUILD_INDICATOR}: ${SRC_FILES} ${INSTALL_INDICATOR}
 		${HORDE_BUILD}/index.html \
 		${HORDE_BUILD}/favicon.ico \
 		${HORDE_BUILD}/themes/default/getFetch.cjs
-#install -D src/fallbackTranslations/translation.json ${HORDE_BUILD}/locale/json/en/translation.json
+	install -D src/fallbackTranslations/translation.json ${HORDE_BUILD}/locale/json/en/translation.json
 
 .PHONY: horde
 horde: ${HORDE_BUILD_INDICATOR} ${INSTALL_INDICATOR} ## Horde-compatible build, enable sourcemaps with SOURCEMAPS=1
@@ -124,9 +124,9 @@ docker: ${REACT_BUILD_INDICATOR} ## Build a docker image with specified based on
 translations: ${INSTALL_INDICATOR}  ## Detects new/missing translations keys
 	i18next --config ${I18NEXT_PARSER_CONFIG}
 
-#.PHONY: translations-check
-#translations-check: translations ## Exits with 1 if any translations are missing
-#	@! grep '__STRING_NOT_TRANSLATED__' ${FALLBACK_TRANSLATIONS}
+.PHONY: translations-check
+translations-check: translations ## Exits with 1 if any translations are missing
+	@! grep '__STRING_NOT_TRANSLATED__' ${FALLBACK_TRANSLATIONS}
 
 .PHONY: setup
 setup: ## Setup development environment

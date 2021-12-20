@@ -1,13 +1,13 @@
 import {
-	requestCloseMonth,
-	requestPerdiem,
-	requestShift,
-	requestTimelog,
-} from './models';
+  requestCloseMonth,
+  requestPerdiem,
+  requestShift,
+  requestTimelog,
+} from "./models";
 
 const getParams = (params?: Object) => {
   if (params === undefined) {
-    return '';
+    return "";
   }
   let buildString = [];
   for (const [key, value] of Object.entries(params)) {
@@ -17,22 +17,22 @@ const getParams = (params?: Object) => {
     }
     buildString.push(`&${key}=${value}`);
   }
-  return buildString.join('');
+  return buildString.join("");
 };
 
 const baseUrl = () =>
   [process.env.REACT_APP_BACKEND_URI, globalThis.horde.appWebroot]
     .filter((subPath) => !!subPath)
-    .join('/');
+    .join("/");
 
 export const fetchProjects = async (requestPrototyp: {
   params?: Object;
 }): Promise<Response> =>
   fetch(`${baseUrl()}/rest/project${getParams(requestPrototyp.params)}`, {
-    method: 'get',
+    method: "get",
     headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
+      Accept: "application/json",
+      "Content-Type": "application/json",
     },
   }).then((response) => {
     if (response.ok) {
@@ -52,18 +52,13 @@ export const fetchProjects = async (requestPrototyp: {
 export const fetchCurrentMonthLogs = async (requestPrototyp: {
   params?: Object;
 }): Promise<Response> =>
-  fetch(
-    `${baseUrl()}/rest/employee/me/timelogs${getParams(
-      requestPrototyp.params,
-    )}`,
-    {
-      method: 'get',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
+  fetch(`${baseUrl()}/rest/employee/me/timelogs${getParams(requestPrototyp.params)}`, {
+    method: "get",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
     },
-  ).then((response) => {
+  }).then((response) => {
     if (response.ok) {
       return response;
     } else {
@@ -74,13 +69,13 @@ export const fetchCurrentMonthLogs = async (requestPrototyp: {
   });
 
 export const fetchDelete = async (requestPrototyp: {
-  request: {uuid: string};
+  request: { uuid: string };
 }): Promise<Response> =>
   fetch(`${baseUrl()}/rest/timelog/${requestPrototyp.request.uuid}`, {
-    method: 'delete',
+    method: "delete",
     headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
+      Accept: "application/json",
+      "Content-Type": "application/json",
     },
   }).then((response) => {
     if (response.ok) {
@@ -96,10 +91,10 @@ export const fetchSubmit = async (
   request: requestTimelog | requestPerdiem | requestShift,
 ): Promise<Response> =>
   fetch(`${baseUrl()}/rest/timelog/${request.uuid}`, {
-    method: 'put',
+    method: "put",
     headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
+      Accept: "application/json",
+      "Content-Type": "application/json",
     },
     body: JSON.stringify(request),
   }).then((response) => {
@@ -116,10 +111,10 @@ export const fetchCloseMonth = async (requestPrototyp: {
   request: requestCloseMonth;
 }): Promise<Response> =>
   fetch(`${baseUrl()}/rest/lockedperiod`, {
-    method: 'post',
+    method: "post",
     headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
+      Accept: "application/json",
+      "Content-Type": "application/json",
     },
     body: JSON.stringify(requestPrototyp.request),
   }).then((response) => {
@@ -137,8 +132,8 @@ export const fetchIsMonthClosed = async (requestPrototyp: {
 }): Promise<Response> =>
   fetch(`${baseUrl()}/rest/lockedperiod${getParams(requestPrototyp.params)}`, {
     headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
+      Accept: "application/json",
+      "Content-Type": "application/json",
     },
   }).then((response) => {
     if (response.ok) {

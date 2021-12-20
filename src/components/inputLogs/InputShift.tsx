@@ -1,30 +1,21 @@
-import { DateTime } from 'luxon';
-import React, { FormEvent, useState } from 'react';
-import { v4 as uuidv4 } from 'uuid';
-
-import DeleteIcon from '@mui/icons-material/Delete';
-import NoteAddIcon from '@mui/icons-material/NoteAdd';
-import { TimePicker } from '@mui/lab';
+import DeleteIcon from "@mui/icons-material/Delete";
+import NoteAddIcon from "@mui/icons-material/NoteAdd";
+import { TimePicker } from "@mui/lab";
 import {
-	Button,
-	Card,
-	CardActions,
-	CardContent,
-	FormControl,
-	FormControlLabel,
-	Grid,
-	InputLabel,
-	MenuItem,
-	Radio,
-	RadioGroup,
-	Select,
-	SelectChangeEvent,
-	TextField,
-} from '@mui/material';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
+  Button,
+  FormControl,
+  Grid,
+  InputLabel,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+  TextField,
+} from "@mui/material";
+import { DateTime } from "luxon";
+import React from "react";
+import { useTranslation } from "react-i18next";
 
-import { Incident } from '../models';
+import { Incident } from "../../models";
 
 export default function InputShift(props: {
   projectShiftModelsAsObject: Object;
@@ -36,12 +27,11 @@ export default function InputShift(props: {
   day: DateTime;
   setShiftModel(model: string): void;
 }) {
+  const { t } = useTranslation();
   const setShiftModelHandler = (event: SelectChangeEvent) => {
     props.setShift(event.target.value as string);
 
-    for (const [key, value] of Object.entries(
-      props.projectShiftModelsAsObject,
-    )) {
+    for (const [key, value] of Object.entries(props.projectShiftModelsAsObject)) {
       if (value === (event.target.value as string)) {
         props.setShiftModel(key);
       }
@@ -54,7 +44,7 @@ export default function InputShift(props: {
       {
         start_dt: props.day.valueOf() / 1000,
         end_dt: props.day.valueOf() / 1000,
-        comment: '',
+        comment: "",
       },
     ]);
   };
@@ -63,12 +53,12 @@ export default function InputShift(props: {
     <>
       <Grid item xs={12} sm={4} md={3} lg={2}>
         <FormControl fullWidth>
-          <InputLabel id='select-label-shiftModelState'>Shift model</InputLabel>
+          <InputLabel id="select-label-shiftModelState">{t("shift_model")}</InputLabel>
           <Select
-            labelId='select-label-shiftModel'
-            id='demo-simple-select-shiftModel'
+            labelId="select-label-shiftModel"
+            id="demo-simple-select-shiftModel"
             value={props.shift}
-            label='shiftModel'
+            label={t("shift_model")}
             onChange={setShiftModelHandler}
           >
             {props.shiftModels.map((singleType, idx) => (
@@ -79,24 +69,24 @@ export default function InputShift(props: {
           </Select>
         </FormControl>
       </Grid>
-      <Grid item xs={12} sm={6} md={3} lg={2} sx={{mt: 1}}>
+      <Grid item xs={12} sm={6} md={3} lg={2} sx={{ mt: 1 }}>
         <Button
           disabled={!props.shift}
           fullWidth
-          size='large'
+          size="large"
           onClick={addHandler}
-          variant='contained'
+          variant="contained"
           startIcon={<NoteAddIcon />}
         >
-          Add Entry
+          {t("add_entry")}
         </Button>
       </Grid>
       {props.incidents.map((incident, index) => (
-        <Grid container spacing={3} item xs={12}>
+        <Grid container spacing={3} item xs={12} key={index}>
           <Grid item xs={12} sm={3} md={2} lg={1}>
             <FormControl fullWidth>
               <TimePicker
-                label='From'
+                label={t("from")}
                 value={DateTime.fromSeconds(incident.start_dt)}
                 ampm={false}
                 ampmInClock={false}
@@ -108,7 +98,7 @@ export default function InputShift(props: {
                         ...incident,
                         start_dt:
                           newValue
-                            .set({second: 0, millisecond: 0})
+                            .set({ second: 0, millisecond: 0 })
 
                             .valueOf() / 1000,
                       },
@@ -123,7 +113,7 @@ export default function InputShift(props: {
           <Grid item xs={12} sm={3} md={2} lg={1}>
             <FormControl fullWidth>
               <TimePicker
-                label='To'
+                label={t("to")}
                 ampm={false}
                 ampmInClock={false}
                 value={DateTime.fromSeconds(incident.end_dt)}
@@ -135,7 +125,7 @@ export default function InputShift(props: {
                         ...incident,
                         end_dt:
                           newValue
-                            .set({second: 0, millisecond: 0})
+                            .set({ second: 0, millisecond: 0 })
 
                             .valueOf() / 1000,
                       },
@@ -150,7 +140,7 @@ export default function InputShift(props: {
           <Grid item xs={10} sm={5} md={3} lg={2}>
             <TextField
               fullWidth
-              label='Comment'
+              label={t("comment")}
               required={true}
               value={incident.comment}
               onChange={(e) => {
@@ -167,9 +157,9 @@ export default function InputShift(props: {
           </Grid>
           <Grid item xs={1}>
             <Button
-              sx={{mt: 1}}
-              color='error'
-              variant='contained'
+              sx={{ mt: 1 }}
+              color="error"
+              variant="contained"
               onClick={() => {
                 props.setIncidents([
                   ...props.incidents.slice(0, index),

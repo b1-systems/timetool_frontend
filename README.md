@@ -1,5 +1,5 @@
 Frontend application based on [React](https://reactjs.org)
-[MUI (Material UI)](https://mui.com)  
+[MUI (Material UI)](https://mui.com)
 
 ### `npm start`
 

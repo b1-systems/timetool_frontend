@@ -1,36 +1,29 @@
-import { DateTime } from 'luxon';
-import React, { FormEvent, useEffect, useState } from 'react';
-import { v4 as uuidv4 } from 'uuid';
-
-import NoteAddIcon from '@mui/icons-material/NoteAdd';
-import DatePicker from '@mui/lab/DatePicker';
+import NoteAddIcon from "@mui/icons-material/NoteAdd";
+import DatePicker from "@mui/lab/DatePicker";
 import {
-	Button,
-	Card,
-	CardActions,
-	CardContent,
-	CardHeader,
-	FormControl,
-	FormControlLabel,
-	Grid,
-	InputLabel,
-	MenuItem,
-	Radio,
-	RadioGroup,
-	Select,
-	SelectChangeEvent,
-	TextField,
-	useMediaQuery,
-	useTheme,
-} from '@mui/material';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
+  Button,
+  Card,
+  CardActions,
+  CardContent,
+  CardHeader,
+  FormControl,
+  Grid,
+  InputLabel,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+  TextField,
+} from "@mui/material";
+import { DateTime } from "luxon";
+import React, { FormEvent, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { v4 as uuidv4 } from "uuid";
 
-import { fetchSubmit } from '../api';
-import { Incident } from '../models';
-import InputDefaultTimelog from './InputDefaultTimelog';
-import InputPerdiem from './InputPerdiem';
-import Inputshift from './InputShift';
+import { fetchSubmit } from "../../api";
+import { Incident } from "../../models";
+import InputDefaultTimelog from "./InputDefaultTimelog";
+import InputPerdiem from "./InputPerdiem";
+import Inputshift from "./InputShift";
 
 export default function InputCard(props: {
   monthIsClosed: boolean;
@@ -43,26 +36,23 @@ export default function InputCard(props: {
   projectShiftModels: string[];
   projectPerdiemtModelsAsObject: Object;
 }) {
-  const theme = useTheme();
-  const mediumOrLargerDisplay = useMediaQuery(theme.breakpoints.up('sm'));
-  const extraLargeDisplay = useMediaQuery(theme.breakpoints.up('xl'));
-
+  const { t } = useTranslation();
   const [type, setType] = useState<string>(props.types[0]);
   const [breakTime, setBreakTime] = useState<number>(0);
   const [travelTime, setTravelTime] = useState<number>(0);
-  const [logMsg, setLogMsg] = useState<string>('');
+  const [logMsg, setLogMsg] = useState<string>("");
   const [selectedDay, setSelectedDay] = useState<DateTime>(
-    props.month.set({day: 1, hour: 0, minute: 0, second: 0, millisecond: 0}),
+    props.month.set({ day: 1, hour: 0, minute: 0, second: 0, millisecond: 0 }),
   );
   const [remote, setRemote] = useState<boolean>(true);
-  const [shift, setShift] = useState<string>('');
-  const [shiftModel, setShiftModel] = useState<string>('');
+  const [shift, setShift] = useState<string>("");
+  const [shiftModel, setShiftModel] = useState<string>("");
   const [incidents, setIncidents] = useState<Incident[]>([]);
   const [from, setFrom] = useState<DateTime>(
-    props.month.set({day: 1, hour: 0, minute: 0, second: 0, millisecond: 0}),
+    props.month.set({ day: 1, hour: 0, minute: 0, second: 0, millisecond: 0 }),
   );
   const [to, setTo] = useState<DateTime>(
-    props.month.set({day: 1, hour: 0, minute: 0, second: 0, millisecond: 0}),
+    props.month.set({ day: 1, hour: 0, minute: 0, second: 0, millisecond: 0 }),
   );
   const [typeOfPerdiem, setTypeOfPerdiem] = useState<number>(-1);
 
@@ -72,17 +62,17 @@ export default function InputCard(props: {
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    let onsiteRemote = 'remote';
+    let onsiteRemote = "remote";
     if (remote === false) {
-      onsiteRemote = 'onsite';
+      onsiteRemote = "onsite";
     }
-    if (type === 'shift' && props.uuidProject) {
+    if (type === "shift" && props.uuidProject) {
       fetchSubmit({
         uuid: props.uuidLog || uuidv4(),
         project_uuid: props.uuidProject,
         start_dt: Math.round(selectedDay.valueOf() / 1000),
         end_dt: Math.round(
-          selectedDay.plus({hours: 23, minutes: 59}).valueOf() / 1000,
+          selectedDay.plus({ hours: 23, minutes: 59 }).valueOf() / 1000,
         ),
         type: type,
         incidents: incidents,
@@ -90,7 +80,7 @@ export default function InputCard(props: {
         timezone: window.Intl.DateTimeFormat().resolvedOptions().timeZone,
       });
     }
-    if (type === 'timelog' && props.uuidProject && from && to) {
+    if (type === "timelog" && props.uuidProject && from && to) {
       fetchSubmit({
         uuid: props.uuidLog || uuidv4(),
         project_uuid: props.uuidProject,
@@ -104,7 +94,7 @@ export default function InputCard(props: {
         timezone: window.Intl.DateTimeFormat().resolvedOptions().timeZone,
       });
     }
-    if (type === 'perdiem' && props.uuidProject && selectedDay) {
+    if (type === "perdiem" && props.uuidProject && selectedDay) {
       fetchSubmit({
         uuid: props.uuidLog || uuidv4(),
         project_uuid: props.uuidProject,
@@ -123,7 +113,7 @@ export default function InputCard(props: {
   };
 
   return (
-    <Card elevation={0} sx={{border: 1, borderColor: 'grey.300', ml: 1, mr: 1}}>
+    <Card elevation={0} sx={{ border: 1, borderColor: "grey.300", ml: 1, mr: 1 }}>
       <form onSubmit={handleSubmit}>
         <CardHeader></CardHeader>
         <CardContent>
@@ -131,11 +121,11 @@ export default function InputCard(props: {
             <Grid item xs={12} sm={4} md={3} lg={2}>
               <FormControl fullWidth>
                 <DatePicker
-                  views={['day']}
-                  label='Day'
+                  views={["day"]}
+                  label={t("day")}
                   disabled={!props.uuidProject}
                   minDate={props.month}
-                  maxDate={props.month.plus({months: 1}).minus({day: 1})}
+                  maxDate={props.month.plus({ months: 1 }).minus({ day: 1 })}
                   value={selectedDay}
                   onChange={(newValue) => {
                     if (newValue) {
@@ -144,20 +134,18 @@ export default function InputCard(props: {
                       setTo(newValue);
                     }
                   }}
-                  renderInput={(params) => (
-                    <TextField {...params} helperText={null} />
-                  )}
+                  renderInput={(params) => <TextField {...params} helperText={null} />}
                 />
               </FormControl>
             </Grid>
             <Grid item xs={12} sm={7} md={6} lg={4}>
               <FormControl fullWidth>
-                <InputLabel id='select-label-typeState'>Type</InputLabel>
+                <InputLabel id="select-label-typeState">{t("type")}</InputLabel>
                 <Select
-                  labelId='select-label-type'
-                  id='demo-simple-select-type'
-                  value={type}
-                  label='Type'
+                  labelId="select-label-type"
+                  id="demo-simple-select-type"
+                  value={t("type")}
+                  label="Type"
                   disabled={!props.types.length}
                   onChange={setTypeHandler}
                 >
@@ -170,8 +158,8 @@ export default function InputCard(props: {
               </FormControl>
             </Grid>
           </Grid>
-          <Grid container spacing={3} sx={{mt: 1}}>
-            {type === 'shift' && (
+          <Grid container spacing={3} sx={{ mt: 1 }}>
+            {type === "shift" && (
               <Inputshift
                 projectShiftModelsAsObject={props.projectShiftModelsAsObject}
                 shiftModels={props.projectShiftModels}
@@ -184,7 +172,7 @@ export default function InputCard(props: {
               />
             )}
 
-            {type === 'timelog' && (
+            {type === "timelog" && (
               <InputDefaultTimelog
                 day={selectedDay}
                 to={to}
@@ -201,11 +189,9 @@ export default function InputCard(props: {
               />
             )}
 
-            {type === 'perdiem' && (
+            {type === "perdiem" && (
               <InputPerdiem
-                projectPerdiemtModelsAsObject={
-                  props.projectPerdiemtModelsAsObject
-                }
+                projectPerdiemtModelsAsObject={props.projectPerdiemtModelsAsObject}
                 setTypeOfPerdiem={setTypeOfPerdiem}
                 setLogMsg={setLogMsg}
                 logMsg={logMsg}
@@ -218,14 +204,14 @@ export default function InputCard(props: {
             <Grid item xs={12} sm={6} md={3} lg={2}>
               <Button
                 fullWidth
-                sx={{mt: 3, mb: 2, ml: 1, mr: 1}}
-                size='large'
-                variant='contained'
+                sx={{ mt: 3, mb: 2, ml: 1, mr: 1 }}
+                size="large"
+                variant="contained"
                 startIcon={<NoteAddIcon />}
-                type='submit'
+                type="submit"
                 disabled={props.monthIsClosed}
               >
-                commit
+                {t("commit")}
               </Button>
             </Grid>
           </Grid>

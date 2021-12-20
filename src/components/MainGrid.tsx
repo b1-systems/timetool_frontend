@@ -1,80 +1,63 @@
-import 'react-datepicker/dist/react-datepicker.css';
-import './style.css';
-
-import { DateTime } from 'luxon';
-import React, { useEffect, useState } from 'react';
-
-import NoteAddIcon from '@mui/icons-material/NoteAdd';
-import DatePicker from '@mui/lab/DatePicker';
+import DatePicker from "@mui/lab/DatePicker";
 import {
-	Button,
-	Card,
-	CardActions,
-	CardContent,
-	CardHeader,
-	FormControl,
-	Grid,
-	InputLabel,
-	MenuItem,
-	Select,
-	SelectChangeEvent,
-	TextField,
-	useMediaQuery,
-	useTheme,
-} from '@mui/material';
-import Box from '@mui/material/Box';
-import Paper from '@mui/material/Paper';
-import Typography from '@mui/material/Typography';
+  Card,
+  CardActions,
+  CardContent,
+  CardHeader,
+  FormControl,
+  Grid,
+  InputLabel,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+  TextField,
+} from "@mui/material";
+import { DateTime } from "luxon";
+import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 
-import {
-	fetchCurrentMonthLogs,
-	fetchIsMonthClosed,
-	fetchProjects,
-} from '../api';
-import { Logs, Perdiem, Project, Timelog } from '../models';
-//start import only for testing without backend
-import {
-	_dummy_old_logs_1,
-	_dummy_old_logs_2,
-	_dummy_projects,
-} from './dummyData';
-//end
-import InputCard from './InputCard';
-import MonthEndDialog from './MonthEndDialog';
-import TimelogItemList from './TimelogItemList';
+import { fetchCurrentMonthLogs, fetchIsMonthClosed, fetchProjects } from "../api";
+import DummyCard from "../dummyData/DummyCard";
+import { Logs, Perdiem, Project, Timelog } from "../models";
+import MonthEndDialog from "./MonthEndDialog";
+import InputCard from "./inputLogs/InputCard";
+import TimelogItemList from "./outputLogs/TimelogItemList";
 
-export default function MainCard() {
-  const theme = useTheme();
+/**
+ * Main Component to bundle all cards
+ */
+
+export default function MainGrid() {
+  const { t } = useTranslation();
   const [selectedMonth, setSelectedMonth] = useState<DateTime>(
-    DateTime.now().set({day: 1, hour: 0, minute: 0, second: 0, millisecond: 0}),
+    DateTime.now().set({ day: 1, hour: 0, minute: 0, second: 0, millisecond: 0 }),
   );
   const [availableProjects, setAvailableProjects] = useState<Project[]>([]);
   const [oldTimelogs, setOldTimelogs] = useState<Timelog[]>([]);
   const [oldPerdiems, setOldPerdiems] = useState<Perdiem[]>([]);
-  // const [perdiemTypes, setPerdiemTypes] = useState<Object>({});
-  const [project, setProject] = useState<string>('');
+  const [project, setProject] = useState<string>("");
   const [projectUuid, setProjectUuid] = useState<string | null>(null);
   const [uuidLog, setUuidLog] = useState<string | null>(null);
   const [projectTypes, setProjectTypes] = useState<string[]>([]);
   const [endMonthOpen, setEndMonthOpen] = useState(false);
   const [projectShiftModels, setProjectShiftModels] = useState<string[]>([]);
   const [monthIsClosed, setMonthIsClosed] = useState<boolean>(true);
-  const [projectShiftModelsAsObject, setProjectShiftModelsAsObject] =
-    useState<Object>({});
+  const [projectShiftModelsAsObject, setProjectShiftModelsAsObject] = useState<Object>(
+    {},
+  );
   const [projectPerdiemtModelsAsObject, setProjectPerdiemtModelsAsObject] =
     useState<Object>({});
-  const mediumOrLargerDisplay = useMediaQuery(theme.breakpoints.up('sm'));
-  const extraLargeDisplay = useMediaQuery(theme.breakpoints.up('xl'));
 
+  //useEffect has disable eslint because an empty array can be used to only use it at initial render
   useEffect(() => {
-    if (process.env.NODE_ENV !== 'development') {
+    if (process.env.NODE_ENV !== "development") {
       setMonthGetProjectsHandler(selectedMonth);
       fetchIsMonthClosed({
         params: {
           year: selectedMonth.year,
           month: selectedMonth.month,
-          format: 'traditional',
-          scope: 'me',
+          format: "traditional",
+          scope: "me",
         },
       })
         .then((response) => {
@@ -111,8 +94,8 @@ export default function MainCard() {
         params: {
           year: newDate.year,
           month: newDate.month,
-          format: 'traditional',
-          scope: 'me',
+          format: "traditional",
+          scope: "me",
         },
       };
       fetchProjects(requestPrototype)
@@ -134,8 +117,8 @@ export default function MainCard() {
         params: {
           year: selectedMonth.year,
           month: selectedMonth.month,
-          format: 'traditional',
-          scope: 'me',
+          format: "traditional",
+          scope: "me",
         },
       })
         .then((response) => {
@@ -151,6 +134,7 @@ export default function MainCard() {
     }
   };
 
+  //setProjectShiftModelsAsObject and setProjectPerdiemtModelsAsObject is used to connect value to key when submitted
   const setProjectGetLogsHandler = (event: SelectChangeEvent) => {
     const projectFiltered = availableProjects.filter(
       (project) => project.name === (event.target.value as string),
@@ -167,13 +151,14 @@ export default function MainCard() {
     }
   };
 
+  //timelogs and perdiems are in one and the same response, but sorted out here
   const fetchAfterSubmitHandler = () => {
     fetchCurrentMonthLogs({
       params: {
         year: selectedMonth.year,
         month: selectedMonth.month,
-        format: 'traditional',
-        scope: 'me',
+        format: "traditional",
+        scope: "me",
       },
     })
       .then((response) => {
@@ -183,55 +168,22 @@ export default function MainCard() {
         setOldTimelogs(LogsResponse.timelogs);
         setOldPerdiems(LogsResponse.perdiems);
       });
+    setUuidLog(null);
   };
 
   return (
     <Grid container spacing={3}>
-      {process.env.NODE_ENV === 'development' && (
-        <Grid item xs={12}>
-          <Card
-            elevation={0}
-            sx={{border: 1, borderColor: 'grey.300', ml: 1, mr: 1}}
-          >
-            this card only for testing without backend
-            <Button
-              onClick={() => {
-                //setSelectedMonth(selectedMonth);
-                setAvailableProjects(_dummy_projects);
-                setOldTimelogs(_dummy_old_logs_1.timelogs);
-                setOldPerdiems(_dummy_old_logs_1.perdiems);
-                setMonthIsClosed(false);
-              }}
-            >
-              _dummy_1
-            </Button>
-            <Button
-              onClick={() => {
-                //setSelectedMonth(selectedMonth);
-                setAvailableProjects(_dummy_projects);
-                setOldTimelogs(_dummy_old_logs_2.timelogs);
-                setOldPerdiems(_dummy_old_logs_2.perdiems);
-                setMonthIsClosed(false);
-              }}
-            >
-              _dummy_2
-            </Button>
-            <Button
-              onClick={() => {
-                setSelectedMonth(DateTime.fromISO('2001-01-01T00:00'));
-                setMonthIsClosed(false);
-              }}
-            >
-              _dummy_set_Month
-            </Button>
-          </Card>
-        </Grid>
+      {process.env.NODE_ENV === "development" && (
+        <DummyCard
+          setAvailableProjects={setAvailableProjects}
+          setOldTimelogs={setOldTimelogs}
+          setOldPerdiems={setOldPerdiems}
+          setMonthIsClosed={setMonthIsClosed}
+          setSelectedMonth={setSelectedMonth}
+        ></DummyCard>
       )}
       <Grid item xs={12}>
-        <Card
-          elevation={0}
-          sx={{border: 1, borderColor: 'grey.300', ml: 1, mr: 1}}
-        >
+        <Card elevation={0} sx={{ border: 1, borderColor: "grey.300", ml: 1, mr: 1 }}>
           {endMonthOpen && (
             <MonthEndDialog
               close={monthEndHandler}
@@ -245,10 +197,10 @@ export default function MainCard() {
               <Grid item xs={12} sm={4} md={3} lg={2}>
                 <FormControl fullWidth>
                   <DatePicker
-                    views={['year', 'month']}
-                    label='Year and Month'
-                    minDate={DateTime.fromISO('2000-01-01T00:00')}
-                    maxDate={DateTime.fromISO('2100-01-01T00:00')}
+                    views={["year", "month"]}
+                    label={t("year_and_month")}
+                    minDate={DateTime.fromISO("2000-01-01T00:00")}
+                    maxDate={DateTime.fromISO("2100-01-01T00:00")}
                     value={selectedMonth}
                     onChange={(newValue) => {
                       if (newValue) {
@@ -263,14 +215,12 @@ export default function MainCard() {
               </Grid>
               <Grid item xs={12} sm={7} md={6} lg={4}>
                 <FormControl fullWidth>
-                  <InputLabel id='select-label-projectState'>
-                    Project
-                  </InputLabel>
+                  <InputLabel id="select-label-projectState">{t("project")}</InputLabel>
                   <Select
-                    labelId='select-label-project'
-                    id='demo-simple-select-project'
+                    labelId="select-label-project"
+                    id="demo-simple-select-project"
                     value={project}
-                    label='Project'
+                    label={t("project")}
                     onChange={setProjectGetLogsHandler}
                     disabled={!selectedMonth}
                   >
