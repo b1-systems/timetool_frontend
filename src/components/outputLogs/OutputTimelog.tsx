@@ -1,21 +1,13 @@
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import ChatIcon from "@mui/icons-material/Chat";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import DriveFileRenameOutlineIcon from "@mui/icons-material/DriveFileRenameOutline";
 import EventIcon from "@mui/icons-material/Event";
+import MoreTimeIcon from "@mui/icons-material/MoreTime";
 import MyLocationIcon from "@mui/icons-material/MyLocation";
-import {
-  Avatar,
-  Box,
-  Button,
-  Card,
-  List,
-  ListItem,
-  ListItemAvatar,
-  ListItemText,
-  useMediaQuery,
-} from "@mui/material";
-import { useTheme } from "@mui/system";
-import React, { useEffect, useState } from "react";
+import { Avatar, Box, Button, Card, Chip } from "@mui/material";
+import { DateTime } from "luxon";
+import React from "react";
 import { useTranslation } from "react-i18next";
 
 import { fetchDelete } from "../../api";
@@ -28,31 +20,6 @@ export default function OutputTimelogs(props: {
   index: number;
 }) {
   const { t } = useTranslation();
-  const theme = useTheme();
-  const extraSmallDisplay = useMediaQuery(theme.breakpoints.up("xs"));
-  const smallDisplay = useMediaQuery(theme.breakpoints.up("sm"));
-  const mediumDisplay = useMediaQuery(theme.breakpoints.up("md"));
-  const LargeDisplay = useMediaQuery(theme.breakpoints.up("lg"));
-  const extraLargeDisplay = useMediaQuery(theme.breakpoints.up("xl"));
-  const [iconPx, setIconPx] = useState<number>(32);
-  const [iconMarginTop, setIconMarginTop] = useState<number>(1);
-
-  useEffect(() => {
-    if (extraLargeDisplay) {
-      setIconPx(32);
-      setIconMarginTop(1);
-    } else if (LargeDisplay) {
-      setIconPx(24);
-      setIconMarginTop(2);
-    } else if (mediumDisplay) {
-      setIconPx(18);
-      setIconMarginTop(2);
-    } else if (smallDisplay) {
-      setIconPx(0);
-    } else if (extraSmallDisplay) {
-      setIconPx(0);
-    }
-  }, [extraSmallDisplay, smallDisplay, mediumDisplay, LargeDisplay, extraLargeDisplay]);
 
   const deleteHandler = (uuid: string) => {
     const requestPrototype = {
@@ -63,64 +30,87 @@ export default function OutputTimelogs(props: {
   };
   return (
     <Card elevation={0}>
-      <Box bgcolor={props.index % 2 ? "white" : "#eeeeee"}>
-        <List style={{ display: "flex", flexDirection: "row", padding: 0 }}>
-          <ListItem>
-            <ListItemAvatar>
-              <Avatar sx={{ width: iconPx, height: iconPx, mt: iconMarginTop }}>
-                <EventIcon sx={{ width: iconPx - 8, height: iconPx - 8 }} />
-              </Avatar>
-            </ListItemAvatar>
-            <ListItemText
-              primary={t("keypoint.date")}
-              secondary={new Date(props.log.start_dt * 1000).toLocaleDateString(
-                "de-DE",
-              )}
-            />
-          </ListItem>
-          <ListItem>
-            <ListItemAvatar>
-              <Avatar sx={{ width: iconPx, height: iconPx, mt: iconMarginTop }}>
-                <DriveFileRenameOutlineIcon
-                  sx={{ width: iconPx - 8, height: iconPx - 8 }}
-                />
-              </Avatar>
-            </ListItemAvatar>
-            <ListItemText
-              primary={t("keypoint.project_name")}
-              secondary={props.log.project_name}
-            />
-          </ListItem>
-          <ListItem>
-            <ListItemAvatar>
-              <Avatar sx={{ width: iconPx, height: iconPx, mt: iconMarginTop }}>
-                <MyLocationIcon sx={{ width: iconPx - 8, height: iconPx - 8 }} />
-              </Avatar>
-            </ListItemAvatar>
-            <ListItemText primary={t("keypoint.onsite")} secondary={props.log.onsite} />
-          </ListItem>
-          <ListItem>
-            <ListItemAvatar>
-              <Avatar sx={{ width: iconPx, height: iconPx, mt: iconMarginTop }}>
-                <ChatIcon sx={{ width: iconPx - 8, height: iconPx - 8 }} />
-              </Avatar>
-            </ListItemAvatar>
-            <ListItemText
-              primary={t("keypoint.comment")}
-              secondary={props.log.comment}
-            />
-          </ListItem>
-          <ListItem>
-            <Button
-              sx={{ mr: 1, mt: 1 }}
-              color="error"
-              onClick={() => deleteHandler(props.log.uuid)}
-              disabled={props.monthIsClosed}
-            >
-              <DeleteForeverIcon />
-            </Button>
-          </ListItem>
-        </List>
+      <Box
+        bgcolor={props.index % 2 ? "white" : "#eeeeee"}
+        sx={{
+          alignItems: "center",
+          flexWrap: "wrap",
+          display: "flex",
+          p: 1,
+          m: 1,
+          justifyContent: "space-evenly",
+        }}
+      >
+        <Chip
+          style={{ backgroundColor: props.index % 2 ? "white" : "#eeeeee" }}
+          label={
+            t("keypoint.date") +
+            new Date(props.log.start_dt * 1000).toLocaleDateString("de-DE")
+          }
+          avatar={
+            <Avatar sx={{ width: 32, height: 32 }}>
+              <EventIcon sx={{ width: 18, height: 18, color: "white" }} />
+            </Avatar>
+          }
+        />
+        <Chip
+          style={{ backgroundColor: props.index % 2 ? "white" : "#eeeeee" }}
+          label={t("keypoint.project") + props.log.project_name}
+          avatar={
+            <Avatar sx={{ width: 32, height: 32 }}>
+              <DriveFileRenameOutlineIcon
+                sx={{ width: 18, height: 18, color: "white" }}
+              />
+            </Avatar>
+          }
+        />
+        <Chip
+          style={{ backgroundColor: props.index % 2 ? "white" : "#eeeeee" }}
+          label={
+            t("keypoint.from") + DateTime.fromSeconds(props.log.start_dt).toFormat("T")
+          }
+          avatar={
+            <Avatar sx={{ width: 32, height: 32 }}>
+              <AccessTimeIcon sx={{ width: 18, height: 18, color: "white" }} />
+            </Avatar>
+          }
+        />
+        <Chip
+          style={{ backgroundColor: props.index % 2 ? "white" : "#eeeeee" }}
+          label={
+            t("keypoint.to") + DateTime.fromSeconds(props.log.end_dt).toFormat("T")
+          }
+          avatar={
+            <Avatar sx={{ width: 32, height: 32 }}>
+              <MoreTimeIcon sx={{ width: 18, height: 18, color: "white" }} />
+            </Avatar>
+          }
+        />
+        <Chip
+          style={{ backgroundColor: props.index % 2 ? "white" : "#eeeeee" }}
+          label={t("keypoint.onsite") + props.log.onsite}
+          avatar={
+            <Avatar sx={{ width: 32, height: 32 }}>
+              <MyLocationIcon sx={{ width: 18, height: 18, color: "white" }} />
+            </Avatar>
+          }
+        />
+        <Chip
+          style={{ backgroundColor: props.index % 2 ? "white" : "#eeeeee" }}
+          label={t("keypoint.comment") + props.log.comment}
+          avatar={
+            <Avatar sx={{ width: 32, height: 32 }}>
+              <ChatIcon sx={{ width: 18, height: 18, color: "white" }} />
+            </Avatar>
+          }
+        />
+        <Button
+          color="error"
+          onClick={() => deleteHandler(props.log.uuid)}
+          disabled={props.monthIsClosed}
+        >
+          <DeleteForeverIcon />
+        </Button>
       </Box>
     </Card>
   );

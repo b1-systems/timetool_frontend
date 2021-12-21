@@ -14,9 +14,10 @@
   "keypoint": {
     "comment": "Comment: ",
     "date": "Date: ",
-    "entries": "Entries",
+    "entries": "Entries: ",
     "from": "from: ",
     "onsite": "Onsite: ",
+    "project": "Project: ",
     "project_name": "Project name: ",
     "to": "to: ",
     "typ": "Typ: "

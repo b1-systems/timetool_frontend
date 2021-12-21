@@ -7,21 +7,9 @@ import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import FilterNoneIcon from "@mui/icons-material/FilterNone";
 import MoreTimeIcon from "@mui/icons-material/MoreTime";
-import {
-  Avatar,
-  Box,
-  Button,
-  Card,
-  Collapse,
-  List,
-  ListItem,
-  ListItemAvatar,
-  ListItemText,
-  useMediaQuery,
-} from "@mui/material";
-import { useTheme } from "@mui/system";
+import { Avatar, Box, Button, Card, Chip, Collapse } from "@mui/material";
 import { DateTime } from "luxon";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { fetchDelete } from "../../api";
@@ -34,32 +22,8 @@ export default function OutputShift(props: {
   deleteTimelog(uuid: string): void;
 }) {
   const { t } = useTranslation();
-  const theme = useTheme();
-  const extraSmallDisplay = useMediaQuery(theme.breakpoints.up("xs"));
-  const smallDisplay = useMediaQuery(theme.breakpoints.up("sm"));
-  const mediumDisplay = useMediaQuery(theme.breakpoints.up("md"));
-  const LargeDisplay = useMediaQuery(theme.breakpoints.up("lg"));
-  const extraLargeDisplay = useMediaQuery(theme.breakpoints.up("xl"));
-  const [iconPx, setIconPx] = useState<number>(32);
-  const [iconMarginTop, setIconMarginTop] = useState<number>(1);
 
   const [entriesVisible, setEntriesVisible] = useState<boolean>(true);
-  useEffect(() => {
-    if (extraLargeDisplay) {
-      setIconPx(32);
-      setIconMarginTop(1);
-    } else if (LargeDisplay) {
-      setIconPx(24);
-      setIconMarginTop(2);
-    } else if (mediumDisplay) {
-      setIconPx(18);
-      setIconMarginTop(2);
-    } else if (smallDisplay) {
-      setIconPx(0);
-    } else if (extraSmallDisplay) {
-      setIconPx(0);
-    }
-  }, [extraSmallDisplay, smallDisplay, mediumDisplay, LargeDisplay, extraLargeDisplay]);
 
   const deleteHandler = (uuid: string) => {
     const requestPrototype = {
@@ -72,159 +36,160 @@ export default function OutputShift(props: {
   return (
     <Card elevation={0}>
       <Box bgcolor={props.index % 2 ? "white" : "#eeeeee"}>
-        <List style={{ display: "flex", flexDirection: "row", padding: 0 }}>
-          <ListItem>
-            <ListItemAvatar>
-              <Avatar sx={{ width: iconPx, height: iconPx, mt: iconMarginTop }}>
-                <EventIcon sx={{ width: iconPx - 8, height: iconPx - 8 }} />
+        <Box
+          bgcolor={props.index % 2 ? "white" : "#eeeeee"}
+          sx={{
+            alignItems: "center",
+            flexWrap: "wrap",
+            display: "flex",
+            p: 1,
+            m: 1,
+            justifyContent: "space-evenly",
+          }}
+        >
+          <Chip
+            style={{ backgroundColor: props.index % 2 ? "white" : "#eeeeee" }}
+            label={
+              t("keypoint.date") +
+              new Date(props.log.start_dt * 1000).toLocaleDateString("de-DE")
+            }
+            avatar={
+              <Avatar sx={{ width: 32, height: 32 }}>
+                <EventIcon sx={{ width: 18, height: 18, color: "white" }} />
               </Avatar>
-            </ListItemAvatar>
-            <ListItemText
-              primary={t("keypoint.date")}
-              secondary={new Date(props.log.start_dt * 1000).toLocaleDateString(
-                "de-DE",
-              )}
-            />
-          </ListItem>
-          <ListItem>
-            <ListItemAvatar>
-              <Avatar sx={{ width: iconPx, height: iconPx, mt: iconMarginTop }}>
+            }
+          />
+          <Chip
+            style={{ backgroundColor: props.index % 2 ? "white" : "#eeeeee" }}
+            label={t("keypoint.project") + props.log.project_name}
+            avatar={
+              <Avatar sx={{ width: 32, height: 32 }}>
                 <DriveFileRenameOutlineIcon
-                  sx={{ width: iconPx - 8, height: iconPx - 8 }}
+                  sx={{ width: 18, height: 18, color: "white" }}
                 />
               </Avatar>
-            </ListItemAvatar>
-            <ListItemText
-              primary={t("keypoint.project_name")}
-              secondary={props.log.project_name}
-            />
-          </ListItem>
-          <ListItem>
-            <ListItemAvatar>
-              <Avatar sx={{ width: iconPx, height: iconPx, mt: iconMarginTop }}>
-                <FilterNoneIcon sx={{ width: iconPx - 8, height: iconPx - 8 }} />
+            }
+          />
+          <Chip
+            style={{ backgroundColor: props.index % 2 ? "white" : "#eeeeee" }}
+            label={
+              t("keypoint.entries") +
+              (props.log.incidents?.length.toString()
+                ? props.log.incidents?.length.toString()
+                : "0")
+            }
+            avatar={
+              <Avatar sx={{ width: 32, height: 32 }}>
+                <FilterNoneIcon sx={{ width: 18, height: 18, color: "white" }} />
               </Avatar>
-            </ListItemAvatar>
-            <ListItemText
-              primary={t("keypoint.entries")}
-              secondary={
-                props.log.incidents?.length.toString()
-                  ? props.log.incidents?.length.toString()
-                  : "0"
-              }
-            />
-          </ListItem>
-          <ListItem>
-            <Button
-              sx={{ mr: 1, mt: 1 }}
-              color="error"
-              onClick={() => deleteHandler(props.log.uuid)}
-              disabled={props.monthIsClosed}
-            >
-              <DeleteForeverIcon />
-            </Button>
-          </ListItem>
-        </List>
-
+            }
+          />
+          <Button
+            color="error"
+            onClick={() => deleteHandler(props.log.uuid)}
+            disabled={props.monthIsClosed}
+          >
+            <DeleteForeverIcon />
+          </Button>
+        </Box>
         {!!props.log.incidents && (
           <>
             {!entriesVisible && (
-              <List
-                style={{ display: "flex", flexDirection: "row", padding: 0 }}
+              <Box
+                bgcolor={props.index % 2 ? "white" : "#eeeeee"}
                 onClick={() => setEntriesVisible(!entriesVisible)}
+                sx={{
+                  alignItems: "center",
+                  flexWrap: "wrap",
+                  display: "flex",
+                  p: 1,
+                  m: 1,
+                  justifyContent: "space-evenly",
+                }}
               >
-                <ListItem>
-                  <ExpandMoreIcon color="info" />
-                </ListItem>
-                <ListItem>
-                  <ExpandMoreIcon color="info" />
-                </ListItem>
-                <ListItem>
-                  <ExpandMoreIcon color="info" />
-                </ListItem>
-                <ListItem>
-                  <ExpandMoreIcon color="info" />
-                </ListItem>
-              </List>
+                <Button fullWidth color="info">
+                  <ExpandMoreIcon />
+                </Button>
+              </Box>
             )}
             <Collapse orientation="vertical" in={entriesVisible}>
               {props.log.incidents?.map((incident, index) => (
                 <Box
-                  bgcolor={(props.index + index) % 2 ? "#eeeeee" : "white"}
                   key={index}
+                  bgcolor={(props.index + index) % 2 ? "#eeeeee" : "white"}
+                  sx={{
+                    alignItems: "center",
+                    flexWrap: "wrap",
+                    display: "flex",
+                    p: 1,
+                    m: 1,
+                    justifyContent: "space-around",
+                  }}
                 >
-                  <List style={{ display: "flex", flexDirection: "row", padding: 0 }}>
-                    <ListItem />
-                    <ListItem>
-                      <ListItemAvatar>
-                        <Avatar
-                          sx={{ width: iconPx, height: iconPx, mt: iconMarginTop }}
-                        >
-                          <AccessTimeIcon
-                            sx={{ width: iconPx - 8, height: iconPx - 8 }}
-                          />
-                        </Avatar>
-                      </ListItemAvatar>
-                      <ListItemText
-                        primary={t("keypoint.from")}
-                        secondary={`${DateTime.fromSeconds(incident.start_dt).day} ${
-                          DateTime.fromSeconds(incident.start_dt).monthShort
-                        } at: ${DateTime.fromSeconds(incident.start_dt).hour} : ${
-                          DateTime.fromSeconds(incident.start_dt).minute
-                        }`}
-                      />
-                    </ListItem>
-                    <ListItem>
-                      <ListItemAvatar>
-                        <Avatar
-                          sx={{ width: iconPx, height: iconPx, mt: iconMarginTop }}
-                        >
-                          <MoreTimeIcon
-                            sx={{ width: iconPx - 8, height: iconPx - 8 }}
-                          />
-                        </Avatar>
-                      </ListItemAvatar>
-                      <ListItemText
-                        primary={t("keypoint.to")}
-                        secondary={`${DateTime.fromSeconds(incident.end_dt).day}. ${
-                          DateTime.fromSeconds(incident.end_dt).monthLong
-                        } at: ${DateTime.fromSeconds(incident.end_dt).hour}:${
-                          DateTime.fromSeconds(incident.end_dt).minute
-                        }`}
-                      />
-                    </ListItem>
-                    <ListItem>
-                      <ListItemAvatar>
-                        <Avatar
-                          sx={{ width: iconPx, height: iconPx, mt: iconMarginTop }}
-                        >
-                          <ChatIcon sx={{ width: iconPx - 8, height: iconPx - 8 }} />
-                        </Avatar>
-                      </ListItemAvatar>
-                      <ListItemText
-                        primary={t("keypoint.comment")}
-                        secondary={incident.comment}
-                      />
-                    </ListItem>
-                  </List>
+                  <Chip
+                    style={{
+                      backgroundColor: (props.index + index) % 2 ? "#eeeeee" : "white",
+                    }}
+                    label={
+                      t("keypoint.from") +
+                      `${DateTime.fromSeconds(incident.start_dt).day} ${
+                        DateTime.fromSeconds(incident.start_dt).monthShort
+                      } at: ${DateTime.fromSeconds(props.log.start_dt).toFormat("T")}`
+                    }
+                    avatar={
+                      <Avatar sx={{ width: 32, height: 32 }}>
+                        <AccessTimeIcon
+                          sx={{ width: 18, height: 18, color: "white" }}
+                        />
+                      </Avatar>
+                    }
+                  />
+                  <Chip
+                    style={{
+                      backgroundColor: (props.index + index) % 2 ? "#eeeeee" : "white",
+                    }}
+                    label={
+                      t("keypoint.to") +
+                      `${DateTime.fromSeconds(incident.end_dt).day} ${
+                        DateTime.fromSeconds(incident.end_dt).monthShort
+                      } at: ${DateTime.fromSeconds(props.log.end_dt).toFormat("T")}`
+                    }
+                    avatar={
+                      <Avatar sx={{ width: 32, height: 32 }}>
+                        <MoreTimeIcon sx={{ width: 18, height: 18, color: "white" }} />
+                      </Avatar>
+                    }
+                  />
+                  <Chip
+                    style={{
+                      backgroundColor: (props.index + index) % 2 ? "#eeeeee" : "white",
+                    }}
+                    label={t("keypoint.comment") + incident.comment}
+                    avatar={
+                      <Avatar sx={{ width: 32, height: 32 }}>
+                        <ChatIcon sx={{ width: 18, height: 18, color: "white" }} />
+                      </Avatar>
+                    }
+                  />
                 </Box>
               ))}
               {props.log.incidents.length >= 1 && (
-                <List
-                  style={{ display: "flex", flexDirection: "row", padding: 0 }}
+                <Box
+                  bgcolor={props.index % 2 ? "white" : "#eeeeee"}
                   onClick={() => setEntriesVisible(!entriesVisible)}
+                  sx={{
+                    alignItems: "center",
+                    flexWrap: "wrap",
+                    display: "flex",
+                    p: 1,
+                    m: 1,
+                    justifyContent: "space-evenly",
+                  }}
                 >
-                  <ListItem />
-                  <ListItem>
-                    <ExpandLessIcon color="info" />
-                  </ListItem>
-                  <ListItem>
-                    <ExpandLessIcon color="info" />
-                  </ListItem>
-                  <ListItem>
-                    <ExpandLessIcon color="info" />
-                  </ListItem>
-                </List>
+                  <Button fullWidth color="info">
+                    <ExpandLessIcon />
+                  </Button>
+                </Box>
               )}
             </Collapse>
           </>
