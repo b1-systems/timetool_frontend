@@ -7,6 +7,7 @@ import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import FilterNoneIcon from "@mui/icons-material/FilterNone";
 import MoreTimeIcon from "@mui/icons-material/MoreTime";
+import NightsStayIcon from "@mui/icons-material/NightsStay";
 import { Avatar, Box, Button, Card, Chip, Collapse } from "@mui/material";
 import { DateTime } from "luxon";
 import React, { useState } from "react";
@@ -16,6 +17,7 @@ import { fetchDelete } from "../../api";
 import { Timelog } from "../../models";
 
 export default function OutputShift(props: {
+  projectShiftModelsAsObject: Object;
   log: Timelog;
   index: number;
   monthIsClosed: boolean;
@@ -24,6 +26,15 @@ export default function OutputShift(props: {
   const { t } = useTranslation();
 
   const [entriesVisible, setEntriesVisible] = useState<boolean>(true);
+
+  const shiftModelHandler = (type: string | undefined): string => {
+    for (const [key, value] of Object.entries(props.projectShiftModelsAsObject)) {
+      if (type && key === type.toString()) {
+        return value;
+      }
+    }
+    return "unknown type";
+  };
 
   const deleteHandler = (uuid: string) => {
     const requestPrototype = {
@@ -67,6 +78,16 @@ export default function OutputShift(props: {
                 <DriveFileRenameOutlineIcon
                   sx={{ width: 18, height: 18, color: "white" }}
                 />
+              </Avatar>
+            }
+          />
+
+          <Chip
+            style={{ backgroundColor: props.index % 2 ? "white" : "#eeeeee" }}
+            label={t("keypoint.type") + shiftModelHandler(props.log.shift_model)}
+            avatar={
+              <Avatar sx={{ width: 32, height: 32 }}>
+                <NightsStayIcon sx={{ width: 18, height: 18, color: "white" }} />
               </Avatar>
             }
           />

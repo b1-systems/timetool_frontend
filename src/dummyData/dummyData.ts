@@ -70,7 +70,7 @@ export const _dummy_old_logs_1: Logs = {
     },
     {
       //e.g. default
-      uuid: "61b846d5-c33c-4751-8feb-2d0f2068c52e",
+      uuid: "61c846d5-c33c-4751-8feb-2d0f2068c52e",
       employee_uuid: "61b846c6-2d44-42c4-83ba-2f0f2068c51e",
       project_uuid: "618e86a1-dfc0-4025-84f8-86616d67120b",
       project_name: "test2 - shift",
@@ -98,7 +98,7 @@ export const _dummy_old_logs_1: Logs = {
     },
     {
       //e.g. default
-      uuid: "61b846d5-c33c-4751-8feb-2d0f2068c52e",
+      uuid: "61d846d5-c33c-4751-8feb-2d0f2068c52e",
       employee_uuid: "61b846c6-2d44-42c4-83ba-2f0f2068c51e",
       project_uuid: "618e86a1-dfc0-4025-84f8-86616d67120b",
       project_name: "test1  - shift - no inc",
@@ -109,7 +109,7 @@ export const _dummy_old_logs_1: Logs = {
     },
     {
       //e.g. default
-      uuid: "61b846d5-c33c-4751-8feb-2d0f2068c52e",
+      uuid: "61g846d5-c33c-4751-8feb-2d0f2068c52e",
       employee_uuid: "61b846c6-2d44-42c4-83ba-2f0f2068c51e",
       project_uuid: "618e86a1-dfc0-4025-84f8-86616d67120b",
       project_name: "test2 - shift - incidents: [],",
@@ -186,11 +186,12 @@ export const _dummy_old_logs_2: Logs = {
       type: "default",
       breaklength: 3600,
       travel: "0",
-      comment: "SAP Unicorn - Telefonica",
+      comment:
+        "SAP Unicorn - Telefonica GAAAANZ LANGER STRING 1293768q7zdfisajkchblhjkaghfed",
       onsite: "onsite",
     },
     {
-      uuid: "21b846d5-c33c-4751-8feb-2d0f2068c52e",
+      uuid: "21y846d5-c33c-4751-8feb-2d0f2068c52e",
       employee_uuid: "31b846c6-2d44-42c4-83ba-2f0f2068c51e",
       project_uuid: "418e86a1-dfc0-4025-84f8-86616d67120b",
       project_name: "test1 - shift",

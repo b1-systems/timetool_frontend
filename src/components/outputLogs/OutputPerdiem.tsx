@@ -11,12 +11,22 @@ import { fetchDelete } from "../../api";
 import { Perdiem } from "../../models";
 
 export default function OutputPerdiem(props: {
+  projectPerdiemtModelsAsObject: Object;
   monthIsClosed: boolean;
   log: Perdiem;
   deletePerdiem(uuid: string): void;
   index: number;
 }) {
   const { t } = useTranslation();
+
+  const perdiemModeltHandler = (type: number): string => {
+    for (const [key, value] of Object.entries(props.projectPerdiemtModelsAsObject)) {
+      if (key === type.toString()) {
+        return value;
+      }
+    }
+    return "unknown type";
+  };
 
   const deleteHandler = (uuid: string) => {
     const requestPrototype = {
@@ -25,22 +35,7 @@ export default function OutputPerdiem(props: {
     fetchDelete(requestPrototype);
     props.deletePerdiem(uuid);
   };
-  const logTypeHandler = (type: number) => {
-    switch (type) {
-      case 4:
-        return "VMA Ausland";
-      case 5:
-        return "32 € 24h ab 3 Mon";
-      case 6:
-        return "16 € Anreise ab 3 Mon";
-      case 7:
-        return "14 € VMA Anreise";
-      case 8:
-        return "28 € VMA 24h";
-      default:
-        return "unknown type";
-    }
-  };
+
   return (
     <Card elevation={0}>
       <Box
@@ -79,7 +74,7 @@ export default function OutputPerdiem(props: {
         />
         <Chip
           style={{ backgroundColor: props.index % 2 ? "white" : "#eeeeee" }}
-          label={t("keypoint.typ") + logTypeHandler(props.log.type)}
+          label={t("keypoint.type") + perdiemModeltHandler(props.log.type)}
           avatar={
             <Avatar sx={{ width: 32, height: 32 }}>
               <PaidIcon sx={{ width: 18, height: 18, color: "white" }} />

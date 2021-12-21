@@ -256,6 +256,8 @@ export default function MainGrid() {
       </Grid>
       <Grid item xs={12}>
         <TimelogItemList
+          projectShiftModelsAsObject={projectShiftModelsAsObject}
+          projectPerdiemtModelsAsObject={projectPerdiemtModelsAsObject}
           monthIsClosed={monthIsClosed}
           deleteTimelog={deleteTimelog}
           deletePerdiem={deletePerdiem}

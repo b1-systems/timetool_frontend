@@ -18,6 +18,8 @@ import OutputShift from "./OutputShift";
 import OutputTimelogs from "./OutputTimelog";
 
 export default function InputCard(props: {
+  projectShiftModelsAsObject: Object;
+  projectPerdiemtModelsAsObject: Object;
   setEndMonthOpen(open: boolean): void;
   monthIsClosed: boolean;
   timelogs: Timelog[];
@@ -63,6 +65,7 @@ export default function InputCard(props: {
             <h3>{t("shifts")}</h3>
             {shiftTimelogs.map((log, index) => (
               <OutputShift
+                projectShiftModelsAsObject={props.projectShiftModelsAsObject}
                 index={index}
                 monthIsClosed={props.monthIsClosed}
                 log={log}
@@ -77,6 +80,7 @@ export default function InputCard(props: {
             <h3>{t("perdiems")}</h3>
             {perdiems.map((log, index) => (
               <OutputPerdiem
+                projectPerdiemtModelsAsObject={props.projectPerdiemtModelsAsObject}
                 index={index}
                 monthIsClosed={props.monthIsClosed}
                 log={log}
