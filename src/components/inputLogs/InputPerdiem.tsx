@@ -7,29 +7,30 @@ import {
   SelectChangeEvent,
   TextField,
 } from "@mui/material";
-import React, { useState } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
 
 import { PerdiemModelsToProjectUuid } from "../../models";
 
 export default function InputPerdiem(props: {
-  projectPerdiemtModelsAsObject: PerdiemModelsToProjectUuid;
+  uuidProject: string | null;
+  projectPerdiemModelsAsObject: PerdiemModelsToProjectUuid;
+  perdiemModels: string[];
+  model: string;
+  setModel(model: string): void;
   setTypeOfPerdiem(type: number): void;
   setLogMsg(msg: string): void;
   logMsg: string;
-  uuidProject: string | null;
 }) {
   const { t } = useTranslation();
-  const [model, setModel] = useState<string>("");
   const setPerdiemModelHandler = (event: SelectChangeEvent) => {
+    props.setModel(event.target.value as string);
     if (props.uuidProject) {
       for (const [key, value] of Object.entries(
-        props.projectPerdiemtModelsAsObject[props.uuidProject],
+        props.projectPerdiemModelsAsObject[props.uuidProject],
       )) {
         if (value === (event.target.value as string)) {
-          console.log("-key:", key, "-value:", value);
           props.setTypeOfPerdiem(parseInt(key));
-          setModel(value);
         }
       }
     }
@@ -44,18 +45,15 @@ export default function InputPerdiem(props: {
             labelId="select-label-model"
             required={true}
             id="demo-simple-select-model"
-            value={model}
+            value={props.model}
             label={t("model")}
             onChange={(e) => setPerdiemModelHandler(e)}
           >
-            {props.uuidProject &&
-              Object.values(props.projectPerdiemtModelsAsObject[props.uuidProject]).map(
-                (singleModel, idx) => (
-                  <MenuItem key={idx} value={singleModel}>
-                    {singleModel}
-                  </MenuItem>
-                ),
-              )}
+            {props.perdiemModels.map((singleType, idx) => (
+              <MenuItem key={idx} value={singleType}>
+                {singleType}
+              </MenuItem>
+            ))}
           </Select>
         </FormControl>
       </Grid>

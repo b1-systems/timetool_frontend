@@ -24,7 +24,7 @@ import OutputTimelogs from "./OutputTimelog";
 
 export default function InputCard(props: {
   projectShiftModelsAsObject: ShiftModelsToProjectUuid;
-  projectPerdiemtModelsAsObject: PerdiemModelsToProjectUuid;
+  projectPerdiemModelsAsObject: PerdiemModelsToProjectUuid;
   setEndMonthOpen(open: boolean): void;
   monthIsClosed: boolean;
   timelogs: Timelog[];
@@ -85,7 +85,7 @@ export default function InputCard(props: {
             <h3>{t("perdiems")}</h3>
             {perdiems.map((log, index) => (
               <OutputPerdiem
-                projectPerdiemtModelsAsObject={props.projectPerdiemtModelsAsObject}
+                projectPerdiemtModelsAsObject={props.projectPerdiemModelsAsObject}
                 index={index}
                 monthIsClosed={props.monthIsClosed}
                 log={log}

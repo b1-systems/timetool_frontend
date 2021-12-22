@@ -75,6 +75,35 @@ export const _dummy_old_logs_1: Logs = {
   timelogs: [
     {
       //e.g. default
+      uuid: "12345-c33c-4751-8feb-2d0f2068c51e",
+      employee_uuid: "61b846c6-2d44-42c4-83ba-2d0f2068c51e",
+      project_uuid: "618e86a1-dfc0-4025-84f8-86516d67120b",
+      project_name: "test2 - default",
+      start_dt: 1625119200,
+      end_dt: 1625151600,
+      type: "default",
+      breaklength: 3600,
+      travel: "0",
+      comment: "SAP Unicorn - Telefonica",
+      onsite: "onsite",
+    },
+    {
+      //e.g. default
+      uuid: "123-c33c-4751-8feb-2d0f2068c51e",
+      employee_uuid: "61b846c6-2d44-42c4-83ba-2d0f2068c51e",
+      project_uuid: "618e86a1-dfc0-4025-84f8-86516d67120b",
+      project_name: "test2 - default",
+      start_dt: 1625119200,
+      end_dt: 1625151600,
+      type: "default",
+      breaklength: 3600,
+      travel: "0",
+      comment:
+        "SAP Unicorn - Megha viel text- Telefonica- asdijhasghdasdfpiouasidfhj  aisudfh ioahnsdiofu iuoashndf ouhn",
+      onsite: "remote",
+    },
+    {
+      //e.g. default
       uuid: "61b846d5-c33c-4751-8feb-2d0f2068c51e",
       employee_uuid: "61b846c6-2d44-42c4-83ba-2d0f2068c51e",
       project_uuid: "618e86a1-dfc0-4025-84f8-86516d67120b",
@@ -160,7 +189,7 @@ export const _dummy_old_logs_2: Logs = {
       employee_uuid: "61b846s6-2d44-42c4-83ba-2f0f2068c51e",
       project_uuid: "123g86a1-dfc0-4025-84f8-86616d67120b",
       project_name: "test1 - shift",
-      start_dt: 1725110200,
+      start_dt: 1100500600,
       end_dt: 1725150600,
       type: "shift",
       incidents: [

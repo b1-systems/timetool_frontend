@@ -3,12 +3,13 @@ import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import DriveFileRenameOutlineIcon from "@mui/icons-material/DriveFileRenameOutline";
 import EventIcon from "@mui/icons-material/Event";
 import PaidIcon from "@mui/icons-material/Paid";
-import { Avatar, Box, Button, Card, Chip } from "@mui/material";
+import { Box, Button, Card, Grid } from "@mui/material";
 import React from "react";
 import { useTranslation } from "react-i18next";
 
 import { fetchDelete } from "../../api";
 import { ModelsPerdiem, Perdiem } from "../../models";
+import OutputChip from "./OutputChip";
 
 export default function OutputPerdiem(props: {
   projectPerdiemtModelsAsObject: { [key: string]: ModelsPerdiem };
@@ -47,65 +48,122 @@ export default function OutputPerdiem(props: {
       <Box
         bgcolor={props.index % 2 ? "white" : "#eeeeee"}
         sx={{
-          alignItems: "center",
           flexWrap: "wrap",
           display: "flex",
-          p: 1,
-          m: 1,
+          p: 0,
+          m: 0,
           justifyContent: "space-evenly",
         }}
       >
-        <Chip
-          style={{ backgroundColor: props.index % 2 ? "white" : "#eeeeee" }}
-          label={
-            t("keypoint.date") +
-            new Date(props.log.start_dt * 1000).toLocaleDateString("de-DE")
-          }
-          avatar={
-            <Avatar sx={{ width: 32, height: 32 }}>
-              <EventIcon sx={{ width: 18, height: 18, color: "white" }} />
-            </Avatar>
-          }
-        />
-        <Chip
-          style={{ backgroundColor: props.index % 2 ? "white" : "#eeeeee" }}
-          label={t("keypoint.project") + props.log.project_name}
-          avatar={
-            <Avatar sx={{ width: 32, height: 32 }}>
-              <DriveFileRenameOutlineIcon
-                sx={{ width: 18, height: 18, color: "white" }}
-              />
-            </Avatar>
-          }
-        />
-        <Chip
-          style={{ backgroundColor: props.index % 2 ? "white" : "#eeeeee" }}
-          label={
-            t("keypoint.type") +
-            perdiemModelHandler(props.log.project_uuid, props.log.type)
-          }
-          avatar={
-            <Avatar sx={{ width: 32, height: 32 }}>
-              <PaidIcon sx={{ width: 18, height: 18, color: "white" }} />
-            </Avatar>
-          }
-        />
-        <Chip
-          style={{ backgroundColor: props.index % 2 ? "white" : "#eeeeee" }}
-          label={t("keypoint.comment") + props.log.comment}
-          avatar={
-            <Avatar sx={{ width: 32, height: 32 }}>
-              <ChatIcon sx={{ width: 18, height: 18, color: "white" }} />
-            </Avatar>
-          }
-        />
-        <Button
-          color="error"
-          onClick={() => deleteHandler(props.log.uuid)}
-          disabled={props.monthIsClosed}
-        >
-          <DeleteForeverIcon />
-        </Button>
+        <Grid container spacing={1}>
+          <Grid
+            item
+            xs={12}
+            sm={6}
+            md={6}
+            lg={1}
+            sx={{
+              borderBottom: 1,
+              borderRight: 1,
+              borderColor: "#bdbdbd",
+            }}
+          >
+            <OutputChip
+              index={props.index}
+              heading={t("keypoint.date")}
+              Icon={<EventIcon sx={{ width: 18, height: 18, color: "white" }} />}
+              text={new Date(props.log.start_dt * 1000).toLocaleDateString("de-DE")}
+            />
+          </Grid>
+          <Grid
+            item
+            xs={12}
+            sm={6}
+            md={6}
+            lg={3}
+            sx={{
+              borderBottom: 1,
+              borderRight: 1,
+              borderColor: "#bdbdbd",
+            }}
+          >
+            <OutputChip
+              index={props.index}
+              heading={t("keypoint.project")}
+              Icon={
+                <DriveFileRenameOutlineIcon
+                  sx={{ width: 18, height: 18, color: "white" }}
+                />
+              }
+              text={props.log.project_name}
+            />
+          </Grid>
+          <Grid
+            item
+            xs={12}
+            sm={6}
+            md={6}
+            lg={3}
+            sx={{
+              borderBottom: 1,
+              borderRight: 1,
+              borderColor: "#bdbdbd",
+            }}
+          >
+            <OutputChip
+              index={props.index}
+              heading={t("keypoint.type")}
+              Icon={<PaidIcon sx={{ width: 18, height: 18, color: "white" }} />}
+              text={perdiemModelHandler(props.log.project_uuid, props.log.type)}
+            />
+          </Grid>
+          <Grid
+            item
+            xs={12}
+            sm={6}
+            md={6}
+            lg={3}
+            sx={{
+              borderBottom: 1,
+              borderRight: 1,
+              borderColor: "#bdbdbd",
+            }}
+          >
+            <OutputChip
+              index={props.index}
+              heading={t("keypoint.comment")}
+              Icon={<ChatIcon sx={{ width: 18, height: 18, color: "white" }} />}
+              text={props.log.comment || "no comment"}
+            />
+          </Grid>
+          <Grid item xs={0} lg={1}></Grid>
+          <Grid item container xs={12} lg={1}>
+            <Grid item xs={9} lg={1}></Grid>
+            <Grid item xs={3} lg={10}>
+              <Card
+                elevation={0}
+                style={{
+                  backgroundColor: "#d50000",
+                  padding: 1,
+                }}
+                sx={{
+                  border: 5,
+                  borderColor: props.index % 2 ? "white" : "#eeeeee",
+                }}
+              >
+                <Button
+                  fullWidth
+                  size="small"
+                  sx={{ color: "white" }}
+                  onClick={() => deleteHandler(props.log.uuid)}
+                  disabled={props.monthIsClosed}
+                >
+                  <DeleteForeverIcon />
+                </Button>
+              </Card>
+            </Grid>
+          </Grid>
+        </Grid>
       </Box>
     </Card>
   );

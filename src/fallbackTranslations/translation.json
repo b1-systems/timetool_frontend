@@ -15,11 +15,11 @@
     "comment": "Comment: ",
     "date": "Date: ",
     "entries": "Entries: ",
-    "from": "from: ",
+    "from": "From: ",
     "onsite": "Onsite: ",
     "project": "Project: ",
     "project_name": "Project name: ",
-    "to": "to: ",
+    "to": "To: ",
     "type": "Type: "
   },
   "model": "Model",

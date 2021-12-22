@@ -48,10 +48,11 @@ export default function MainGrid() {
   const [projectTypes, setProjectTypes] = useState<string[]>([]);
   const [endMonthOpen, setEndMonthOpen] = useState(false);
   const [projectShiftModels, setProjectShiftModels] = useState<string[]>([]);
+  const [perdiemModels, setPerdiemModels] = useState<string[]>([]);
   const [monthIsClosed, setMonthIsClosed] = useState<boolean>(true);
   const [projectShiftModelsAsObject, setProjectShiftModelsAsObject] =
     useState<ShiftModelsToProjectUuid>({});
-  const [projectPerdiemtModelsAsObject, setProjectPerdiemtModelsAsObject] =
+  const [projectPerdiemModelsAsObject, setProjectPerdiemtModelsAsObject] =
     useState<PerdiemModelsToProjectUuid>({});
 
   //useEffect has disable eslint because an empty array can be used to only use it at initial render
@@ -165,6 +166,9 @@ export default function MainGrid() {
     if (projectFiltered[0].worktypes.shift !== undefined) {
       setProjectShiftModels(Object.values(projectFiltered[0].worktypes.shift));
     }
+    if (projectFiltered[0].worktypes.perdiem !== undefined) {
+      setPerdiemModels(Object.values(projectFiltered[0].worktypes.perdiem));
+    }
   };
 
   //timelogs and perdiems are in one and the same response, but sorted out here
@@ -261,9 +265,10 @@ export default function MainGrid() {
       </Grid>
       <Grid item xs={12}>
         <InputCard
+          perdiemModels={perdiemModels}
           monthIsClosed={monthIsClosed}
           fetchAfterSubmitHandler={fetchAfterSubmitHandler}
-          projectPerdiemtModelsAsObject={projectPerdiemtModelsAsObject}
+          projectPerdiemModelsAsObject={projectPerdiemModelsAsObject}
           projectShiftModelsAsObject={projectShiftModelsAsObject}
           types={projectTypes}
           month={selectedMonth}
@@ -275,7 +280,7 @@ export default function MainGrid() {
       <Grid item xs={12}>
         <TimelogItemList
           projectShiftModelsAsObject={projectShiftModelsAsObject}
-          projectPerdiemtModelsAsObject={projectPerdiemtModelsAsObject}
+          projectPerdiemModelsAsObject={projectPerdiemModelsAsObject}
           monthIsClosed={monthIsClosed}
           deleteTimelog={deleteTimelog}
           deletePerdiem={deletePerdiem}

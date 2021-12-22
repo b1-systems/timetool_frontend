@@ -38,10 +38,12 @@ export default function InputCard(props: {
   uuidProject: string | null;
   uuidLog: string | null;
   projectShiftModels: string[];
-  projectPerdiemtModelsAsObject: PerdiemModelsToProjectUuid;
+  perdiemModels: string[];
+  projectPerdiemModelsAsObject: PerdiemModelsToProjectUuid;
 }) {
   const { t } = useTranslation();
-  const [type, setType] = useState<string>(props.types[0]);
+  const [model, setModel] = useState<string>("");
+  const [type, setType] = useState<string>("");
   const [breakTime, setBreakTime] = useState<number>(0);
   const [travelTime, setTravelTime] = useState<number>(0);
   const [logMsg, setLogMsg] = useState<string>("");
@@ -116,7 +118,6 @@ export default function InputCard(props: {
   const handleRemote = () => {
     setRemote(!remote);
   };
-
   return (
     <Card elevation={0} sx={{ border: 1, borderColor: "grey.300", ml: 1, mr: 1 }}>
       <form onSubmit={handleSubmit}>
@@ -150,6 +151,7 @@ export default function InputCard(props: {
                   labelId="select-label-type"
                   id="demo-simple-select-type"
                   value={type}
+                  required={true}
                   label={t("type")}
                   disabled={!props.types.length}
                   onChange={setTypeHandler}
@@ -197,8 +199,11 @@ export default function InputCard(props: {
 
             {type === "perdiem" && (
               <InputPerdiem
+                model={model}
+                perdiemModels={props.perdiemModels}
+                setModel={setModel}
                 uuidProject={props.uuidProject}
-                projectPerdiemtModelsAsObject={props.projectPerdiemtModelsAsObject}
+                projectPerdiemModelsAsObject={props.projectPerdiemModelsAsObject}
                 setTypeOfPerdiem={setTypeOfPerdiem}
                 setLogMsg={setLogMsg}
                 logMsg={logMsg}
