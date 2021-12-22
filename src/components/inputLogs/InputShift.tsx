@@ -15,10 +15,11 @@ import { DateTime } from "luxon";
 import React from "react";
 import { useTranslation } from "react-i18next";
 
-import { Incident } from "../../models";
+import { Incident, ShiftModelsToProjectUuid } from "../../models";
 
 export default function InputShift(props: {
-  projectShiftModelsAsObject: Object;
+  uuidProject: string | null;
+  projectShiftModelsAsObject: ShiftModelsToProjectUuid;
   shiftModels: string[];
   shift: string;
   setShift(shiftModel: string): void;
@@ -30,10 +31,13 @@ export default function InputShift(props: {
   const { t } = useTranslation();
   const setShiftModelHandler = (event: SelectChangeEvent) => {
     props.setShift(event.target.value as string);
-
-    for (const [key, value] of Object.entries(props.projectShiftModelsAsObject)) {
-      if (value === (event.target.value as string)) {
-        props.setShiftModel(key);
+    if (props.uuidProject) {
+      for (const [key, value] of Object.entries(
+        props.projectShiftModelsAsObject[props.uuidProject],
+      )) {
+        if (value === (event.target.value as string)) {
+          props.setShiftModel(key);
+        }
       }
     }
   };

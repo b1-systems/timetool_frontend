@@ -20,7 +20,11 @@ import { useTranslation } from "react-i18next";
 import { v4 as uuidv4 } from "uuid";
 
 import { fetchSubmit } from "../../api";
-import { Incident } from "../../models";
+import {
+  Incident,
+  PerdiemModelsToProjectUuid,
+  ShiftModelsToProjectUuid,
+} from "../../models";
 import InputDefaultTimelog from "./InputDefaultTimelog";
 import InputPerdiem from "./InputPerdiem";
 import Inputshift from "./InputShift";
@@ -28,13 +32,13 @@ import Inputshift from "./InputShift";
 export default function InputCard(props: {
   monthIsClosed: boolean;
   fetchAfterSubmitHandler(): void;
-  projectShiftModelsAsObject: Object;
+  projectShiftModelsAsObject: ShiftModelsToProjectUuid;
   types: string[];
   month: DateTime;
   uuidProject: string | null;
   uuidLog: string | null;
   projectShiftModels: string[];
-  projectPerdiemtModelsAsObject: Object;
+  projectPerdiemtModelsAsObject: PerdiemModelsToProjectUuid;
 }) {
   const { t } = useTranslation();
   const [type, setType] = useState<string>(props.types[0]);
@@ -145,8 +149,8 @@ export default function InputCard(props: {
                 <Select
                   labelId="select-label-type"
                   id="demo-simple-select-type"
-                  value={t("type")}
-                  label="Type"
+                  value={type}
+                  label={t("type")}
                   disabled={!props.types.length}
                   onChange={setTypeHandler}
                 >
@@ -162,6 +166,7 @@ export default function InputCard(props: {
           <Grid container spacing={3} sx={{ mt: 1 }}>
             {type === "shift" && (
               <Inputshift
+                uuidProject={props.uuidProject}
                 projectShiftModelsAsObject={props.projectShiftModelsAsObject}
                 shiftModels={props.projectShiftModels}
                 setShift={setShift}
@@ -192,6 +197,7 @@ export default function InputCard(props: {
 
             {type === "perdiem" && (
               <InputPerdiem
+                uuidProject={props.uuidProject}
                 projectPerdiemtModelsAsObject={props.projectPerdiemtModelsAsObject}
                 setTypeOfPerdiem={setTypeOfPerdiem}
                 setLogMsg={setLogMsg}

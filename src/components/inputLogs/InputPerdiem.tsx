@@ -10,41 +10,29 @@ import {
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 
+import { PerdiemModelsToProjectUuid } from "../../models";
+
 export default function InputPerdiem(props: {
-  projectPerdiemtModelsAsObject: Object;
+  projectPerdiemtModelsAsObject: PerdiemModelsToProjectUuid;
   setTypeOfPerdiem(type: number): void;
   setLogMsg(msg: string): void;
   logMsg: string;
+  uuidProject: string | null;
 }) {
   const { t } = useTranslation();
-  const [model, setModel] = useState<string>(
-    Object.values(props.projectPerdiemtModelsAsObject)[0],
-  );
-  const perdiemModelHandler = (model: string) => {
-    switch (model) {
-      case "VMA Ausland":
-        props.setTypeOfPerdiem(4);
-        break;
-      case "32 € 24h ab 3 Mon":
-        props.setTypeOfPerdiem(5);
-        break;
-      case "16 € Anreise ab 3 Mon":
-        props.setTypeOfPerdiem(6);
-        break;
-      case "14 € VMA Anreise":
-        props.setTypeOfPerdiem(7);
-        break;
-      case "28 € VMA 24h":
-        props.setTypeOfPerdiem(8);
-        break;
-      default:
-        props.setTypeOfPerdiem(-1);
+  const [model, setModel] = useState<string>("");
+  const setPerdiemModelHandler = (event: SelectChangeEvent) => {
+    if (props.uuidProject) {
+      for (const [key, value] of Object.entries(
+        props.projectPerdiemtModelsAsObject[props.uuidProject],
+      )) {
+        if (value === (event.target.value as string)) {
+          console.log("-key:", key, "-value:", value);
+          props.setTypeOfPerdiem(parseInt(key));
+          setModel(value);
+        }
+      }
     }
-  };
-
-  const setModelHandler = (event: SelectChangeEvent) => {
-    setModel(event.target.value as string);
-    perdiemModelHandler(event.target.value as string);
   };
 
   return (
@@ -54,18 +42,20 @@ export default function InputPerdiem(props: {
           <InputLabel id="select-label-modelState">{t("model")}</InputLabel>
           <Select
             labelId="select-label-model"
+            required={true}
             id="demo-simple-select-model"
             value={model}
             label={t("model")}
-            onChange={setModelHandler}
+            onChange={(e) => setPerdiemModelHandler(e)}
           >
-            {Object.values(props.projectPerdiemtModelsAsObject).map(
-              (singleModel, idx) => (
-                <MenuItem key={idx} value={singleModel}>
-                  {singleModel}
-                </MenuItem>
-              ),
-            )}
+            {props.uuidProject &&
+              Object.values(props.projectPerdiemtModelsAsObject[props.uuidProject]).map(
+                (singleModel, idx) => (
+                  <MenuItem key={idx} value={singleModel}>
+                    {singleModel}
+                  </MenuItem>
+                ),
+              )}
           </Select>
         </FormControl>
       </Grid>
