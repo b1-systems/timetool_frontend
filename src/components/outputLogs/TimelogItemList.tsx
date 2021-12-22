@@ -12,14 +12,19 @@ import Box from "@mui/material/Box";
 import React from "react";
 import { useTranslation } from "react-i18next";
 
-import { Perdiem, Timelog } from "../../models";
+import {
+  Perdiem,
+  PerdiemModelsToProjectUuid,
+  ShiftModelsToProjectUuid,
+  Timelog,
+} from "../../models";
 import OutputPerdiem from "./OutputPerdiem";
 import OutputShift from "./OutputShift";
 import OutputTimelogs from "./OutputTimelog";
 
 export default function InputCard(props: {
-  projectShiftModelsAsObject: Object;
-  projectPerdiemtModelsAsObject: Object;
+  projectShiftModelsAsObject: ShiftModelsToProjectUuid;
+  projectPerdiemtModelsAsObject: PerdiemModelsToProjectUuid;
   setEndMonthOpen(open: boolean): void;
   monthIsClosed: boolean;
   timelogs: Timelog[];

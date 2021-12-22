@@ -3,8 +3,27 @@ import { Logs, Project } from "../models";
 
 export const _dummy_projects: Project[] = [
   {
-    uuid: "618e8681-9bb8-4c26-9ae3-86516d67120b",
-    name: "test1",
+    uuid: "618e56a1-dfc0-4025-84f8-86516d67120b",
+    name: "test der Typen",
+    worktypes: {
+      perdiem: {
+        1: "1GAAAAANZ LANGER STRING 1234567890 16 € Anreise ab 3 Mon",
+        2: "2GAAAAANZ LANGER STRING 1234567890 16 € Anreise ab 3 Mon",
+        3: "3GAAAAANZ LANGER STRING 1234567890 16 € Anreise ab 3 Mon",
+      },
+      timelog: {
+        timelog: "timelog",
+      },
+      shift: {
+        morning: "ICH DARF NICHT AUFTAUCHEN dummy 2",
+        afternoon: "ICH DARF NICHT AUFTAUCHEN dummy 2",
+        night: "ICH DARF NICHT AUFTAUCHEN dummy 2",
+      },
+    },
+  },
+  {
+    uuid: "123g86a1-dfc0-4025-84f8-86616d67120b",
+    name: "test der Typen für shifts",
     worktypes: {
       perdiem: {
         3: "GAAAAANZ LANGER STRING 1234567890 16 € Anreise ab 3 Mon",
@@ -18,9 +37,9 @@ export const _dummy_projects: Project[] = [
         timelog: "timelog",
       },
       shift: {
-        morning: "Frühschicht",
-        afternoon: "Nachmittag",
-        night: "Nachtschicht",
+        morning: "Frühschicht dummy 2",
+        afternoon: "Nachmittag dummy 2",
+        night: "Nachtschicht dummy 2",
       },
     },
   },
@@ -137,22 +156,9 @@ export const _dummy_old_logs_1: Logs = {
 export const _dummy_old_logs_2: Logs = {
   timelogs: [
     {
-      uuid: "61b846d5-c33s-4751-8feb-2d0f2068c51e",
-      employee_uuid: "61b846h6-2d44-42c4-83ba-2d0f2068c51e",
-      project_uuid: "618e86r1-dfc0-4025-84f8-86516d67120b",
-      project_name: "test1 - default",
-      start_dt: 1625129200,
-      end_dt: 1625191600,
-      type: "default",
-      breaklength: 3600,
-      travel: "0",
-      comment: "SAP Unicorn - Telefonica",
-      onsite: "onsite",
-    },
-    {
-      uuid: "61b846f5-c33c-4751-8feb-2d0f2068c52e",
+      uuid: "61b846f5-c33c-4211-8feb-2d0f2068c52e",
       employee_uuid: "61b846s6-2d44-42c4-83ba-2f0f2068c51e",
-      project_uuid: "618g86a1-dfc0-4025-84f8-86616d67120b",
+      project_uuid: "123g86a1-dfc0-4025-84f8-86616d67120b",
       project_name: "test1 - shift",
       start_dt: 1725110200,
       end_dt: 1725150600,
@@ -177,23 +183,9 @@ export const _dummy_old_logs_2: Logs = {
       shift_model: "morning",
     },
     {
-      uuid: "71b846d5-c33c-4751-8feb-2d0g2068c51e",
-      employee_uuid: "91b846c6-2d44-42g4-83ba-2d0f2068c51e",
-      project_uuid: "018e86a1-dfg0-4025-84f8-86516d67120b",
-      project_name: "test1 - default",
-      start_dt: 1825119200,
-      end_dt: 1825151600,
-      type: "default",
-      breaklength: 3600,
-      travel: "0",
-      comment:
-        "SAP Unicorn - Telefonica GAAAANZ LANGER STRING 1293768q7zdfisajkchblhjkaghfed",
-      onsite: "onsite",
-    },
-    {
-      uuid: "21y846d5-c33c-4751-8feb-2d0f2068c52e",
+      uuid: "21y846d5-g13c-4751-8feb-2d0f2068c52e",
       employee_uuid: "31b846c6-2d44-42c4-83ba-2f0f2068c51e",
-      project_uuid: "418e86a1-dfc0-4025-84f8-86616d67120b",
+      project_uuid: "123g86a1-dfc0-4025-84f8-86616d67120b",
       project_name: "test1 - shift",
       start_dt: 1425110200,
       end_dt: 1425150600,
@@ -215,25 +207,61 @@ export const _dummy_old_logs_2: Logs = {
           comment: "mitteilung1",
         },
       ],
-      shift_model: "morning",
+      shift_model: "afternoon",
+    },
+    {
+      uuid: "21y826h5-c33c-4751-8feb-2d0f2068c52e",
+      employee_uuid: "31b846c6-2d44-42c4-83ba-2f0f2068c51e",
+      project_uuid: "123g86a1-dfc0-4025-84f8-86616d67120b",
+      project_name: "test1 - shift",
+      start_dt: 1425110200,
+      end_dt: 1425150600,
+      type: "shift",
+      incidents: [
+        {
+          start_dt: 123,
+          end_dt: 123666,
+          comment: "mitteilung1",
+        },
+        {
+          start_dt: 123234,
+          end_dt: 123234666,
+          comment: "mitteilung1",
+        },
+        {
+          start_dt: 1232345,
+          end_dt: 123234666,
+          comment: "mitteilung1",
+        },
+      ],
+      shift_model: "night",
     },
   ],
   perdiems: [
     {
-      uuid: "a41cdbe1-e271-45f4-8644-07ed650d7a50",
+      uuid: "a41cdbe1-e273-45f4-8644-07ed650d7a50",
       project_name: "Test2 perdiem",
       start_dt: 1626566400,
       employee_uuid: "61b846c6-2d44-42c4-83ba-2d0f2068c51e",
-      type: 7,
-      project_uuid: "618e86a1-dfc0-4025-84f8-86516d67120b",
+      type: 1,
+      project_uuid: "618e56a1-dfc0-4025-84f8-86516d67120b",
       comment: "Dresden - Unicorn Meetings - Anreise",
     },
     {
-      uuid: "a51cdbe1-e271-45f4-8644-07ed650d7a50",
+      uuid: "a51cdbe1-e2671-45f4-8644-07ed650d7a50",
       project_name: "Test2 perdiem",
       start_dt: 1676566400,
       employee_uuid: "61b946c6-2d44-42c4-83ba-2d0f2068c51e",
-      type: 8,
+      type: 2,
+      project_uuid: "618e56a1-dfc0-4025-84f8-86516d67120b",
+      comment: "Dresden - Unicorn Meetings - Anreise",
+    },
+    {
+      uuid: "a51cdbe1-e224-45f4-8644-07ed650d7a50",
+      project_name: "Test2 perdiem",
+      start_dt: 1676566400,
+      employee_uuid: "61b946c6-2d44-42c4-83ba-2d0f2068c51e",
+      type: 3,
       project_uuid: "618e56a1-dfc0-4025-84f8-86516d67120b",
       comment: "Dresden - Unicorn Meetings - Anreise",
     },

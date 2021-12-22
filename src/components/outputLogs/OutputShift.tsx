@@ -14,10 +14,10 @@ import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { fetchDelete } from "../../api";
-import { Timelog } from "../../models";
+import { ModelsShift, Timelog } from "../../models";
 
 export default function OutputShift(props: {
-  projectShiftModelsAsObject: Object;
+  projectShiftModelsAsObject: { [key: string]: ModelsShift };
   log: Timelog;
   index: number;
   monthIsClosed: boolean;
@@ -27,10 +27,16 @@ export default function OutputShift(props: {
 
   const [entriesVisible, setEntriesVisible] = useState<boolean>(true);
 
-  const shiftModelHandler = (type: string | undefined): string => {
-    for (const [key, value] of Object.entries(props.projectShiftModelsAsObject)) {
-      if (type && key === type.toString()) {
-        return value;
+  const shiftModelHandler = (uuid: string, type: string | undefined): string => {
+    if (Object.keys(props.projectShiftModelsAsObject).length !== 0 && type) {
+      if (props.projectShiftModelsAsObject[uuid]) {
+        for (const [key, value] of Object.entries(
+          props.projectShiftModelsAsObject[uuid],
+        )) {
+          if (key === type.toString()) {
+            return value;
+          }
+        }
       }
     }
     return "unknown type";
@@ -84,7 +90,10 @@ export default function OutputShift(props: {
 
           <Chip
             style={{ backgroundColor: props.index % 2 ? "white" : "#eeeeee" }}
-            label={t("keypoint.type") + shiftModelHandler(props.log.shift_model)}
+            label={
+              t("keypoint.type") +
+              shiftModelHandler(props.log.project_uuid, props.log.shift_model)
+            }
             avatar={
               <Avatar sx={{ width: 32, height: 32 }}>
                 <NightsStayIcon sx={{ width: 18, height: 18, color: "white" }} />

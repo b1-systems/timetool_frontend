@@ -8,10 +8,10 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 
 import { fetchDelete } from "../../api";
-import { Perdiem } from "../../models";
+import { ModelsPerdiem, Perdiem } from "../../models";
 
 export default function OutputPerdiem(props: {
-  projectPerdiemtModelsAsObject: Object;
+  projectPerdiemtModelsAsObject: { [key: string]: ModelsPerdiem };
   monthIsClosed: boolean;
   log: Perdiem;
   deletePerdiem(uuid: string): void;
@@ -19,10 +19,16 @@ export default function OutputPerdiem(props: {
 }) {
   const { t } = useTranslation();
 
-  const perdiemModeltHandler = (type: number): string => {
-    for (const [key, value] of Object.entries(props.projectPerdiemtModelsAsObject)) {
-      if (key === type.toString()) {
-        return value;
+  const perdiemModelHandler = (uuid: string, type: number): string => {
+    if (Object.keys(props.projectPerdiemtModelsAsObject).length !== 0) {
+      if (props.projectPerdiemtModelsAsObject[uuid]) {
+        for (const [key, value] of Object.entries(
+          props.projectPerdiemtModelsAsObject[uuid],
+        )) {
+          if (key === type.toString()) {
+            return value;
+          }
+        }
       }
     }
     return "unknown type";
@@ -74,7 +80,10 @@ export default function OutputPerdiem(props: {
         />
         <Chip
           style={{ backgroundColor: props.index % 2 ? "white" : "#eeeeee" }}
-          label={t("keypoint.type") + perdiemModeltHandler(props.log.type)}
+          label={
+            t("keypoint.type") +
+            perdiemModelHandler(props.log.project_uuid, props.log.type)
+          }
           avatar={
             <Avatar sx={{ width: 32, height: 32 }}>
               <PaidIcon sx={{ width: 18, height: 18, color: "white" }} />

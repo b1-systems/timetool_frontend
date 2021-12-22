@@ -2,16 +2,7 @@ export interface Project {
   name: string;
   uuid: string;
   worktypes: {
-    perdiem?: {
-      1?: string;
-      2?: string;
-      3?: string;
-      4?: string;
-      5?: string;
-      6?: string;
-      7?: string;
-      8?: string;
-    };
+    perdiem?: ModelsPerdiem;
     timelog?: {
       timelog?: string;
     };
@@ -21,6 +12,27 @@ export interface Project {
       night?: string;
     };
   };
+}
+export interface ModelsPerdiem {
+  1?: string;
+  2?: string;
+  3?: string;
+  4?: string;
+  5?: string;
+  6?: string;
+  7?: string;
+  8?: string;
+}
+export interface PerdiemModelsToProjectUuid {
+  [key: string]: ModelsPerdiem;
+}
+export interface ModelsShift {
+  morning?: string;
+  afternoon?: string;
+  night?: string;
+}
+export interface ShiftModelsToProjectUuid {
+  [key: string]: ModelsShift;
 }
 export interface Logs {
   timelogs: Timelog[];

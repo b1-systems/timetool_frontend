@@ -18,7 +18,14 @@ import { useTranslation } from "react-i18next";
 
 import { fetchCurrentMonthLogs, fetchIsMonthClosed, fetchProjects } from "../api";
 import DummyCard from "../dummyData/DummyCard";
-import { Logs, Perdiem, Project, Timelog } from "../models";
+import {
+  Logs,
+  Perdiem,
+  PerdiemModelsToProjectUuid,
+  Project,
+  ShiftModelsToProjectUuid,
+  Timelog,
+} from "../models";
 import MonthEndDialog from "./MonthEndDialog";
 import InputCard from "./inputLogs/InputCard";
 import TimelogItemList from "./outputLogs/TimelogItemList";
@@ -42,11 +49,10 @@ export default function MainGrid() {
   const [endMonthOpen, setEndMonthOpen] = useState(false);
   const [projectShiftModels, setProjectShiftModels] = useState<string[]>([]);
   const [monthIsClosed, setMonthIsClosed] = useState<boolean>(true);
-  const [projectShiftModelsAsObject, setProjectShiftModelsAsObject] = useState<Object>(
-    {},
-  );
+  const [projectShiftModelsAsObject, setProjectShiftModelsAsObject] =
+    useState<ShiftModelsToProjectUuid>({});
   const [projectPerdiemtModelsAsObject, setProjectPerdiemtModelsAsObject] =
-    useState<Object>({});
+    useState<PerdiemModelsToProjectUuid>({});
 
   //useEffect has disable eslint because an empty array can be used to only use it at initial render
   useEffect(() => {
@@ -132,9 +138,23 @@ export default function MainGrid() {
           }
         });
     }
+    let objPerdiemModels: PerdiemModelsToProjectUuid = {};
+    let objShiftModels: ShiftModelsToProjectUuid = {};
+    availableProjects.forEach((project) => {
+      if (project.worktypes.perdiem) {
+        objPerdiemModels = {
+          ...objPerdiemModels,
+          [project.uuid]: project.worktypes.perdiem,
+        };
+      }
+      if (project.worktypes.shift) {
+        objShiftModels = { ...objShiftModels, [project.uuid]: project.worktypes.shift };
+      }
+    });
+    setProjectShiftModelsAsObject(objShiftModels);
+    setProjectPerdiemtModelsAsObject(objPerdiemModels);
   };
 
-  //setProjectShiftModelsAsObject and setProjectPerdiemtModelsAsObject is used to connect value to key when submitted
   const setProjectGetLogsHandler = (event: SelectChangeEvent) => {
     const projectFiltered = availableProjects.filter(
       (project) => project.name === (event.target.value as string),
@@ -144,10 +164,6 @@ export default function MainGrid() {
     setProjectTypes(Object.keys(projectFiltered[0].worktypes));
     if (projectFiltered[0].worktypes.shift !== undefined) {
       setProjectShiftModels(Object.values(projectFiltered[0].worktypes.shift));
-      setProjectShiftModelsAsObject(projectFiltered[0].worktypes.shift);
-    }
-    if (projectFiltered[0].worktypes.perdiem !== undefined) {
-      setProjectPerdiemtModelsAsObject(projectFiltered[0].worktypes.perdiem);
     }
   };
 
@@ -180,6 +196,8 @@ export default function MainGrid() {
           setOldPerdiems={setOldPerdiems}
           setMonthIsClosed={setMonthIsClosed}
           setSelectedMonth={setSelectedMonth}
+          setProjectShiftModelsAsObject={setProjectShiftModelsAsObject}
+          setProjectPerdiemtModelsAsObject={setProjectPerdiemtModelsAsObject}
         ></DummyCard>
       )}
       <Grid item xs={12}>
