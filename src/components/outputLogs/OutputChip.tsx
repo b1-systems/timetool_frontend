@@ -4,37 +4,22 @@ import React from "react";
 export default function OutputChip(props: {
   index: number;
   heading: string;
-  inversedColor?: boolean;
-  //todo type
-  Icon: any;
+  Icon: React.ReactNode;
   text: string;
 }) {
   return (
     <Card
       elevation={0}
       style={{
-        backgroundColor: props.inversedColor
-          ? props.index % 2
-            ? "#eeeeee"
-            : "white"
-          : props.index % 2
-          ? "white"
-          : "#eeeeee",
-        padding: 1,
+        backgroundColor: props.index % 2 ? "white" : "#eeeeee",
+        padding: 0,
+        borderRadius: 0,
+        boxShadow: "none",
       }}
-      //   sx={{
-      //     borderTop: 5,
-      //     borderLeft: 5,
-      //     borderColor: props.inversedColor
-      //       ? props.index % 2
-      //         ? "white"
-      //         : "#eeeeee"
-      //       : props.index % 2
-      //       ? "#eeeeee"
-      //       : "white",
-      //     borderTopLeftRadius: 20,
-      //     borderTopRightRadius: 20,
-      //   }}
+      sx={{
+        border: 1,
+        borderColor: "#dedede",
+      }}
     >
       <CardHeader
         style={{ padding: 0 }}

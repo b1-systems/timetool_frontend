@@ -8,7 +8,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import FilterNoneIcon from "@mui/icons-material/FilterNone";
 import MoreTimeIcon from "@mui/icons-material/MoreTime";
 import NightsStayIcon from "@mui/icons-material/NightsStay";
-import { Box, Button, Card, Collapse, Grid } from "@mui/material";
+import { Box, Button, Card, CardActions, Collapse, Grid } from "@mui/material";
 import { DateTime } from "luxon";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -52,257 +52,180 @@ export default function OutputShift(props: {
   };
 
   return (
-    <Card elevation={0}>
-      <Box
-        bgcolor={props.index % 2 ? "white" : "#eeeeee"}
-        sx={{
-          flexWrap: "wrap",
-          display: "flex",
-          p: 1,
-          m: 1,
-          justifyContent: "space-evenly",
-        }}
-      >
-        <Grid container spacing={1}>
-          <Grid
-            item
-            xs={12}
-            sm={6}
-            md={6}
-            lg={1}
+    <Card elevation={0} sx={{ backgroundColor: props.index % 2 ? "white" : "#eeeeee" }}>
+      <Grid container spacing={1}>
+        <Grid item xs={12}>
+          <Box
+            bgcolor={props.index % 2 ? "white" : "#eeeeee"}
             sx={{
-              borderBottom: 1,
-              borderRight: 1,
-              borderColor: "#bdbdbd",
+              flexWrap: "wrap",
+              display: "flex",
+              p: 0,
+              m: 0,
+              justifyContent: "space-evenly",
             }}
           >
-            <OutputChip
-              index={props.index}
-              heading={t("keypoint.date")}
-              Icon={<EventIcon sx={{ width: 18, height: 18, color: "white" }} />}
-              text={new Date(props.log.start_dt * 1000).toLocaleDateString("de-DE")}
-            />
-          </Grid>
-          <Grid
-            item
-            xs={12}
-            sm={6}
-            md={6}
-            lg={3}
-            sx={{
-              borderBottom: 1,
-              borderRight: 1,
-              borderColor: "#bdbdbd",
-            }}
-          >
-            <OutputChip
-              index={props.index}
-              heading={t("keypoint.project")}
-              Icon={
-                <DriveFileRenameOutlineIcon
-                  sx={{ width: 18, height: 18, color: "white" }}
+            <Grid container spacing={0}>
+              <Grid item xs={12} sm={6} md={6} lg={2}>
+                <OutputChip
+                  index={props.index}
+                  heading={t("keypoint.date")}
+                  Icon={<EventIcon sx={{ width: 18, height: 18, color: "white" }} />}
+                  text={new Date(props.log.start_dt * 1000).toLocaleDateString("de-DE")}
                 />
-              }
-              text={props.log.project_name}
-            />
-          </Grid>
-          <Grid
-            item
-            xs={12}
-            sm={6}
-            md={6}
-            lg={3}
-            sx={{
-              borderBottom: 1,
-              borderRight: 1,
-              borderColor: "#bdbdbd",
-            }}
-          >
-            <OutputChip
-              index={props.index}
-              heading={t("keypoint.type")}
-              Icon={<NightsStayIcon sx={{ width: 18, height: 18, color: "white" }} />}
-              text={shiftModelHandler(props.log.project_uuid, props.log.shift_model)}
-            />
-          </Grid>
-          <Grid
-            item
-            xs={12}
-            sm={6}
-            md={6}
-            lg={2}
-            sx={{
-              borderBottom: 1,
-              borderRight: 1,
-              borderColor: "#bdbdbd",
-            }}
-          >
-            <OutputChip
-              index={props.index}
-              heading={t("keypoint.entries")}
-              Icon={<FilterNoneIcon sx={{ width: 18, height: 18, color: "white" }} />}
-              text={
-                props.log.incidents?.length.toString()
-                  ? props.log.incidents?.length.toString()
-                  : "0"
-              }
-            />
-          </Grid>
-          <Grid item xs={1} lg={0}></Grid>
-          <Grid container item xs={12} lg={2}>
-            <Grid item xs={0} lg={1}></Grid>
-            <Grid item xs={5} lg={5}>
-              {!!props.log.incidents?.length && (
-                <Card
-                  elevation={0}
-                  style={{
-                    backgroundColor: "#2196f3",
-                    padding: 1,
-                  }}
-                  sx={{
-                    border: 5,
-                    borderColor: props.index % 2 ? "white" : "#eeeeee",
-                  }}
-                >
-                  <Button
-                    fullWidth
-                    size="small"
-                    sx={{ color: "white" }}
-                    onClick={() => setEntriesVisible(!entriesVisible)}
-                  >
-                    {entriesVisible && <ExpandLessIcon />}
-                    {!entriesVisible && <ExpandMoreIcon />}
-                  </Button>
-                </Card>
+              </Grid>
+              <Grid item xs={12} sm={6} md={6} lg={4}>
+                <OutputChip
+                  index={props.index}
+                  heading={t("keypoint.project")}
+                  Icon={
+                    <DriveFileRenameOutlineIcon
+                      sx={{ width: 18, height: 18, color: "white" }}
+                    />
+                  }
+                  text={props.log.project_name}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6} md={6} lg={4}>
+                <OutputChip
+                  index={props.index}
+                  heading={t("keypoint.type")}
+                  Icon={
+                    <NightsStayIcon sx={{ width: 18, height: 18, color: "white" }} />
+                  }
+                  text={shiftModelHandler(
+                    props.log.project_uuid,
+                    props.log.shift_model,
+                  )}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6} md={6} lg={2}>
+                <OutputChip
+                  index={props.index}
+                  heading={t("keypoint.entries")}
+                  Icon={
+                    <FilterNoneIcon sx={{ width: 18, height: 18, color: "white" }} />
+                  }
+                  text={
+                    props.log.incidents?.length.toString()
+                      ? props.log.incidents?.length.toString()
+                      : "0"
+                  }
+                />
+              </Grid>
+              {!!props.log.incidents && (
+                <>
+                  <Grid item xs={1}></Grid>
+                  <Grid item xs={10}>
+                    <Collapse orientation="vertical" in={entriesVisible}>
+                      {props.log.incidents?.map((incident, index) => (
+                        <Box
+                          key={index}
+                          bgcolor={(props.index + index) % 2 ? "#eeeeee" : "white"}
+                          sx={{
+                            width: "100%",
+                            alignItems: "center",
+                            flexWrap: "wrap",
+                            display: "flex",
+                            m: 0,
+                            p: 0,
+                            justifyContent: "space-around",
+                          }}
+                        >
+                          <Grid container spacing={0}>
+                            <Grid item xs={12} sm={3} md={4} lg={4}>
+                              <OutputChip
+                                index={index + 1}
+                                heading={t("keypoint.from")}
+                                Icon={
+                                  <AccessTimeIcon
+                                    sx={{ width: 18, height: 18, color: "white" }}
+                                  />
+                                }
+                                text={`${DateTime.fromSeconds(incident.start_dt).day} ${
+                                  DateTime.fromSeconds(incident.start_dt).monthShort
+                                } at: ${DateTime.fromSeconds(
+                                  props.log.start_dt,
+                                ).toFormat("T")}`}
+                              />
+                            </Grid>
+
+                            <Grid item xs={12} sm={3} md={4} lg={4}>
+                              <OutputChip
+                                index={index + 1}
+                                heading={t("keypoint.to")}
+                                Icon={
+                                  <MoreTimeIcon
+                                    sx={{ width: 18, height: 18, color: "white" }}
+                                  />
+                                }
+                                text={`${DateTime.fromSeconds(incident.end_dt).day} ${
+                                  DateTime.fromSeconds(incident.end_dt).monthShort
+                                } at: ${DateTime.fromSeconds(props.log.end_dt).toFormat(
+                                  "T",
+                                )}`}
+                              />
+                            </Grid>
+                            <Grid item xs={12} sm={6} md={4} lg={4}>
+                              <OutputChip
+                                index={index + 1}
+                                heading={t("keypoint.comment")}
+                                Icon={
+                                  <ChatIcon
+                                    sx={{ width: 18, height: 18, color: "white" }}
+                                  />
+                                }
+                                text={incident.comment}
+                              />
+                            </Grid>
+                          </Grid>
+                        </Box>
+                      ))}
+                    </Collapse>
+                  </Grid>
+                </>
               )}
             </Grid>
-            <Grid item xs={2} lg={1}></Grid>
-            <Grid item xs={5} lg={5}>
-              <Card
-                elevation={0}
-                style={{
-                  backgroundColor: "#d50000",
-                  padding: 1,
-                }}
-                sx={{
-                  border: 5,
-                  borderColor: props.index % 2 ? "white" : "#eeeeee",
-                }}
-              >
-                <Button
-                  fullWidth
-                  size="small"
-                  sx={{ color: "white" }}
-                  onClick={() => deleteHandler(props.log.uuid)}
-                  disabled={props.monthIsClosed}
-                >
-                  <DeleteForeverIcon />
-                </Button>
-              </Card>
-            </Grid>
-          </Grid>
-          <Grid item xs={10}>
-            {!!props.log.incidents && (
-              <Collapse orientation="vertical" in={entriesVisible}>
-                {props.log.incidents?.map((incident, index) => (
-                  <Box
-                    key={index}
-                    bgcolor={(props.index + index) % 2 ? "#eeeeee" : "white"}
-                    sx={{
-                      width: "100%",
-                      alignItems: "center",
-                      flexWrap: "wrap",
-                      display: "flex",
-                      m: 0,
-                      p: 0,
-                      justifyContent: "space-around",
-                    }}
-                  >
-                    <Grid container spacing={1}>
-                      <Grid
-                        item
-                        xs={12}
-                        sm={3}
-                        md={4}
-                        lg={4}
-                        sx={{
-                          borderBottom: 1,
-                          borderRight: 1,
-                          borderColor: "#bdbdbd",
-                        }}
-                      >
-                        <OutputChip
-                          index={index + 1}
-                          heading={t("keypoint.from")}
-                          Icon={
-                            <AccessTimeIcon
-                              sx={{ width: 18, height: 18, color: "white" }}
-                            />
-                          }
-                          text={`${DateTime.fromSeconds(incident.start_dt).day} ${
-                            DateTime.fromSeconds(incident.start_dt).monthShort
-                          } at: ${DateTime.fromSeconds(props.log.start_dt).toFormat(
-                            "T",
-                          )}`}
-                        />
-                      </Grid>
-
-                      <Grid
-                        item
-                        xs={12}
-                        sm={3}
-                        md={4}
-                        lg={4}
-                        sx={{
-                          borderBottom: 1,
-                          borderRight: 1,
-                          borderColor: "#bdbdbd",
-                        }}
-                      >
-                        <OutputChip
-                          index={index + 1}
-                          heading={t("keypoint.to")}
-                          Icon={
-                            <MoreTimeIcon
-                              sx={{ width: 18, height: 18, color: "white" }}
-                            />
-                          }
-                          text={`${DateTime.fromSeconds(incident.end_dt).day} ${
-                            DateTime.fromSeconds(incident.end_dt).monthShort
-                          } at: ${DateTime.fromSeconds(props.log.end_dt).toFormat(
-                            "T",
-                          )}`}
-                        />
-                      </Grid>
-                      <Grid
-                        item
-                        xs={12}
-                        sm={6}
-                        md={4}
-                        lg={4}
-                        sx={{
-                          borderBottom: 1,
-                          borderRight: 1,
-                          borderColor: "#bdbdbd",
-                        }}
-                      >
-                        <OutputChip
-                          index={index + 1}
-                          heading={t("keypoint.comment")}
-                          Icon={
-                            <ChatIcon sx={{ width: 18, height: 18, color: "white" }} />
-                          }
-                          text={incident.comment}
-                        />
-                      </Grid>
-                    </Grid>
-                  </Box>
-                ))}
-              </Collapse>
-            )}
-          </Grid>
+          </Box>
         </Grid>
-      </Box>
+      </Grid>
+      <CardActions>
+        {!props.monthIsClosed && (
+          <>
+            {!!props.log.incidents?.length && (
+              <Button
+                color="info"
+                size="small"
+                variant="contained"
+                onClick={() => setEntriesVisible(!entriesVisible)}
+              >
+                {entriesVisible && <ExpandLessIcon />}
+                {!entriesVisible && <ExpandMoreIcon />}
+              </Button>
+            )}
+            <Button
+              color="error"
+              size="small"
+              variant="contained"
+              onClick={() => deleteHandler(props.log.uuid)}
+              disabled={props.monthIsClosed}
+            >
+              <DeleteForeverIcon />
+            </Button>
+          </>
+        )}
+        {props.monthIsClosed && !!props.log.incidents?.length && (
+          <Button
+            color="info"
+            size="small"
+            variant="contained"
+            onClick={() => setEntriesVisible(!entriesVisible)}
+          >
+            {entriesVisible && <ExpandLessIcon />}
+            {!entriesVisible && <ExpandMoreIcon />}
+          </Button>
+        )}
+      </CardActions>
     </Card>
   );
 }

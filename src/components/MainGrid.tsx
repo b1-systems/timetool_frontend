@@ -59,24 +59,6 @@ export default function MainGrid() {
   useEffect(() => {
     if (process.env.NODE_ENV !== "development") {
       setMonthGetProjectsHandler(selectedMonth);
-      fetchIsMonthClosed({
-        params: {
-          year: selectedMonth.year,
-          month: selectedMonth.month,
-          format: "traditional",
-          scope: "me",
-        },
-      })
-        .then((response) => {
-          return response.json();
-        })
-        .then((response) => {
-          if (response.locks.length === 0) {
-            setMonthIsClosed(false);
-          } else {
-            setMonthIsClosed(true);
-          }
-        });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
