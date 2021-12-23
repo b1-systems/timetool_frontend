@@ -122,8 +122,8 @@ export default function MainGrid() {
         });
       fetchIsMonthClosed({
         params: {
-          year: selectedMonth.year,
-          month: selectedMonth.month,
+          year: newDate.year,
+          month: newDate.month,
           format: "traditional",
           scope: "me",
         },
