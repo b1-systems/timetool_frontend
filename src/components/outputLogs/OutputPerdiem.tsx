@@ -57,43 +57,39 @@ export default function OutputPerdiem(props: {
               justifyContent: "space-evenly",
             }}
           >
-            <Grid container spacing={0}>
-              <Grid item xs={12} sm={6} md={6} lg={2}>
-                <OutputChip
-                  index={props.index}
-                  heading={t("keypoint.date")}
-                  Icon={<EventIcon sx={{ width: 18, height: 18, color: "white" }} />}
-                  text={new Date(props.log.start_dt * 1000).toLocaleDateString("de-DE")}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6} md={6} lg={3}>
-                <OutputChip
-                  index={props.index}
-                  heading={t("keypoint.project")}
-                  Icon={
-                    <DriveFileRenameOutlineIcon
-                      sx={{ width: 18, height: 18, color: "white" }}
-                    />
-                  }
-                  text={props.log.project_name}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6} md={6} lg={3}>
-                <OutputChip
-                  index={props.index}
-                  heading={t("keypoint.type")}
-                  Icon={<PaidIcon sx={{ width: 18, height: 18, color: "white" }} />}
-                  text={perdiemModelHandler(props.log.project_uuid, props.log.type)}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6} md={6} lg={4}>
-                <OutputChip
-                  index={props.index}
-                  heading={t("keypoint.comment")}
-                  Icon={<ChatIcon sx={{ width: 18, height: 18, color: "white" }} />}
-                  text={props.log.comment || "no comment"}
-                />
-              </Grid>
+            <Grid container spacing={0} alignItems="stretch">
+              <OutputChip
+                lg={2}
+                index={props.index}
+                heading={t("keypoint.date")}
+                Icon={<EventIcon sx={{ width: 18, height: 18, color: "white" }} />}
+                text={new Date(props.log.start_dt * 1000).toLocaleDateString("de-DE")}
+              />
+              <OutputChip
+                lg={3}
+                index={props.index}
+                heading={t("keypoint.project")}
+                Icon={
+                  <DriveFileRenameOutlineIcon
+                    sx={{ width: 18, height: 18, color: "white" }}
+                  />
+                }
+                text={props.log.project_name}
+              />
+              <OutputChip
+                lg={3}
+                index={props.index}
+                heading={t("keypoint.type")}
+                Icon={<PaidIcon sx={{ width: 18, height: 18, color: "white" }} />}
+                text={perdiemModelHandler(props.log.project_uuid, props.log.type)}
+              />
+              <OutputChip
+                lg={4}
+                index={props.index}
+                heading={t("keypoint.comment")}
+                Icon={<ChatIcon sx={{ width: 18, height: 18, color: "white" }} />}
+                text={props.log.comment || "no comment"}
+              />
             </Grid>
           </Box>
         </Grid>

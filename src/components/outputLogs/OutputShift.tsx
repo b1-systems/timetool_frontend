@@ -65,54 +65,41 @@ export default function OutputShift(props: {
               justifyContent: "space-evenly",
             }}
           >
-            <Grid container spacing={0}>
-              <Grid item xs={12} sm={6} md={6} lg={2}>
-                <OutputChip
-                  index={props.index}
-                  heading={t("keypoint.date")}
-                  Icon={<EventIcon sx={{ width: 18, height: 18, color: "white" }} />}
-                  text={new Date(props.log.start_dt * 1000).toLocaleDateString("de-DE")}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6} md={6} lg={4}>
-                <OutputChip
-                  index={props.index}
-                  heading={t("keypoint.project")}
-                  Icon={
-                    <DriveFileRenameOutlineIcon
-                      sx={{ width: 18, height: 18, color: "white" }}
-                    />
-                  }
-                  text={props.log.project_name}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6} md={6} lg={4}>
-                <OutputChip
-                  index={props.index}
-                  heading={t("keypoint.type")}
-                  Icon={
-                    <NightsStayIcon sx={{ width: 18, height: 18, color: "white" }} />
-                  }
-                  text={shiftModelHandler(
-                    props.log.project_uuid,
-                    props.log.shift_model,
-                  )}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6} md={6} lg={2}>
-                <OutputChip
-                  index={props.index}
-                  heading={t("keypoint.entries")}
-                  Icon={
-                    <FilterNoneIcon sx={{ width: 18, height: 18, color: "white" }} />
-                  }
-                  text={
-                    props.log.incidents?.length.toString()
-                      ? props.log.incidents?.length.toString()
-                      : "0"
-                  }
-                />
-              </Grid>
+            <Grid container spacing={0} alignItems="stretch">
+              <OutputChip
+                index={props.index}
+                heading={t("keypoint.date")}
+                Icon={<EventIcon sx={{ width: 18, height: 18, color: "white" }} />}
+                text={new Date(props.log.start_dt * 1000).toLocaleDateString("de-DE")}
+              />
+              <OutputChip
+                lg={4}
+                index={props.index}
+                heading={t("keypoint.project")}
+                Icon={
+                  <DriveFileRenameOutlineIcon
+                    sx={{ width: 18, height: 18, color: "white" }}
+                  />
+                }
+                text={props.log.project_name}
+              />
+              <OutputChip
+                lg={4}
+                index={props.index}
+                heading={t("keypoint.type")}
+                Icon={<NightsStayIcon sx={{ width: 18, height: 18, color: "white" }} />}
+                text={shiftModelHandler(props.log.project_uuid, props.log.shift_model)}
+              />
+              <OutputChip
+                index={props.index}
+                heading={t("keypoint.entries")}
+                Icon={<FilterNoneIcon sx={{ width: 18, height: 18, color: "white" }} />}
+                text={
+                  props.log.incidents?.length.toString()
+                    ? props.log.incidents?.length.toString()
+                    : "0"
+                }
+              />
               {!!props.log.incidents && (
                 <>
                   <Grid item xs={1}></Grid>
@@ -132,52 +119,52 @@ export default function OutputShift(props: {
                             justifyContent: "space-around",
                           }}
                         >
-                          <Grid container spacing={0}>
-                            <Grid item xs={12} sm={3} md={4} lg={4}>
-                              <OutputChip
-                                index={index + 1}
-                                heading={t("keypoint.from")}
-                                Icon={
-                                  <AccessTimeIcon
-                                    sx={{ width: 18, height: 18, color: "white" }}
-                                  />
-                                }
-                                text={`${DateTime.fromSeconds(incident.start_dt).day} ${
-                                  DateTime.fromSeconds(incident.start_dt).monthShort
-                                } at: ${DateTime.fromSeconds(
-                                  props.log.start_dt,
-                                ).toFormat("T")}`}
-                              />
-                            </Grid>
+                          <Grid container spacing={0} alignItems="stretch">
+                            <OutputChip
+                              md={4}
+                              lg={4}
+                              index={index + 1}
+                              heading={t("keypoint.from")}
+                              Icon={
+                                <AccessTimeIcon
+                                  sx={{ width: 18, height: 18, color: "white" }}
+                                />
+                              }
+                              text={`${DateTime.fromSeconds(incident.start_dt).day} ${
+                                DateTime.fromSeconds(incident.start_dt).monthShort
+                              } at: ${DateTime.fromSeconds(props.log.start_dt).toFormat(
+                                "T",
+                              )}`}
+                            />
+                            <OutputChip
+                              md={4}
+                              lg={4}
+                              index={index + 1}
+                              heading={t("keypoint.to")}
+                              Icon={
+                                <MoreTimeIcon
+                                  sx={{ width: 18, height: 18, color: "white" }}
+                                />
+                              }
+                              text={`${DateTime.fromSeconds(incident.end_dt).day} ${
+                                DateTime.fromSeconds(incident.end_dt).monthShort
+                              } at: ${DateTime.fromSeconds(props.log.end_dt).toFormat(
+                                "T",
+                              )}`}
+                            />
 
-                            <Grid item xs={12} sm={3} md={4} lg={4}>
-                              <OutputChip
-                                index={index + 1}
-                                heading={t("keypoint.to")}
-                                Icon={
-                                  <MoreTimeIcon
-                                    sx={{ width: 18, height: 18, color: "white" }}
-                                  />
-                                }
-                                text={`${DateTime.fromSeconds(incident.end_dt).day} ${
-                                  DateTime.fromSeconds(incident.end_dt).monthShort
-                                } at: ${DateTime.fromSeconds(props.log.end_dt).toFormat(
-                                  "T",
-                                )}`}
-                              />
-                            </Grid>
-                            <Grid item xs={12} sm={6} md={4} lg={4}>
-                              <OutputChip
-                                index={index + 1}
-                                heading={t("keypoint.comment")}
-                                Icon={
-                                  <ChatIcon
-                                    sx={{ width: 18, height: 18, color: "white" }}
-                                  />
-                                }
-                                text={incident.comment}
-                              />
-                            </Grid>
+                            <OutputChip
+                              md={4}
+                              lg={4}
+                              index={index + 1}
+                              heading={t("keypoint.comment")}
+                              Icon={
+                                <ChatIcon
+                                  sx={{ width: 18, height: 18, color: "white" }}
+                                />
+                              }
+                              text={incident.comment}
+                            />
                           </Grid>
                         </Box>
                       ))}

@@ -1,3 +1,5 @@
+import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import NoteAddIcon from "@mui/icons-material/NoteAdd";
 import {
   Alert,
@@ -5,11 +7,12 @@ import {
   Card,
   CardActions,
   CardContent,
+  Collapse,
   Container,
   Grid,
 } from "@mui/material";
 import Box from "@mui/material/Box";
-import React from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import {
@@ -33,6 +36,9 @@ export default function InputCard(props: {
   deletePerdiem(uuid: string): void;
 }) {
   const { t } = useTranslation();
+  const [timelogsVisible, setTimelogsVisible] = useState<boolean>(true);
+  const [perdiemsVisible, setPerdiemsVisible] = useState<boolean>(true);
+  const [shiftsVisible, setShiftsVisible] = useState<boolean>(true);
   let defaultTimelogs = props.timelogs
     .filter((log) => log.type === "default")
     .sort(function (x, y) {
@@ -53,46 +59,94 @@ export default function InputCard(props: {
       <CardContent>
         {!!defaultTimelogs.length && (
           <ul>
-            <h3>{t("timelogs")}</h3>
-            {defaultTimelogs.map((log, index) => (
-              <OutputTimelogs
-                monthIsClosed={props.monthIsClosed}
-                log={log}
-                index={index}
-                key={log.uuid}
-                deleteTimelog={props.deleteTimelog}
-              />
-            ))}
+            <Grid container alignItems="center">
+              <Grid item>
+                <h3>{t("timelogs")}</h3>
+              </Grid>
+              <Grid item>
+                <Button
+                  color="info"
+                  size="small"
+                  onClick={() => setTimelogsVisible(!timelogsVisible)}
+                >
+                  {timelogsVisible && <ExpandLessIcon />}
+                  {!timelogsVisible && <ExpandMoreIcon />}
+                </Button>
+              </Grid>
+            </Grid>
+            <Collapse orientation="vertical" in={timelogsVisible}>
+              {defaultTimelogs.map((log, index) => (
+                <OutputTimelogs
+                  monthIsClosed={props.monthIsClosed}
+                  log={log}
+                  index={index}
+                  key={log.uuid}
+                  deleteTimelog={props.deleteTimelog}
+                />
+              ))}
+            </Collapse>
           </ul>
         )}
         {!!shiftTimelogs.length && (
           <ul>
-            <h3>{t("shifts")}</h3>
-            {shiftTimelogs.map((log, index) => (
-              <OutputShift
-                projectShiftModelsAsObject={props.projectShiftModelsAsObject}
-                index={index}
-                monthIsClosed={props.monthIsClosed}
-                log={log}
-                key={log.uuid}
-                deleteTimelog={props.deleteTimelog}
-              />
-            ))}
+            <Grid container alignItems="center">
+              <Grid item>
+                <h3>{t("shifts")}</h3>
+              </Grid>
+              <Grid item>
+                <Button
+                  color="info"
+                  size="small"
+                  onClick={() => setShiftsVisible(!shiftsVisible)}
+                >
+                  {shiftsVisible && <ExpandLessIcon />}
+                  {!shiftsVisible && <ExpandMoreIcon />}
+                </Button>
+              </Grid>
+            </Grid>
+            <Collapse orientation="vertical" in={shiftsVisible}>
+              {shiftTimelogs.map((log, index) => (
+                <OutputShift
+                  projectShiftModelsAsObject={props.projectShiftModelsAsObject}
+                  index={index}
+                  monthIsClosed={props.monthIsClosed}
+                  log={log}
+                  key={log.uuid}
+                  deleteTimelog={props.deleteTimelog}
+                />
+              ))}
+            </Collapse>
           </ul>
         )}
         {!!perdiems.length && (
           <ul>
-            <h3>{t("perdiems")}</h3>
-            {perdiems.map((log, index) => (
-              <OutputPerdiem
-                projectPerdiemtModelsAsObject={props.projectPerdiemModelsAsObject}
-                index={index}
-                monthIsClosed={props.monthIsClosed}
-                log={log}
-                key={log.uuid}
-                deletePerdiem={props.deletePerdiem}
-              />
-            ))}
+            <Grid container alignItems="center">
+              <Grid item>
+                <h3>{t("perdiems")}</h3>
+              </Grid>
+              <Grid item>
+                <Button
+                  color="info"
+                  size="small"
+                  onClick={() => setPerdiemsVisible(!perdiemsVisible)}
+                >
+                  {perdiemsVisible && <ExpandLessIcon />}
+                  {!perdiemsVisible && <ExpandMoreIcon />}
+                </Button>
+              </Grid>
+            </Grid>
+            <Collapse orientation="vertical" in={perdiemsVisible}>
+              {perdiems.map((log, index) => (
+                <OutputPerdiem
+                  projectPerdiemtModelsAsObject={props.projectPerdiemModelsAsObject}
+                  index={index}
+                  monthIsClosed={props.monthIsClosed}
+                  log={log}
+                  key={log.uuid}
+                  deletePerdiem={props.deletePerdiem}
+                />
+              ))}
+            </Collapse>
           </ul>
         )}
         {defaultTimelogs.length + shiftTimelogs.length + perdiems.length === 0 && (

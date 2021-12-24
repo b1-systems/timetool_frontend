@@ -22,7 +22,6 @@ export default function OutputTimelogs(props: {
   index: number;
 }) {
   const { t } = useTranslation();
-
   const deleteHandler = (uuid: string) => {
     const requestPrototype = {
       request: { uuid: uuid },
@@ -45,62 +44,50 @@ export default function OutputTimelogs(props: {
             }}
           >
             <Grid container spacing={0} alignItems="stretch">
-              <Grid item xs={12} sm={6} md={6} lg={2}>
-                <OutputChip
-                  index={props.index}
-                  heading={t("keypoint.date")}
-                  Icon={<EventIcon sx={{ width: 18, height: 18, color: "white" }} />}
-                  text={new Date(props.log.start_dt * 1000).toLocaleDateString("de-DE")}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6} md={6} lg={3}>
-                <OutputChip
-                  index={props.index}
-                  heading={t("keypoint.project")}
-                  Icon={
-                    <DriveFileRenameOutlineIcon
-                      sx={{ width: 18, height: 18, color: "white" }}
-                    />
-                  }
-                  text={props.log.project_name}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6} md={6} lg={1}>
-                <OutputChip
-                  index={props.index}
-                  heading={t("keypoint.from")}
-                  Icon={
-                    <AccessTimeIcon sx={{ width: 18, height: 18, color: "white" }} />
-                  }
-                  text={DateTime.fromSeconds(props.log.start_dt).toFormat("T")}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6} md={6} lg={1}>
-                <OutputChip
-                  index={props.index}
-                  heading={t("keypoint.to")}
-                  Icon={<MoreTimeIcon sx={{ width: 18, height: 18, color: "white" }} />}
-                  text={DateTime.fromSeconds(props.log.end_dt).toFormat("T")}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6} md={6} lg={3}>
-                <OutputChip
-                  index={props.index}
-                  heading={t("keypoint.comment")}
-                  Icon={<ChatIcon sx={{ width: 18, height: 18, color: "white" }} />}
-                  text={props.log.comment || "no comment"}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6} md={6} lg={2}>
-                <OutputChip
-                  index={props.index}
-                  heading={t("keypoint.onsite")}
-                  Icon={
-                    <MyLocationIcon sx={{ width: 18, height: 18, color: "white" }} />
-                  }
-                  text={props.log.onsite || "remote"}
-                />
-              </Grid>
+              <OutputChip
+                index={props.index}
+                heading={t("keypoint.date")}
+                Icon={<EventIcon sx={{ width: 18, height: 18, color: "white" }} />}
+                text={new Date(props.log.start_dt * 1000).toLocaleDateString("de-DE")}
+              />
+              <OutputChip
+                lg={3}
+                index={props.index}
+                heading={t("keypoint.project")}
+                Icon={
+                  <DriveFileRenameOutlineIcon
+                    sx={{ width: 18, height: 18, color: "white" }}
+                  />
+                }
+                text={props.log.project_name}
+              />
+              <OutputChip
+                lg={1}
+                index={props.index}
+                heading={t("keypoint.from")}
+                Icon={<AccessTimeIcon sx={{ width: 18, height: 18, color: "white" }} />}
+                text={DateTime.fromSeconds(props.log.start_dt).toFormat("T")}
+              />
+              <OutputChip
+                lg={1}
+                index={props.index}
+                heading={t("keypoint.to")}
+                Icon={<MoreTimeIcon sx={{ width: 18, height: 18, color: "white" }} />}
+                text={DateTime.fromSeconds(props.log.end_dt).toFormat("T")}
+              />
+              <OutputChip
+                lg={3}
+                index={props.index}
+                heading={t("keypoint.comment")}
+                Icon={<ChatIcon sx={{ width: 18, height: 18, color: "white" }} />}
+                text={props.log.comment || "no comment"}
+              />
+              <OutputChip
+                index={props.index}
+                heading={t("keypoint.onsite")}
+                Icon={<MyLocationIcon sx={{ width: 18, height: 18, color: "white" }} />}
+                text={props.log.onsite || "remote"}
+              />
             </Grid>
           </Box>
         </Grid>
