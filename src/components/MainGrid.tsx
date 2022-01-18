@@ -154,7 +154,7 @@ export default function MainGrid() {
   };
 
   //timelogs and perdiems are in one and the same response, but sorted out here
-  const fetchAfterSubmitHandler = () => {
+  const fetchAfterSubmitHandler = (): Promise<void> =>
     fetchCurrentMonthLogs({
       params: {
         year: selectedMonth.year,
@@ -169,9 +169,11 @@ export default function MainGrid() {
       .then((LogsResponse: Logs) => {
         setOldTimelogs(LogsResponse.timelogs);
         setOldPerdiems(LogsResponse.perdiems);
+        return;
+      })
+      .finally(() => {
+        setUuidLog(null);
       });
-    setUuidLog(null);
-  };
 
   return (
     <Grid container spacing={3}>

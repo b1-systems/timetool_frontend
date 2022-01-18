@@ -31,7 +31,7 @@ import Inputshift from "./InputShift";
 
 export default function InputCard(props: {
   monthIsClosed: boolean;
-  fetchAfterSubmitHandler(): void;
+  fetchAfterSubmitHandler(): Promise<void>;
   projectShiftModelsAsObject: ShiftModelsToProjectUuid;
   types: string[];
   month: DateTime;
@@ -66,14 +66,14 @@ export default function InputCard(props: {
     setType(event.target.value as string);
   };
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     let onsiteRemote = "remote";
     if (remote === false) {
       onsiteRemote = "onsite";
     }
     if (type === "shift" && props.uuidProject) {
-      fetchSubmit({
+      await fetchSubmit({
         uuid: props.uuidLog || uuidv4(),
         project_uuid: props.uuidProject,
         start_dt: Math.round(selectedDay.valueOf() / 1000),
@@ -87,7 +87,7 @@ export default function InputCard(props: {
       });
     }
     if (type === "timelog" && props.uuidProject && from && to) {
-      fetchSubmit({
+      await fetchSubmit({
         uuid: props.uuidLog || uuidv4(),
         project_uuid: props.uuidProject,
         start_dt: Math.round(from.valueOf() / 1000),
@@ -101,7 +101,7 @@ export default function InputCard(props: {
       });
     }
     if (type === "perdiem" && props.uuidProject && selectedDay) {
-      fetchSubmit({
+      await fetchSubmit({
         uuid: props.uuidLog || uuidv4(),
         project_uuid: props.uuidProject,
         start_dt: Math.round(selectedDay.valueOf() / 1000),
@@ -111,8 +111,9 @@ export default function InputCard(props: {
         timezone: window.Intl.DateTimeFormat().resolvedOptions().timeZone,
       });
     }
-    props.fetchAfterSubmitHandler();
-    //setSelectedDay(selectedDay.plus({ days: 1 }));
+    props.fetchAfterSubmitHandler().then(() => {
+      setSelectedDay(selectedDay.plus({ days: 1 }));
+    });
   };
 
   const handleRemote = () => {

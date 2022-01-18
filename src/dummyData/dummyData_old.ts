@@ -3,149 +3,69 @@ import { Logs, Project } from "../models";
 
 export const _dummy_projects: Project[] = [
   {
-    uuid: "618e867e-8e0c-4465-b376-86516d67120b",
-    name: "Onsite",
+    uuid: "618e56a1-dfc0-4025-84f8-86516d67120b",
+    name: "test der Typen",
     worktypes: {
       perdiem: {
-        4: "VMA Ausland",
-        5: "32 \u20ac 24h ab 3 Mon",
-        6: "16 \u20ac Anreise ab 3 Mon",
-        7: "14 \u20ac VMA Anreise",
-        8: "28 \u20ac VMA 24h",
+        1: "1GAAAAANZ LANGER STRING 1234567890 16 € Anreise ab 3 Mon",
+        2: "2GAAAAANZ LANGER STRING 1234567890 16 € Anreise ab 3 Mon",
+        3: "3GAAAAANZ LANGER STRING 1234567890 16 € Anreise ab 3 Mon",
       },
       timelog: {
         timelog: "timelog",
       },
       shift: {
-        morning: "Fr\u00fchschicht",
-        afternoon: "Nachmittag",
-        night: "Nachtschicht",
+        morning: "ICH DARF NICHT AUFTAUCHEN dummy 2",
+        afternoon: "ICH DARF NICHT AUFTAUCHEN dummy 2",
+        night: "ICH DARF NICHT AUFTAUCHEN dummy 2",
       },
     },
   },
   {
-    uuid: "618e867e-9334-4800-b192-86516d67120b",
-    name: "Entwicklung",
+    uuid: "123g86a1-dfc0-4025-84f8-86616d67120b",
+    name: "test der Typen für shifts",
     worktypes: {
       perdiem: {
+        3: "GAAAAANZ LANGER STRING 1234567890 16 € Anreise ab 3 Mon",
         4: "VMA Ausland",
-        5: "32 \u20ac 24h ab 3 Mon",
-        6: "16 \u20ac Anreise ab 3 Mon",
-        7: "14 \u20ac VMA Anreise",
-        8: "28 \u20ac VMA 24h",
+        5: "32 € 24h ab 3 Mon",
+        6: "16 € Anreise ab 3 Mon",
+        7: "14 € VMA Anreise",
+        8: "28 € VMA 24h",
       },
       timelog: {
         timelog: "timelog",
       },
       shift: {
-        morning: "Fr\u00fchschicht",
-        afternoon: "Nachmittag",
-        night: "Nachtschicht",
+        morning: "Frühschicht dummy 2",
+        afternoon: "Nachmittag dummy 2",
+        night: "Nachtschicht dummy 2",
       },
     },
   },
   {
-    uuid: "618e867e-a8c4-4a33-a03e-86516d67120b",
-    name: "Consulting",
+    uuid: "618e8681-9bb8-4c26-9ae3-86516d67120c",
+    name: "test2",
     worktypes: {
-      perdiem: {
-        4: "VMA Ausland",
-        5: "32 \u20ac 24h ab 3 Mon",
-        6: "16 \u20ac Anreise ab 3 Mon",
-        7: "14 \u20ac VMA Anreise",
-        8: "28 \u20ac VMA 24h",
-      },
       timelog: {
         timelog: "timelog",
-      },
-      shift: {
-        morning: "Fr\u00fchschicht",
-        afternoon: "Nachmittag",
-        night: "Nachtschicht",
       },
     },
   },
   {
-    uuid: "618e867e-b58c-4cd2-b343-86516d67120b",
-    name: "Training",
+    uuid: "623f481-9bb8-4c26-9ae3-86516d67120b",
+    name: "test3",
     worktypes: {
       perdiem: {
-        4: "VMA Ausland",
-        5: "32 \u20ac 24h ab 3 Mon",
-        6: "16 \u20ac Anreise ab 3 Mon",
-        7: "14 \u20ac VMA Anreise",
-        8: "28 \u20ac VMA 24h",
+        1: "VMA Ausland",
+        2: "0 € 24h ab 3 Mon",
+        3: "99 € Anreise ab 3 Mon",
       },
       timelog: {
         timelog: "timelog",
       },
       shift: {
-        morning: "Fr\u00fchschicht",
-        afternoon: "Nachmittag",
-        night: "Nachtschicht",
-      },
-    },
-  },
-  {
-    uuid: "618e8680-9670-4ecd-974f-86516d67120b",
-    name: "SP - By Design",
-    worktypes: {
-      perdiem: {
-        4: "VMA Ausland",
-        5: "32 \u20ac 24h ab 3 Mon",
-        6: "16 \u20ac Anreise ab 3 Mon",
-        7: "14 \u20ac VMA Anreise",
-        "8": "28 \u20ac VMA 24h",
-      },
-      timelog: {
-        timelog: "timelog",
-      },
-      shift: {
-        morning: "Fr\u00fchschicht",
-        afternoon: "Nachmittag",
-        night: "Nachtschicht",
-      },
-    },
-  },
-  {
-    uuid: "618e8685-ba30-4b3b-8f31-86516d67120b",
-    name: 'IS - Erweiterung "Reseller"',
-    worktypes: {
-      perdiem: {
-        4: "VMA Ausland",
-        5: "32 \u20ac 24h ab 3 Mon",
-        6: "16 \u20ac Anreise ab 3 Mon",
-        7: "14 \u20ac VMA Anreise",
-        8: "28 \u20ac VMA 24h",
-      },
-      timelog: {
-        timelog: "timelog",
-      },
-      shift: {
-        morning: "Fr\u00fchschicht",
-        afternoon: "Nachmittag",
-        night: "Nachtschicht",
-      },
-    },
-  },
-  {
-    uuid: "618e8687-43b0-45a6-addd-86516d67120b",
-    name: "ek - SUSE Manager",
-    worktypes: {
-      perdiem: {
-        4: "VMA Ausland",
-        5: "32 \u20ac 24h ab 3 Mon",
-        6: "16 \u20ac Anreise ab 3 Mon",
-        7: "14 \u20ac VMA Anreise",
-        8: "28 \u20ac VMA 24h",
-      },
-      timelog: {
-        timelog: "timelog",
-      },
-      shift: {
-        morning: "Fr\u00fchschicht",
-        afternoon: "Nachmittag",
-        night: "Nachtschicht",
+        morning: "Frühschicht",
       },
     },
   },

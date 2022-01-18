@@ -3,17 +3,13 @@ import { DateTime } from "luxon";
 import React, { useEffect } from "react";
 
 import {
-  _dummy_old_logs_1,
-  _dummy_old_logs_2,
-  _dummy_projects,
-} from "../dummyData/dummyData";
-import {
   Perdiem,
   PerdiemModelsToProjectUuid,
   Project,
   ShiftModelsToProjectUuid,
   Timelog,
 } from "../models";
+import { _dummy_old_logs_1, _dummy_old_logs_2, _dummy_projects } from "./dummyData";
 
 interface Props {
   setAvailableProjects(_dummy_projects: Project[]): void;
