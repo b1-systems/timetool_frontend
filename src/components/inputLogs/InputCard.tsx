@@ -112,7 +112,7 @@ export default function InputCard(props: {
       });
     }
     props.fetchAfterSubmitHandler();
-    setSelectedDay(selectedDay.plus({ days: 1 }));
+    //setSelectedDay(selectedDay.plus({ days: 1 }));
   };
 
   const handleRemote = () => {
