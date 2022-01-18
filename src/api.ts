@@ -70,7 +70,7 @@ export const fetchCurrentMonthLogs = async (requestPrototyp: {
 
 export const fetchDelete = async (requestPrototyp: {
   request: { uuid: string };
-}): Promise<Response> =>
+}): Promise<void> =>
   fetch(`${baseUrl()}/rest/timelog/${requestPrototyp.request.uuid}`, {
     method: "delete",
     headers: {
@@ -79,7 +79,7 @@ export const fetchDelete = async (requestPrototyp: {
     },
   }).then((response) => {
     if (response.ok) {
-      return response;
+      return;
     } else {
       throw new Error(
         `Could not fetch auditlogs. Backend response code: ${response.status}`,

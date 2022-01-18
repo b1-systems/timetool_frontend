@@ -8,50 +8,50 @@ import {
   InputLabel,
   MenuItem,
   Select,
-  SelectChangeEvent,
   TextField,
 } from "@mui/material";
 import { DateTime } from "luxon";
-import React from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useRecoilState, useRecoilValue } from "recoil";
 
+import { dateFromState, shiftModelsState } from "../../atom";
 import { Incident, ShiftModelsToProjectUuid } from "../../models";
 
 export default function InputShift(props: {
-  uuidProject: string | null;
+  uuidProject: string;
   projectShiftModelsAsObject: ShiftModelsToProjectUuid;
   shiftModels: string[];
   shift: string;
   setShift(shiftModel: string): void;
   incidents: Incident[];
   setIncidents(Incidents: Incident[]): void;
-  day: DateTime;
   setShiftModel(model: string): void;
 }) {
   const { t } = useTranslation();
-  const setShiftModelHandler = (event: SelectChangeEvent) => {
-    props.setShift(event.target.value as string);
-    if (props.uuidProject) {
-      for (const [key, value] of Object.entries(
-        props.projectShiftModelsAsObject[props.uuidProject],
-      )) {
-        if (value === (event.target.value as string)) {
-          props.setShiftModel(key);
-        }
-      }
-    }
-  };
+
+  const [shiftSelected, setShiftSelected] = useState(props.shift);
+  const shiftModels = useRecoilValue(shiftModelsState);
+
+  const [dateFrom] = useRecoilState(dateFromState);
 
   const addHandler = () => {
     props.setIncidents([
       ...props.incidents,
       {
-        start_dt: props.day.valueOf() / 1000,
-        end_dt: props.day.valueOf() / 1000,
+        start_dt: dateFrom.valueOf() / 1000,
+        end_dt: dateFrom.valueOf() / 1000,
         comment: "",
       },
     ]);
   };
+
+  console.log("XD", Object.entries(shiftModels));
+
+  const shiftModel = shiftModels.get(props.uuidProject);
+  if (!shiftModel) {
+    return <p>No Shifts</p>;
+  }
 
   return (
     <>
@@ -61,13 +61,16 @@ export default function InputShift(props: {
           <Select
             labelId="select-label-shiftModel"
             id="demo-simple-select-shiftModel"
-            value={props.shift}
+            value={shiftSelected}
             label={t("shift_model")}
-            onChange={setShiftModelHandler}
+            onChange={(e) => {
+              props.setShiftModel(e.target.value);
+              setShiftSelected(e.target.value);
+            }}
           >
-            {props.shiftModels.map((singleType, idx) => (
-              <MenuItem key={idx} value={singleType}>
-                {singleType}
+            {Object.entries(shiftModel).map(([key, shift]) => (
+              <MenuItem key={key} value={key}>
+                {shift}
               </MenuItem>
             ))}
           </Select>
@@ -75,7 +78,7 @@ export default function InputShift(props: {
       </Grid>
       <Grid item xs={12} sm={6} md={3} lg={2} sx={{ mt: 1 }}>
         <Button
-          disabled={!props.shift}
+          disabled={!shiftSelected}
           fullWidth
           size="large"
           onClick={addHandler}

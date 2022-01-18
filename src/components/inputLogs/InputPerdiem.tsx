@@ -1,20 +1,20 @@
 import {
+  Button,
   FormControl,
   Grid,
   InputLabel,
   MenuItem,
   Select,
-  SelectChangeEvent,
   TextField,
 } from "@mui/material";
-import React from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useRecoilValue } from "recoil";
 
-import { PerdiemModelsToProjectUuid } from "../../models";
+import { perdiemModelsState } from "../../atom";
 
 export default function InputPerdiem(props: {
-  uuidProject: string | null;
-  projectPerdiemModelsAsObject: PerdiemModelsToProjectUuid;
+  uuidProject: string;
   perdiemModels: string[];
   model: string;
   setModel(model: string): void;
@@ -22,22 +22,23 @@ export default function InputPerdiem(props: {
   setLogMsg(msg: string): void;
   logMsg: string;
 }) {
+  const perdiemModels = useRecoilValue(perdiemModelsState);
+  const [modelSelected, setModelSelected] = useState(props.model);
   const { t } = useTranslation();
-  const setPerdiemModelHandler = (event: SelectChangeEvent) => {
-    props.setModel(event.target.value as string);
-    if (props.uuidProject) {
-      for (const [key, value] of Object.entries(
-        props.projectPerdiemModelsAsObject[props.uuidProject],
-      )) {
-        if (value === (event.target.value as string)) {
-          props.setTypeOfPerdiem(parseInt(key));
-        }
-      }
-    }
-  };
 
+  const projectPerdiem = perdiemModels.get(props.uuidProject);
+  if (!projectPerdiem) {
+    return <p>has no perdiems</p>;
+  }
   return (
     <>
+      {/* only_test */}
+      {process.env.NODE_ENV === "development" && (
+        <>
+          <Button onClick={() => console.log(props.model)}>model</Button>
+        </>
+      )}
+      {/* only_test_end */}
       <Grid item xs={12} sm={4} md={3} lg={2}>
         <FormControl fullWidth>
           <InputLabel id="select-label-modelState">{t("model")}</InputLabel>
@@ -45,13 +46,16 @@ export default function InputPerdiem(props: {
             labelId="select-label-model"
             required={true}
             id="demo-simple-select-model"
-            value={props.model}
+            value={modelSelected}
             label={t("model")}
-            onChange={(e) => setPerdiemModelHandler(e)}
+            onChange={(e) => {
+              props.setTypeOfPerdiem(parseInt(e.target.value));
+              setModelSelected(e.target.value);
+            }}
           >
-            {props.perdiemModels.map((singleType, idx) => (
-              <MenuItem key={idx} value={singleType}>
-                {singleType}
+            {Object.entries(projectPerdiem).map(([key, perdiemModel]) => (
+              <MenuItem key={key} value={key}>
+                {perdiemModel}
               </MenuItem>
             ))}
           </Select>

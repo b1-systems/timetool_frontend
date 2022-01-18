@@ -6,26 +6,32 @@ import PaidIcon from "@mui/icons-material/Paid";
 import { Box, Button, Card, CardActions, Grid } from "@mui/material";
 import React from "react";
 import { useTranslation } from "react-i18next";
+import { useRecoilValue } from "recoil";
 
 import { fetchDelete } from "../../api";
-import { ModelsPerdiem, Perdiem } from "../../models";
+import { perdiemModelsState, useUpdateProjects } from "../../atom";
+import { Perdiem } from "../../models";
 import OutputChip from "./OutputChip";
 
 export default function OutputPerdiem(props: {
-  projectPerdiemtModelsAsObject: { [key: string]: ModelsPerdiem };
   monthIsClosed: boolean;
   log: Perdiem;
-  deletePerdiem(uuid: string): void;
   index: number;
 }) {
   const { t } = useTranslation();
 
+  const updateProjects = useUpdateProjects();
+
+  const perdiemModels = useRecoilValue(perdiemModelsState);
+
   const perdiemModelHandler = (uuid: string, type: number): string => {
-    if (Object.keys(props.projectPerdiemtModelsAsObject).length !== 0) {
-      if (props.projectPerdiemtModelsAsObject[uuid]) {
-        for (const [key, value] of Object.entries(
-          props.projectPerdiemtModelsAsObject[uuid],
-        )) {
+    if (perdiemModels.size !== 0 && type) {
+      if (perdiemModels.has(uuid)) {
+        const perdiem = perdiemModels.get(uuid);
+        if (!perdiem) {
+          return "unknown type";
+        }
+        for (const [key, value] of Object.entries(perdiem)) {
           if (key === type.toString()) {
             return value;
           }
@@ -35,12 +41,26 @@ export default function OutputPerdiem(props: {
     return "unknown type";
   };
 
+  //const perdiemModelHandler = (uuid: string, type: number): string => {
+  //if (Object.keys(props.projectPerdiemtModelsAsObject).length !== 0) {
+  //  if (props.projectPerdiemtModelsAsObject[uuid]) {
+  //       for (const [key, value] of Object.entries(
+  //         props.projectPerdiemtModelsAsObject[uuid],
+  //       )) {
+  //         if (key === type.toString()) {
+  //           return value;
+  //         }
+  //       }
+  //     }
+  //   }
+  //   return "unknown type";
+  // };
+
   const deleteHandler = (uuid: string) => {
     const requestPrototype = {
       request: { uuid: uuid },
     };
-    fetchDelete(requestPrototype);
-    props.deletePerdiem(uuid);
+    fetchDelete(requestPrototype).then(() => updateProjects());
   };
 
   return (

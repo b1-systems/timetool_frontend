@@ -8,16 +8,13 @@ import {
   RadioGroup,
   TextField,
 } from "@mui/material";
-import { DateTime } from "luxon";
 import React from "react";
 import { useTranslation } from "react-i18next";
+import { useRecoilState } from "recoil";
+
+import { dateFromState, dateToState } from "../../atom";
 
 export default function InputDefaultTimelog(props: {
-  day: DateTime;
-  to: DateTime;
-  from: DateTime;
-  setToCard(time: DateTime): void;
-  setFromCard(time: DateTime): void;
   handleRemote(): void;
   setBreakTime(time: number): void;
   breakTime: number;
@@ -27,18 +24,21 @@ export default function InputDefaultTimelog(props: {
   logMsg: string;
 }) {
   const { t } = useTranslation();
+
+  const [dateFrom, setDateFrom] = useRecoilState(dateFromState);
+  const [dateTo, setDateTo] = useRecoilState(dateToState);
   return (
     <>
       <Grid item xs={12} sm={11} md={6} lg={3}>
         <FormControl fullWidth>
           <TimePicker
             label={t("from")}
-            value={props.from}
+            value={dateFrom}
             ampm={false}
             ampmInClock={false}
             onChange={(newValue) => {
               if (newValue) {
-                props.setFromCard(newValue.set({ second: 0, millisecond: 0 }));
+                setDateFrom(newValue.set({ second: 0, millisecond: 0 }));
               }
             }}
             renderInput={(params) => <TextField {...params} />}
@@ -48,9 +48,8 @@ export default function InputDefaultTimelog(props: {
       {/* only_test */}
       {process.env.NODE_ENV === "development" && (
         <>
-          <Button onClick={() => console.log(props.day)}>select_day</Button>
-          <Button onClick={() => console.log(props.from)}>selceted_from</Button>
-          <Button onClick={() => console.log(props.to)}>selceted_to</Button>
+          <Button onClick={() => console.log(dateFrom)}>selceted_from</Button>
+          <Button onClick={() => console.log(dateTo)}>selceted_to</Button>
         </>
       )}
       {/* only_test_end */}
@@ -60,10 +59,10 @@ export default function InputDefaultTimelog(props: {
             label={t("to")}
             ampm={false}
             ampmInClock={false}
-            value={props.to}
+            value={dateTo}
             onChange={(newValue) => {
               if (newValue) {
-                props.setToCard(newValue.set({ second: 0, millisecond: 0 }));
+                setDateTo(newValue.set({ second: 0, millisecond: 0 }));
               }
             }}
             renderInput={(params) => <TextField {...params} />}

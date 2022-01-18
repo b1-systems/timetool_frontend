@@ -8,34 +8,36 @@ import {
   DialogContent,
   Typography,
 } from "@mui/material";
-import { DateTime } from "luxon";
 import { useTranslation } from "react-i18next";
+import { useRecoilState } from "recoil";
 
 import { fetchCloseMonth, fetchIsMonthClosed } from "../api";
+import { dateFromState } from "../atom";
 
 const MonthEndDialog = (props: {
   setMonthIsClosed(isClosed: boolean): void;
   close: () => void;
-  selectedMonth: DateTime;
 }) => {
   const { t } = useTranslation();
   const cancelHandler = async () => {
     props.close();
   };
 
+  const [dateFrom] = useRecoilState(dateFromState);
+
   const handleEndMonth = () => {
     fetchCloseMonth({
       request: {
-        year: props.selectedMonth.year.toString(),
-        month: props.selectedMonth.month.toString(),
+        year: dateFrom.year.toString(),
+        month: dateFrom.month.toString(),
         format: "traditional",
         scope: "me",
       },
     });
     fetchIsMonthClosed({
       params: {
-        year: props.selectedMonth.year,
-        month: props.selectedMonth.month,
+        year: dateFrom.year,
+        month: dateFrom.month,
         format: "traditional",
         scope: "me",
       },

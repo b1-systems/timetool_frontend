@@ -14,12 +14,13 @@ import {
   SelectChangeEvent,
   TextField,
 } from "@mui/material";
-import { DateTime } from "luxon";
 import React, { FormEvent, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useRecoilState } from "recoil";
 import { v4 as uuidv4 } from "uuid";
 
 import { fetchSubmit } from "../../api";
+import { dateFromState, dateToState, useUpdateProjects } from "../../atom";
 import {
   Incident,
   PerdiemModelsToProjectUuid,
@@ -31,11 +32,9 @@ import Inputshift from "./InputShift";
 
 export default function InputCard(props: {
   monthIsClosed: boolean;
-  fetchAfterSubmitHandler(): Promise<void>;
   projectShiftModelsAsObject: ShiftModelsToProjectUuid;
   types: string[];
-  month: DateTime;
-  uuidProject: string | null;
+  uuidProject: string;
   uuidLog: string | null;
   projectShiftModels: string[];
   perdiemModels: string[];
@@ -47,20 +46,24 @@ export default function InputCard(props: {
   const [breakTime, setBreakTime] = useState<number>(0);
   const [travelTime, setTravelTime] = useState<number>(0);
   const [logMsg, setLogMsg] = useState<string>("");
-  const [selectedDay, setSelectedDay] = useState<DateTime>(
-    props.month.set({ day: 1, hour: 0, minute: 0, second: 0, millisecond: 0 }),
-  );
+  // const [selectedDay, setSelectedDay] = useState<DateTime>(
+  //   props.month.set({ day: 1, hour: 0, minute: 0, second: 0, millisecond: 0 }),
+  // );
+  const [dateFrom, setDateFrom] = useRecoilState(dateFromState);
+  const [dateTo, setDateTo] = useRecoilState(dateToState);
   const [remote, setRemote] = useState<boolean>(true);
   const [shift, setShift] = useState<string>("");
   const [shiftModel, setShiftModel] = useState<string>("");
   const [incidents, setIncidents] = useState<Incident[]>([]);
-  const [from, setFrom] = useState<DateTime>(
-    props.month.set({ day: 1, hour: 0, minute: 0, second: 0, millisecond: 0 }),
-  );
-  const [to, setTo] = useState<DateTime>(
-    props.month.set({ day: 1, hour: 0, minute: 0, second: 0, millisecond: 0 }),
-  );
+  // const [from, setFrom] = useState<DateTime>(
+  //   props.month.set({ day: 1, hour: 0, minute: 0, second: 0, millisecond: 0 }),
+  // );
+  // const [to, setTo] = useState<DateTime>(
+  //   props.month.set({ day: 1, hour: 0, minute: 0, second: 0, millisecond: 0 }),
+  // );
   const [typeOfPerdiem, setTypeOfPerdiem] = useState<number>(-1);
+
+  const updateProjects = useUpdateProjects();
 
   const setTypeHandler = (event: SelectChangeEvent) => {
     setType(event.target.value as string);
@@ -72,49 +75,45 @@ export default function InputCard(props: {
     if (remote === false) {
       onsiteRemote = "onsite";
     }
+    const commonData = {
+      uuid: props.uuidLog || uuidv4(),
+      project_uuid: props.uuidProject,
+      start_dt: Math.round(dateFrom.valueOf() / 1000),
+      timezone: window.Intl.DateTimeFormat().resolvedOptions().timeZone,
+    };
+    let submitData;
     if (type === "shift" && props.uuidProject) {
-      await fetchSubmit({
-        uuid: props.uuidLog || uuidv4(),
-        project_uuid: props.uuidProject,
-        start_dt: Math.round(selectedDay.valueOf() / 1000),
-        end_dt: Math.round(
-          selectedDay.plus({ hours: 23, minutes: 59 }).valueOf() / 1000,
-        ),
+      submitData = {
+        ...commonData,
+        end_dt: Math.round(dateFrom.plus({ hours: 23, minutes: 59 }).valueOf() / 1000),
         type: type,
         incidents: incidents,
         shift_model: shiftModel,
-        timezone: window.Intl.DateTimeFormat().resolvedOptions().timeZone,
-      });
-    }
-    if (type === "timelog" && props.uuidProject && from && to) {
-      await fetchSubmit({
-        uuid: props.uuidLog || uuidv4(),
-        project_uuid: props.uuidProject,
-        start_dt: Math.round(from.valueOf() / 1000),
-        end_dt: Math.round(to.valueOf() / 1000),
+      };
+    } else if (type === "timelog" && props.uuidProject && dateFrom && dateTo) {
+      submitData = {
+        ...commonData,
+        end_dt: Math.round(dateTo.valueOf() / 1000),
         type: type,
         breakTime: breakTime * 60,
         travelTime: travelTime * 60,
         comment: logMsg,
         onsite: onsiteRemote,
-        timezone: window.Intl.DateTimeFormat().resolvedOptions().timeZone,
-      });
-    }
-    if (type === "perdiem" && props.uuidProject && selectedDay) {
-      await fetchSubmit({
-        uuid: props.uuidLog || uuidv4(),
-        project_uuid: props.uuidProject,
-        start_dt: Math.round(selectedDay.valueOf() / 1000),
+      };
+    } else if (type === "perdiem" && props.uuidProject && dateFrom) {
+      submitData = {
+        ...commonData,
         type: typeOfPerdiem,
         comment: logMsg,
         is_perdiem: true,
-        timezone: window.Intl.DateTimeFormat().resolvedOptions().timeZone,
-      });
+      };
+    } else {
+      throw new Error("not a valid submit");
     }
-    props.fetchAfterSubmitHandler().then(() => {
-      setSelectedDay(selectedDay.plus({ days: 1 }));
-      setSelectedDay(from.plus({ days: 1 }));
-      setSelectedDay(to.plus({ days: 1 }));
+    fetchSubmit(submitData).then(() => {
+      updateProjects();
+      setDateFrom(dateFrom.plus({ days: 1 }));
+      setDateTo(dateTo.plus({ days: 1 }));
     });
   };
 
@@ -129,11 +128,20 @@ export default function InputCard(props: {
           {/* only_test */}
           {process.env.NODE_ENV === "development" && (
             <>
-              <Button onClick={() => console.log(props.month)}>
+              <Button onClick={() => console.log(dateFrom)}>
                 Test_year_Month_in_inputCard
               </Button>
-              <Button onClick={() => console.log(selectedDay)}>selceted_Day</Button>
-              <Button onClick={() => console.log(Math.round(from.valueOf() / 1000))}>
+              <Button onClick={() => console.log(dateFrom)}>selceted_Day</Button>
+              <Button
+                onClick={() =>
+                  console.log(
+                    "Todo neue copmmit obj hier rein",
+                    "timelog",
+                    "shift",
+                    "perdiem",
+                  )
+                }
+              >
                 check_commit
               </Button>
             </>
@@ -146,14 +154,13 @@ export default function InputCard(props: {
                   views={["day"]}
                   label={t("day")}
                   disabled={!props.uuidProject}
-                  minDate={props.month}
-                  maxDate={props.month.plus({ months: 1 }).minus({ day: 1 })}
-                  value={selectedDay}
+                  minDate={dateFrom}
+                  maxDate={dateFrom.plus({ months: 1 }).minus({ day: 1 })}
+                  value={dateFrom}
                   onChange={(newValue) => {
                     if (newValue) {
-                      setSelectedDay(newValue);
-                      setFrom(newValue);
-                      setTo(newValue);
+                      setDateFrom(newValue);
+                      setDateTo(newValue);
                     }
                   }}
                   renderInput={(params) => <TextField {...params} helperText={null} />}
@@ -191,18 +198,12 @@ export default function InputCard(props: {
                 shift={shift}
                 incidents={incidents}
                 setIncidents={setIncidents}
-                day={selectedDay}
                 setShiftModel={setShiftModel}
               />
             )}
 
             {type === "timelog" && (
               <InputDefaultTimelog
-                day={selectedDay}
-                to={to}
-                from={from}
-                setToCard={setTo}
-                setFromCard={setFrom}
                 handleRemote={handleRemote}
                 setBreakTime={setBreakTime}
                 breakTime={breakTime}
@@ -219,7 +220,6 @@ export default function InputCard(props: {
                 perdiemModels={props.perdiemModels}
                 setModel={setModel}
                 uuidProject={props.uuidProject}
-                projectPerdiemModelsAsObject={props.projectPerdiemModelsAsObject}
                 setTypeOfPerdiem={setTypeOfPerdiem}
                 setLogMsg={setLogMsg}
                 logMsg={logMsg}

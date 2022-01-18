@@ -16,17 +16,12 @@ import {
 import { DateTime } from "luxon";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useRecoilState, useRecoilValue } from "recoil";
 
-import { fetchCurrentMonthLogs, fetchIsMonthClosed, fetchProjects } from "../api";
+import { fetchIsMonthClosed } from "../api";
+import { dateFromState, projectsState } from "../atom";
 import DummyCard from "../dummyData/DummyCard";
-import {
-  Logs,
-  Perdiem,
-  PerdiemModelsToProjectUuid,
-  Project,
-  ShiftModelsToProjectUuid,
-  Timelog,
-} from "../models";
+import { PerdiemModelsToProjectUuid, ShiftModelsToProjectUuid } from "../models";
 import MonthEndDialog from "./MonthEndDialog";
 import InputCard from "./inputLogs/InputCard";
 import TimelogItemList from "./outputLogs/TimelogItemList";
@@ -37,15 +32,14 @@ import TimelogItemList from "./outputLogs/TimelogItemList";
 
 export default function MainGrid() {
   const { t } = useTranslation();
-  const [selectedMonth, setSelectedMonth] = useState<DateTime>(
-    DateTime.now().set({ day: 1, hour: 0, minute: 0, second: 0, millisecond: 0 }),
-  );
-  const [availableProjects, setAvailableProjects] = useState<Project[]>([]);
-  const [oldTimelogs, setOldTimelogs] = useState<Timelog[]>([]);
-  const [oldPerdiems, setOldPerdiems] = useState<Perdiem[]>([]);
+  const [dateFrom, setDateFrom] = useRecoilState(dateFromState);
+  const availableProjects = useRecoilValue(projectsState);
+  // const CurrentMonthLogs = useRecoilValue(currentMonthLogsState);
+  // const oldTimelogs = useRecoilValue(currentMonthLogsTimelogsState);
+  // const oldPerdiems = useRecoilValue(currentMonthLogsPerdiemsState);
   const [project, setProject] = useState<string>("");
-  const [projectUuid, setProjectUuid] = useState<string | null>(null);
-  const [uuidLog, setUuidLog] = useState<string | null>(null);
+  const [projectUuid, setProjectUuid] = useState<string>("");
+  const [uuidLog] = useState<string | null>(null);
   const [projectTypes, setProjectTypes] = useState<string[]>([]);
   const [endMonthOpen, setEndMonthOpen] = useState(false);
   const [projectShiftModels, setProjectShiftModels] = useState<string[]>([]);
@@ -59,50 +53,18 @@ export default function MainGrid() {
   //useEffect has disable eslint because an empty array can be used to only use it at initial render
   useEffect(() => {
     if (process.env.NODE_ENV !== "development") {
-      setMonthGetProjectsHandler(selectedMonth);
+      setMonthGetProjectsHandler(dateFrom);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const deleteTimelog = (uuid: string) => {
-    setOldTimelogs(oldTimelogs.filter((log) => log.uuid !== uuid));
-  };
-
-  const deletePerdiem = (uuid: string) => {
-    setOldPerdiems(oldPerdiems.filter((log) => log.uuid !== uuid));
-  };
 
   const monthEndHandler = () => {
     setEndMonthOpen(false);
   };
 
   const setMonthGetProjectsHandler = (newDate: DateTime) => {
-    setSelectedMonth(newDate);
-    let requestPrototype;
+    setDateFrom(newDate);
     if (newDate !== null) {
-      requestPrototype = {
-        params: {
-          year: newDate.year,
-          month: newDate.month,
-          format: "traditional",
-          scope: "me",
-        },
-      };
-      fetchProjects(requestPrototype)
-        .then((response) => {
-          return response.json();
-        })
-        .then((projectsResponse) => {
-          setAvailableProjects(projectsResponse.projects);
-        });
-      fetchCurrentMonthLogs(requestPrototype)
-        .then((response) => {
-          return response.json();
-        })
-        .then((LogsResponse: Logs) => {
-          setOldTimelogs(LogsResponse.timelogs);
-          setOldPerdiems(LogsResponse.perdiems);
-        });
       fetchIsMonthClosed({
         params: {
           year: newDate.year,
@@ -122,21 +84,6 @@ export default function MainGrid() {
           }
         });
     }
-    let objPerdiemModels: PerdiemModelsToProjectUuid = {};
-    let objShiftModels: ShiftModelsToProjectUuid = {};
-    availableProjects.forEach((project) => {
-      if (project.worktypes.perdiem) {
-        objPerdiemModels = {
-          ...objPerdiemModels,
-          [project.uuid]: project.worktypes.perdiem,
-        };
-      }
-      if (project.worktypes.shift) {
-        objShiftModels = { ...objShiftModels, [project.uuid]: project.worktypes.shift };
-      }
-    });
-    setProjectShiftModelsAsObject(objShiftModels);
-    setProjectPerdiemtModelsAsObject(objPerdiemModels);
   };
 
   const setProjectGetLogsHandler = (event: SelectChangeEvent) => {
@@ -154,37 +101,13 @@ export default function MainGrid() {
     }
   };
 
-  //timelogs and perdiems are in one and the same response, but sorted out here
-  const fetchAfterSubmitHandler = (): Promise<void> =>
-    fetchCurrentMonthLogs({
-      params: {
-        year: selectedMonth.year,
-        month: selectedMonth.month,
-        format: "traditional",
-        scope: "me",
-      },
-    })
-      .then((response) => {
-        return response.json();
-      })
-      .then((LogsResponse: Logs) => {
-        setOldTimelogs(LogsResponse.timelogs);
-        setOldPerdiems(LogsResponse.perdiems);
-        return;
-      })
-      .finally(() => {
-        setUuidLog(null);
-      });
+  console.log(availableProjects);
 
   return (
     <Grid container spacing={3}>
       {process.env.NODE_ENV === "development" && (
         <DummyCard
-          setAvailableProjects={setAvailableProjects}
-          setOldTimelogs={setOldTimelogs}
-          setOldPerdiems={setOldPerdiems}
           setMonthIsClosed={setMonthIsClosed}
-          setSelectedMonth={setSelectedMonth}
           setProjectShiftModelsAsObject={setProjectShiftModelsAsObject}
           setProjectPerdiemtModelsAsObject={setProjectPerdiemtModelsAsObject}
         ></DummyCard>
@@ -194,16 +117,13 @@ export default function MainGrid() {
           {endMonthOpen && (
             <MonthEndDialog
               close={monthEndHandler}
-              selectedMonth={selectedMonth}
               setMonthIsClosed={setMonthIsClosed}
             />
           )}
           <CardHeader></CardHeader>
           <CardContent>
             {process.env.NODE_ENV === "development" && (
-              <Button onClick={() => console.log(selectedMonth)}>
-                Test_year_Month
-              </Button>
+              <Button onClick={() => console.log(dateFrom)}>Test_year_Month</Button>
             )}
             <Grid container spacing={3}>
               <Grid item xs={12} sm={4} md={3} lg={2}>
@@ -213,7 +133,7 @@ export default function MainGrid() {
                     label={t("year_and_month")}
                     minDate={DateTime.fromISO("2000-01-01T00:00")}
                     maxDate={DateTime.fromISO("2100-01-01T00:00")}
-                    value={selectedMonth}
+                    value={dateFrom}
                     onChange={(newValue) => {
                       if (newValue) {
                         setMonthGetProjectsHandler(newValue);
@@ -234,7 +154,7 @@ export default function MainGrid() {
                     value={project}
                     label={t("project")}
                     onChange={setProjectGetLogsHandler}
-                    disabled={!selectedMonth}
+                    disabled={!dateFrom}
                   >
                     {availableProjects.map((project) => (
                       <MenuItem key={project.uuid} value={project.name}>
@@ -257,11 +177,9 @@ export default function MainGrid() {
         <InputCard
           perdiemModels={perdiemModels}
           monthIsClosed={monthIsClosed}
-          fetchAfterSubmitHandler={fetchAfterSubmitHandler}
           projectPerdiemModelsAsObject={projectPerdiemModelsAsObject}
           projectShiftModelsAsObject={projectShiftModelsAsObject}
           types={projectTypes}
-          month={selectedMonth}
           uuidProject={projectUuid}
           uuidLog={uuidLog}
           projectShiftModels={projectShiftModels}
@@ -269,13 +187,7 @@ export default function MainGrid() {
       </Grid>
       <Grid item xs={12}>
         <TimelogItemList
-          projectShiftModelsAsObject={projectShiftModelsAsObject}
-          projectPerdiemModelsAsObject={projectPerdiemModelsAsObject}
           monthIsClosed={monthIsClosed}
-          deleteTimelog={deleteTimelog}
-          deletePerdiem={deletePerdiem}
-          timelogs={oldTimelogs}
-          perdiems={oldPerdiems}
           setEndMonthOpen={setEndMonthOpen}
         />
       </Grid>

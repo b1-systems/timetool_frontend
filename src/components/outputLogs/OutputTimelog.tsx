@@ -11,6 +11,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 
 import { fetchDelete } from "../../api";
+import { useUpdateProjects } from "../../atom";
 import { Timelog } from "../../models";
 import OutputChip from "./OutputChip";
 
@@ -18,16 +19,16 @@ export default function OutputTimelogs(props: {
   monthIsClosed: boolean;
 
   log: Timelog;
-  deleteTimelog(uuid: string): void;
   index: number;
 }) {
+  const updateProjects = useUpdateProjects();
+
   const { t } = useTranslation();
   const deleteHandler = (uuid: string) => {
     const requestPrototype = {
       request: { uuid: uuid },
     };
-    fetchDelete(requestPrototype);
-    props.deleteTimelog(uuid);
+    fetchDelete(requestPrototype).then(() => updateProjects());
   };
   return (
     <Card elevation={0} sx={{ backgroundColor: props.index % 2 ? "white" : "#eeeeee" }}>

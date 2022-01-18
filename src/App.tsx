@@ -7,6 +7,7 @@ import { deDE, enUS } from "@mui/x-data-grid";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { BrowserRouter } from "react-router-dom";
+import { RecoilRoot } from "recoil";
 
 import OuterMenu from "./components/OuterMenu";
 
@@ -50,21 +51,23 @@ function App() {
   }
   const theme = responsiveFontSizes(preTheme);
   return (
-    <LocalizationProvider dateAdapter={DateAdapter}>
-      <BrowserRouter basename={appWebroot}>
-        <ThemeProvider theme={theme}>
-          <Toastyfier position="bottom-center" gutter={12}>
-            <ConfirmationDialog
-              confirm={t("confirm")}
-              cancel={t("cancel")}
-              title={t("confirmation_required")}
-            >
-              <OuterMenu supportedLanguages={supportedLanguages}></OuterMenu>
-            </ConfirmationDialog>
-          </Toastyfier>
-        </ThemeProvider>
-      </BrowserRouter>
-    </LocalizationProvider>
+    <RecoilRoot>
+      <LocalizationProvider dateAdapter={DateAdapter}>
+        <BrowserRouter basename={appWebroot}>
+          <ThemeProvider theme={theme}>
+            <Toastyfier position="bottom-center" gutter={12}>
+              <ConfirmationDialog
+                confirm={t("confirm")}
+                cancel={t("cancel")}
+                title={t("confirmation_required")}
+              >
+                <OuterMenu supportedLanguages={supportedLanguages}></OuterMenu>
+              </ConfirmationDialog>
+            </Toastyfier>
+          </ThemeProvider>
+        </BrowserRouter>
+      </LocalizationProvider>
+    </RecoilRoot>
   );
 }
 

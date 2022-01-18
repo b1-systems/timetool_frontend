@@ -14,44 +14,41 @@ import {
 import Box from "@mui/material/Box";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useRecoilValue } from "recoil";
 
 import {
-  Perdiem,
-  PerdiemModelsToProjectUuid,
-  ShiftModelsToProjectUuid,
-  Timelog,
-} from "../../models";
+  currentMonthLogsPerdiemsState,
+  currentMonthLogsTimelogsState,
+} from "../../atom";
 import OutputPerdiem from "./OutputPerdiem";
 import OutputShift from "./OutputShift";
 import OutputTimelogs from "./OutputTimelog";
 
 export default function InputCard(props: {
-  projectShiftModelsAsObject: ShiftModelsToProjectUuid;
-  projectPerdiemModelsAsObject: PerdiemModelsToProjectUuid;
   setEndMonthOpen(open: boolean): void;
   monthIsClosed: boolean;
-  timelogs: Timelog[];
-  perdiems: Perdiem[];
-  deleteTimelog(uuid: string): void;
-  deletePerdiem(uuid: string): void;
 }) {
   const { t } = useTranslation();
   const [timelogsVisible, setTimelogsVisible] = useState<boolean>(true);
   const [perdiemsVisible, setPerdiemsVisible] = useState<boolean>(true);
   const [shiftsVisible, setShiftsVisible] = useState<boolean>(true);
-  let defaultTimelogs = props.timelogs
+
+  const oldTimelogs = useRecoilValue(currentMonthLogsTimelogsState);
+  const oldPerdiems = useRecoilValue(currentMonthLogsPerdiemsState);
+
+  let defaultTimelogs = oldTimelogs
     .filter((log) => log.type === "default")
     .sort(function (x, y) {
       return x.start_dt - y.start_dt;
     });
 
-  let shiftTimelogs = props.timelogs
+  let shiftTimelogs = oldTimelogs
     .filter((log) => log.type === "shift")
     .sort(function (x, y) {
       return x.start_dt - y.start_dt;
     });
 
-  let perdiems = props.perdiems.sort(function (x, y) {
+  let perdiems = oldPerdiems.sort(function (x, y) {
     return x.start_dt - y.start_dt;
   });
   return (
@@ -81,7 +78,6 @@ export default function InputCard(props: {
                   log={log}
                   index={index}
                   key={log.uuid}
-                  deleteTimelog={props.deleteTimelog}
                 />
               ))}
             </Collapse>
@@ -107,12 +103,10 @@ export default function InputCard(props: {
             <Collapse orientation="vertical" in={shiftsVisible}>
               {shiftTimelogs.map((log, index) => (
                 <OutputShift
-                  projectShiftModelsAsObject={props.projectShiftModelsAsObject}
                   index={index}
                   monthIsClosed={props.monthIsClosed}
                   log={log}
                   key={log.uuid}
-                  deleteTimelog={props.deleteTimelog}
                 />
               ))}
             </Collapse>
@@ -138,12 +132,10 @@ export default function InputCard(props: {
             <Collapse orientation="vertical" in={perdiemsVisible}>
               {perdiems.map((log, index) => (
                 <OutputPerdiem
-                  projectPerdiemtModelsAsObject={props.projectPerdiemModelsAsObject}
                   index={index}
                   monthIsClosed={props.monthIsClosed}
                   log={log}
                   key={log.uuid}
-                  deletePerdiem={props.deletePerdiem}
                 />
               ))}
             </Collapse>

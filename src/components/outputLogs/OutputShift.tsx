@@ -12,28 +12,32 @@ import { Box, Button, Card, CardActions, Collapse, Grid } from "@mui/material";
 import { DateTime } from "luxon";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useRecoilValue } from "recoil";
 
 import { fetchDelete } from "../../api";
-import { ModelsShift, Timelog } from "../../models";
+import { shiftModelsState, useUpdateProjects } from "../../atom";
+import { Timelog } from "../../models";
 import OutputChip from "./OutputChip";
 
 export default function OutputShift(props: {
-  projectShiftModelsAsObject: { [key: string]: ModelsShift };
   log: Timelog;
   index: number;
   monthIsClosed: boolean;
-  deleteTimelog(uuid: string): void;
 }) {
   const { t } = useTranslation();
 
   const [entriesVisible, setEntriesVisible] = useState<boolean>(false);
 
+  const shiftModels = useRecoilValue(shiftModelsState);
+
   const shiftModelHandler = (uuid: string, type: string | undefined): string => {
-    if (Object.keys(props.projectShiftModelsAsObject).length !== 0 && type) {
-      if (props.projectShiftModelsAsObject[uuid]) {
-        for (const [key, value] of Object.entries(
-          props.projectShiftModelsAsObject[uuid],
-        )) {
+    if (shiftModels.size !== 0 && type) {
+      if (shiftModels.has(uuid)) {
+        const shift = shiftModels.get(uuid);
+        if (!shift) {
+          return "unknown type";
+        }
+        for (const [key, value] of Object.entries(shift)) {
           if (key === type.toString()) {
             return value;
           }
@@ -43,12 +47,13 @@ export default function OutputShift(props: {
     return "unknown type";
   };
 
+  const updateProjects = useUpdateProjects();
+
   const deleteHandler = (uuid: string) => {
     const requestPrototype = {
       request: { uuid: uuid },
     };
-    fetchDelete(requestPrototype);
-    props.deleteTimelog(uuid);
+    fetchDelete(requestPrototype).then(() => updateProjects());
   };
 
   return (
