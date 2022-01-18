@@ -1,5 +1,6 @@
 import DatePicker from "@mui/lab/DatePicker";
 import {
+  Button,
   Card,
   CardActions,
   CardContent,
@@ -199,6 +200,11 @@ export default function MainGrid() {
           )}
           <CardHeader></CardHeader>
           <CardContent>
+            {process.env.NODE_ENV === "development" && (
+              <Button onClick={() => console.log(selectedMonth)}>
+                Test_year_Month
+              </Button>
+            )}
             <Grid container spacing={3}>
               <Grid item xs={12} sm={4} md={3} lg={2}>
                 <FormControl fullWidth>

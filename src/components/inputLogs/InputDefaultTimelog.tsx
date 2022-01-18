@@ -1,5 +1,6 @@
 import { TimePicker } from "@mui/lab";
 import {
+  Button,
   FormControl,
   FormControlLabel,
   Grid,
@@ -44,6 +45,15 @@ export default function InputDefaultTimelog(props: {
           />
         </FormControl>
       </Grid>
+      {/* only_test */}
+      {process.env.NODE_ENV === "development" && (
+        <>
+          <Button onClick={() => console.log(props.day)}>select_day</Button>
+          <Button onClick={() => console.log(props.from)}>selceted_from</Button>
+          <Button onClick={() => console.log(props.to)}>selceted_to</Button>
+        </>
+      )}
+      {/* only_test_end */}
       <Grid item xs={12} sm={11} md={6} lg={3}>
         <FormControl fullWidth>
           <TimePicker

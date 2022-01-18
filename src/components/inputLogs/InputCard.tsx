@@ -113,6 +113,8 @@ export default function InputCard(props: {
     }
     props.fetchAfterSubmitHandler().then(() => {
       setSelectedDay(selectedDay.plus({ days: 1 }));
+      setSelectedDay(from.plus({ days: 1 }));
+      setSelectedDay(to.plus({ days: 1 }));
     });
   };
 
@@ -124,6 +126,19 @@ export default function InputCard(props: {
       <form onSubmit={handleSubmit}>
         <CardHeader></CardHeader>
         <CardContent>
+          {/* only_test */}
+          {process.env.NODE_ENV === "development" && (
+            <>
+              <Button onClick={() => console.log(props.month)}>
+                Test_year_Month_in_inputCard
+              </Button>
+              <Button onClick={() => console.log(selectedDay)}>selceted_Day</Button>
+              <Button onClick={() => console.log(Math.round(from.valueOf() / 1000))}>
+                check_commit
+              </Button>
+            </>
+          )}
+          {/* only_test_end */}
           <Grid container spacing={3}>
             <Grid item xs={12} sm={4} md={3} lg={2}>
               <FormControl fullWidth>
