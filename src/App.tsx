@@ -39,10 +39,19 @@ function App() {
     localeTuple[0],
     localeTuple[1],
   );
+  // sometimes appWebroot is a full URL, but basename requires a path
+  // we will have to support multiple URL in the future for now simply replace the URL with '/'
+  let appWebroot = "/";
+  try {
+    new URL(globalThis.horde.appWebroot);
+  } catch (TypeError) {
+    // not a full URL, use as is
+    appWebroot = globalThis.horde.appWebroot;
+  }
   const theme = responsiveFontSizes(preTheme);
   return (
     <LocalizationProvider dateAdapter={DateAdapter}>
-      <BrowserRouter basename={globalThis.horde.appWebroot}>
+      <BrowserRouter basename={appWebroot}>
         <ThemeProvider theme={theme}>
           <Toastyfier position="bottom-center" gutter={12}>
             <ConfirmationDialog
