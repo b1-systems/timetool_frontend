@@ -88,7 +88,7 @@ export default function InputShift(props: {
       </Grid>
       {props.incidents.map((incident, index) => (
         <Grid container spacing={3} item xs={12} key={index}>
-          <Grid item xs={12} sm={3} md={2} lg={1}>
+          <Grid item xs={12} sm={3} md={2} lg={2}>
             <FormControl fullWidth>
               <TimePicker
                 label={t("from")}
@@ -119,7 +119,7 @@ export default function InputShift(props: {
               />
             </FormControl>
           </Grid>
-          <Grid item xs={12} sm={3} md={2} lg={1}>
+          <Grid item xs={12} sm={3} md={2} lg={2}>
             <FormControl fullWidth>
               <TimePicker
                 label={t("to")}
