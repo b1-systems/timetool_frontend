@@ -18,7 +18,7 @@ import { useTranslation } from "react-i18next";
 import { useRecoilState, useRecoilValue } from "recoil";
 
 import { fetchIsMonthClosed } from "../api";
-import { dateFromState, projectsState } from "../atom";
+import { dateFromState, editTimelogState, projectsState } from "../atom";
 import DummyCard from "../dummyData/DummyCard";
 import { PerdiemModelsToProjectUuid, ShiftModelsToProjectUuid } from "../models";
 import MonthEndDialog from "./MonthEndDialog";
@@ -35,7 +35,7 @@ export default function MainGrid() {
   const availableProjects = useRecoilValue(projectsState);
   const [project, setProject] = useState<string>("");
   const [projectUuid, setProjectUuid] = useState<string>("");
-  const [uuidLog] = useState<string | null>(null);
+  const [uuidLog, setUuidLog] = useState<string | null>(null);
   const [projectTypes, setProjectTypes] = useState<string[]>([]);
   const [endMonthOpen, setEndMonthOpen] = useState(false);
   const [projectShiftModels, setProjectShiftModels] = useState<string[]>([]);
@@ -46,13 +46,22 @@ export default function MainGrid() {
   const [projectPerdiemModelsAsObject, setProjectPerdiemtModelsAsObject] =
     useState<PerdiemModelsToProjectUuid>({});
 
-  //useEffect has disable eslint because an empty array can be used to only use it at initial render
+  const [editShift] = useRecoilState(editTimelogState);
+
   useEffect(() => {
-    if (process.env.NODE_ENV !== "development") {
-      setMonthGetProjectsHandler(dateFrom);
+    if (editShift.project_uuid !== "-1" && editShift.start_dt !== -1) {
+      setUuidLog(editShift.uuid);
+      setProjectUuid(editShift.project_uuid);
+      const projectFiltered = availableProjects.filter(
+        (project) => project.uuid === editShift.project_uuid,
+      );
+      setProject(projectFiltered[0].name);
+      setProjectTypes(Object.keys(projectFiltered[0].worktypes));
+      if (projectFiltered[0].worktypes.shift !== undefined) {
+        setProjectShiftModels(Object.values(projectFiltered[0].worktypes.shift));
+      }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [availableProjects, editShift]);
 
   const monthEndHandler = () => {
     setEndMonthOpen(false);
@@ -166,6 +175,8 @@ export default function MainGrid() {
       </Grid>
       <Grid item xs={12}>
         <InputCard
+          setUuidLog={setUuidLog}
+          setProjectUuid={setProjectUuid}
           perdiemModels={perdiemModels}
           monthIsClosed={monthIsClosed}
           projectPerdiemModelsAsObject={projectPerdiemModelsAsObject}

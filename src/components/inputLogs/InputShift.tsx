@@ -1,4 +1,5 @@
 import DeleteIcon from "@mui/icons-material/Delete";
+import DoDisturbIcon from "@mui/icons-material/DoDisturb";
 import NoteAddIcon from "@mui/icons-material/NoteAdd";
 import { TimePicker } from "@mui/lab";
 import {
@@ -15,7 +16,7 @@ import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilState, useRecoilValue } from "recoil";
 
-import { dateFromState, shiftModelsState } from "../../atom";
+import { dateFromState, editTimelogState, shiftModelsState } from "../../atom";
 import { Incident, ShiftModelsToProjectUuid } from "../../models";
 
 export default function InputShift(props: {
@@ -23,6 +24,7 @@ export default function InputShift(props: {
   projectShiftModelsAsObject: ShiftModelsToProjectUuid;
   shiftModels: string[];
   shift: string;
+  setUuidLog(uuid: string | null): void;
   setShift(shiftModel: string): void;
   incidents: Incident[];
   setIncidents(Incidents: Incident[]): void;
@@ -32,7 +34,7 @@ export default function InputShift(props: {
 
   const [shiftSelected, setShiftSelected] = useState(props.shift);
   const shiftModels = useRecoilValue(shiftModelsState);
-
+  const [editShift, setEditShift] = useRecoilState(editTimelogState);
   const [dateFrom] = useRecoilState(dateFromState);
 
   const addHandler = () => {
@@ -86,6 +88,35 @@ export default function InputShift(props: {
         >
           {t("add_entry")}
         </Button>
+      </Grid>
+      <Grid item xs={12} sm={6} md={3} lg={2} sx={{ mt: 1 }}>
+        {editShift.project_uuid !== "-1" && editShift.start_dt !== -1 && (
+          <Button
+            color="warning"
+            fullWidth
+            size="large"
+            onClick={() => {
+              setEditShift({
+                uuid: "-1",
+                employee_uuid: "-1",
+                project_uuid: "-1",
+                project_name: "-1",
+                start_dt: -1,
+                end_dt: -1,
+                type: "-1",
+              });
+              setShiftSelected("");
+              props.setShift("");
+              props.setShiftModel("");
+              props.setUuidLog(null);
+              props.setIncidents([]);
+            }}
+            variant="contained"
+            startIcon={<DoDisturbIcon />}
+          >
+            {t("cancel_edit")}
+          </Button>
+        )}
       </Grid>
       {props.incidents.map((incident, index) => (
         <Grid container spacing={3} item xs={12} key={index}>

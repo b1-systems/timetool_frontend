@@ -15,13 +15,18 @@ import {
   TextField,
 } from "@mui/material";
 import { DateTime } from "luxon";
-import React, { FormEvent, useState } from "react";
+import React, { FormEvent, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilState } from "recoil";
 import { v4 as uuidv4 } from "uuid";
 
 import { fetchSubmit } from "../../api";
-import { dateFromState, dateToState, useUpdateProjects } from "../../atom";
+import {
+  dateFromState,
+  dateToState,
+  editTimelogState,
+  useUpdateProjects,
+} from "../../atom";
 import {
   Incident,
   PerdiemModelsToProjectUuid,
@@ -35,6 +40,8 @@ export default function InputCard(props: {
   monthIsClosed: boolean;
   projectShiftModelsAsObject: ShiftModelsToProjectUuid;
   types: string[];
+  setProjectUuid(uuid: string): void;
+  setUuidLog(uuid: string | null): void;
   uuidProject: string;
   uuidLog: string | null;
   projectShiftModels: string[];
@@ -55,8 +62,17 @@ export default function InputCard(props: {
   const [incidents, setIncidents] = useState<Incident[]>([]);
   const [typeOfPerdiem, setTypeOfPerdiem] = useState<number>(-1);
   const [submitBtnDisabled, setSubmitBtnDisabled] = useState(false);
-
+  const [editShift, setEditShift] = useRecoilState(editTimelogState);
   const updateProjects = useUpdateProjects();
+
+  useEffect(() => {
+    if (editShift.project_uuid !== "-1" && editShift.start_dt !== -1) {
+      setType("shift");
+      setDateFrom(DateTime.fromSeconds(editShift.start_dt));
+      setShift(editShift.shift_model || "unknown shift");
+      setIncidents(editShift.incidents || []);
+    }
+  }, [editShift, setDateFrom]);
 
   const setTypeHandler = (event: SelectChangeEvent) => {
     setType(event.target.value as string);
@@ -130,6 +146,17 @@ export default function InputCard(props: {
       setDateFrom(dateFrom.plus({ days: 1 }));
       setDateTo(dateTo.plus({ days: 1 }));
       setIncidents([]);
+      setEditShift({
+        uuid: "-1",
+        employee_uuid: "-1",
+        project_uuid: "-1",
+        project_name: "-1",
+        start_dt: -1,
+        end_dt: -1,
+        type: "-1",
+      });
+      props.setUuidLog(null);
+      updateProjects();
     });
   };
 
@@ -156,6 +183,7 @@ export default function InputCard(props: {
                       setDateFrom(newValue);
                       setDateTo(newValue);
                       setIncidents([]);
+                      props.setUuidLog(null);
                     }
                   }}
                   renderInput={(params) => <TextField {...params} helperText={null} />}
@@ -186,6 +214,7 @@ export default function InputCard(props: {
           <Grid container spacing={3} sx={{ mt: 1 }}>
             {type === "shift" && (
               <Inputshift
+                setUuidLog={props.setUuidLog}
                 uuidProject={props.uuidProject}
                 projectShiftModelsAsObject={props.projectShiftModelsAsObject}
                 shiftModels={props.projectShiftModels}

@@ -2,6 +2,7 @@ import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import ChatIcon from "@mui/icons-material/Chat";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import DriveFileRenameOutlineIcon from "@mui/icons-material/DriveFileRenameOutline";
+import EditIcon from "@mui/icons-material/Edit";
 import EventIcon from "@mui/icons-material/Event";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -12,10 +13,10 @@ import { Box, Button, Card, CardActions, Collapse, Grid } from "@mui/material";
 import { DateTime } from "luxon";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 
 import { fetchDelete } from "../../api";
-import { shiftModelsState, useUpdateProjects } from "../../atom";
+import { editTimelogState, shiftModelsState, useUpdateProjects } from "../../atom";
 import { Timelog } from "../../models";
 import OutputChip from "./OutputChip";
 
@@ -29,6 +30,7 @@ export default function OutputShift(props: {
   const [entriesVisible, setEntriesVisible] = useState<boolean>(false);
 
   const shiftModels = useRecoilValue(shiftModelsState);
+  const [, setEditShift] = useRecoilState(editTimelogState);
 
   const shiftModelHandler = (uuid: string, type: string | undefined): string => {
     if (shiftModels.size !== 0 && type) {
@@ -54,6 +56,11 @@ export default function OutputShift(props: {
       request: { uuid: uuid },
     };
     fetchDelete(requestPrototype).then(() => updateProjects());
+  };
+
+  const editHandler = (log: Timelog) => {
+    console.log("log in OutputShift", log);
+    setEditShift(log);
   };
 
   return (
@@ -203,6 +210,14 @@ export default function OutputShift(props: {
               disabled={props.monthIsClosed}
             >
               <DeleteForeverIcon />
+            </Button>
+            <Button
+              color="warning"
+              size="small"
+              variant="contained"
+              onClick={() => editHandler(props.log)}
+            >
+              <EditIcon />
             </Button>
           </>
         )}

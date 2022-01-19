@@ -117,3 +117,16 @@ export const currentMonthLogsTimelogsState = selector<Timelog[]>({
     return monthLogs.timelogs;
   },
 });
+
+export const editTimelogState = atom<Timelog>({
+  key: "editTimelogState",
+  default: {
+    uuid: "-1",
+    employee_uuid: "-1",
+    project_uuid: "-1",
+    project_name: "-1",
+    start_dt: -1,
+    end_dt: -1,
+    type: "-1",
+  },
+});
