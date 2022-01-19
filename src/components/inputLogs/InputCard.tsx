@@ -47,22 +47,14 @@ export default function InputCard(props: {
   const [breakTime, setBreakTime] = useState<number>(0);
   const [travelTime, setTravelTime] = useState<number>(0);
   const [logMsg, setLogMsg] = useState<string>("");
-  // const [selectedDay, setSelectedDay] = useState<DateTime>(
-  //   props.month.set({ day: 1, hour: 0, minute: 0, second: 0, millisecond: 0 }),
-  // );
   const [dateFrom, setDateFrom] = useRecoilState(dateFromState);
   const [dateTo, setDateTo] = useRecoilState(dateToState);
   const [remote, setRemote] = useState<boolean>(true);
   const [shift, setShift] = useState<string>("");
   const [shiftModel, setShiftModel] = useState<string>("");
   const [incidents, setIncidents] = useState<Incident[]>([]);
-  // const [from, setFrom] = useState<DateTime>(
-  //   props.month.set({ day: 1, hour: 0, minute: 0, second: 0, millisecond: 0 }),
-  // );
-  // const [to, setTo] = useState<DateTime>(
-  //   props.month.set({ day: 1, hour: 0, minute: 0, second: 0, millisecond: 0 }),
-  // );
   const [typeOfPerdiem, setTypeOfPerdiem] = useState<number>(-1);
+  const [submitBtnDisabled, setSubmitBtnDisabled] = useState(false);
 
   const updateProjects = useUpdateProjects();
 
@@ -72,6 +64,10 @@ export default function InputCard(props: {
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setSubmitBtnDisabled(true);
+    setTimeout(function () {
+      setSubmitBtnDisabled(false);
+    }, 1000);
     let onsiteRemote = "remote";
     if (remote === false) {
       onsiteRemote = "onsite";
@@ -236,7 +232,7 @@ export default function InputCard(props: {
                 variant="contained"
                 startIcon={<NoteAddIcon />}
                 type="submit"
-                disabled={props.monthIsClosed}
+                disabled={props.monthIsClosed || submitBtnDisabled}
               >
                 {t("commit")}
               </Button>
