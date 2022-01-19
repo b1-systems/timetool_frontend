@@ -1,5 +1,4 @@
 import {
-  Button,
   FormControl,
   Grid,
   InputLabel,
@@ -32,13 +31,6 @@ export default function InputPerdiem(props: {
   }
   return (
     <>
-      {/* only_test */}
-      {process.env.NODE_ENV === "development" && (
-        <>
-          <Button onClick={() => console.log(props.model)}>model</Button>
-        </>
-      )}
-      {/* only_test_end */}
       <Grid item xs={12} sm={4} md={3} lg={2}>
         <FormControl fullWidth>
           <InputLabel id="select-label-modelState">{t("model")}</InputLabel>

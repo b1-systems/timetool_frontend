@@ -114,6 +114,7 @@ export default function InputCard(props: {
       updateProjects();
       setDateFrom(dateFrom.plus({ days: 1 }));
       setDateTo(dateTo.plus({ days: 1 }));
+      setIncidents([]);
     });
   };
 
@@ -125,28 +126,6 @@ export default function InputCard(props: {
       <form onSubmit={handleSubmit}>
         <CardHeader></CardHeader>
         <CardContent>
-          {/* only_test */}
-          {process.env.NODE_ENV === "development" && (
-            <>
-              <Button onClick={() => console.log(dateFrom)}>
-                Test_year_Month_in_inputCard
-              </Button>
-              <Button onClick={() => console.log(dateFrom)}>selceted_Day</Button>
-              <Button
-                onClick={() =>
-                  console.log(
-                    "Todo neue copmmit obj hier rein",
-                    "timelog",
-                    "shift",
-                    "perdiem",
-                  )
-                }
-              >
-                check_commit
-              </Button>
-            </>
-          )}
-          {/* only_test_end */}
           <Grid container spacing={3}>
             <Grid item xs={12} sm={4} md={3} lg={2}>
               <FormControl fullWidth>
@@ -161,6 +140,7 @@ export default function InputCard(props: {
                     if (newValue) {
                       setDateFrom(newValue);
                       setDateTo(newValue);
+                      setIncidents([]);
                     }
                   }}
                   renderInput={(params) => <TextField {...params} helperText={null} />}

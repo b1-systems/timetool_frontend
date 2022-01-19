@@ -46,8 +46,6 @@ export default function InputShift(props: {
     ]);
   };
 
-  console.log("XD", Object.entries(shiftModels));
-
   const shiftModel = shiftModels.get(props.uuidProject);
   if (!shiftModel) {
     return <p>No Shifts</p>;
@@ -104,9 +102,13 @@ export default function InputShift(props: {
                       {
                         ...incident,
                         start_dt:
-                          newValue
-                            .set({ second: 0, millisecond: 0 })
-
+                          dateFrom
+                            .set({
+                              hour: newValue.hour,
+                              minute: newValue.minute,
+                              second: 0,
+                              millisecond: 0,
+                            })
                             .valueOf() / 1000,
                       },
                       ...props.incidents.slice(index + 1),
@@ -131,9 +133,13 @@ export default function InputShift(props: {
                       {
                         ...incident,
                         end_dt:
-                          newValue
-                            .set({ second: 0, millisecond: 0 })
-
+                          dateFrom
+                            .set({
+                              hour: newValue.hour,
+                              minute: newValue.minute,
+                              second: 0,
+                              millisecond: 0,
+                            })
                             .valueOf() / 1000,
                       },
                       ...props.incidents.slice(index + 1),

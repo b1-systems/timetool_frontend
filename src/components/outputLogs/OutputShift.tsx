@@ -137,7 +137,7 @@ export default function OutputShift(props: {
                               }
                               text={`${DateTime.fromSeconds(incident.start_dt).day} ${
                                 DateTime.fromSeconds(incident.start_dt).monthShort
-                              } at: ${DateTime.fromSeconds(props.log.start_dt).toFormat(
+                              } at: ${DateTime.fromSeconds(incident.start_dt).toFormat(
                                 "T",
                               )}`}
                             />
@@ -153,7 +153,7 @@ export default function OutputShift(props: {
                               }
                               text={`${DateTime.fromSeconds(incident.end_dt).day} ${
                                 DateTime.fromSeconds(incident.end_dt).monthShort
-                              } at: ${DateTime.fromSeconds(props.log.end_dt).toFormat(
+                              } at: ${DateTime.fromSeconds(incident.end_dt).toFormat(
                                 "T",
                               )}`}
                             />

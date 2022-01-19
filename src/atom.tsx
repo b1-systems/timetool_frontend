@@ -30,13 +30,11 @@ export const shiftModelsState = selector({
   key: "shiftModelsState",
   get: async ({ get }) => {
     const projects = get(projectsState);
-    console.log("--", projects);
     const m = new Map(
       projects
         .filter((project) => project.worktypes.shift !== undefined)
         .map((project) => [project.uuid, project.worktypes.shift]),
     );
-    console.log("ää", m);
     return m;
   },
 });
@@ -91,7 +89,6 @@ export const currentMonthLogsState = selector<Logs>({
   get: async ({ get }) => {
     get(projectsRequestIdState);
     const dateFrom = get(dateFromState);
-    console.log(dateFrom, get(projectsRequestIdState));
     return fetchCurrentMonthLogs({
       params: {
         year: dateFrom.year,
