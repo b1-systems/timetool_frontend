@@ -60,6 +60,7 @@ export default function InputShift(props: {
             labelId="select-label-shiftModel"
             id="demo-simple-select-shiftModel"
             value={shiftSelected}
+            required={true}
             label={t("shift_model")}
             onChange={(e) => {
               props.setShiftModel(e.target.value);
