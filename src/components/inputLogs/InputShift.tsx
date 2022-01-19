@@ -105,8 +105,8 @@ export default function InputShift(props: {
                         start_dt:
                           dateFrom
                             .set({
-                              hour: newValue.hour,
-                              minute: newValue.minute,
+                              hour: newValue.hour || 0,
+                              minute: newValue.minute || 0,
                               second: 0,
                               millisecond: 0,
                             })
@@ -136,8 +136,8 @@ export default function InputShift(props: {
                         end_dt:
                           dateFrom
                             .set({
-                              hour: newValue.hour,
-                              minute: newValue.minute,
+                              hour: newValue.hour || 0,
+                              minute: newValue.minute || 0,
                               second: 0,
                               millisecond: 0,
                             })
