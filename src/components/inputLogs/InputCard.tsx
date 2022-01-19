@@ -14,6 +14,7 @@ import {
   SelectChangeEvent,
   TextField,
 } from "@mui/material";
+import { DateTime } from "luxon";
 import React, { FormEvent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilState } from "recoil";
@@ -82,18 +83,36 @@ export default function InputCard(props: {
       timezone: window.Intl.DateTimeFormat().resolvedOptions().timeZone,
     };
     let submitData;
+    let incidentsChecked: Incident[] = [];
     if (type === "shift" && props.uuidProject) {
+      console.log("incidents", incidents);
+      incidents.forEach((incident) => {
+        if (incident.end_dt < incident.start_dt) {
+          incidentsChecked.push({
+            start_dt: incident.start_dt,
+            end_dt:
+              DateTime.fromSeconds(incident.end_dt).plus({ days: 1 }).valueOf() / 1000,
+            comment: incident.comment,
+          });
+        } else {
+          incidentsChecked.push(incident);
+        }
+      });
+      console.log("incidentsChecked", incidentsChecked);
       submitData = {
         ...commonData,
         end_dt: Math.round(dateFrom.plus({ hours: 23, minutes: 59 }).valueOf() / 1000),
         type: type,
-        incidents: incidents,
+        incidents: incidentsChecked,
         shift_model: shiftModel,
       };
     } else if (type === "timelog" && props.uuidProject && dateFrom && dateTo) {
       submitData = {
         ...commonData,
-        end_dt: Math.round(dateTo.valueOf() / 1000),
+        end_dt:
+          dateTo.valueOf() < dateFrom.valueOf()
+            ? Math.round(dateTo.plus({ days: 1 }).valueOf() / 1000)
+            : Math.round(dateTo.valueOf() / 1000),
         type: type,
         breakTime: breakTime * 60,
         travelTime: travelTime * 60,
