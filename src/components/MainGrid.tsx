@@ -33,9 +33,6 @@ export default function MainGrid() {
   const { t } = useTranslation();
   const [dateFrom, setDateFrom] = useRecoilState(dateFromState);
   const availableProjects = useRecoilValue(projectsState);
-  // const CurrentMonthLogs = useRecoilValue(currentMonthLogsState);
-  // const oldTimelogs = useRecoilValue(currentMonthLogsTimelogsState);
-  // const oldPerdiems = useRecoilValue(currentMonthLogsPerdiemsState);
   const [project, setProject] = useState<string>("");
   const [projectUuid, setProjectUuid] = useState<string>("");
   const [uuidLog] = useState<string | null>(null);

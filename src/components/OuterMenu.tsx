@@ -3,7 +3,13 @@ import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import FeedIcon from "@mui/icons-material/Feed";
 import PersonIcon from "@mui/icons-material/Person";
-import { ListItemButton, ListItemText, useMediaQuery, useTheme } from "@mui/material";
+import {
+  LinearProgress,
+  ListItemButton,
+  ListItemText,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
 import Box from "@mui/material/Box";
 import CssBaseline from "@mui/material/CssBaseline";
 import Drawer from "@mui/material/Drawer";
@@ -11,7 +17,7 @@ import Link from "@mui/material/Link";
 import List from "@mui/material/List";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import Toolbar from "@mui/material/Toolbar";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link as RouterLink } from "react-router-dom";
 
@@ -139,7 +145,9 @@ const OuterMenu = (props: Props) => {
           }}
         >
           <Toolbar />
-          <MainGrid />
+          <Suspense fallback={<LinearProgress />}>
+            <MainGrid />
+          </Suspense>
         </Box>
       </Box>
     </>

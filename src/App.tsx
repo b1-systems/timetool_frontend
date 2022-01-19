@@ -52,7 +52,7 @@ function App() {
   const theme = responsiveFontSizes(preTheme);
   return (
     <RecoilRoot>
-      <LocalizationProvider dateAdapter={DateAdapter}>
+      <LocalizationProvider dateAdapter={DateAdapter} locale={"de"}>
         <BrowserRouter basename={appWebroot}>
           <ThemeProvider theme={theme}>
             <Toastyfier position="bottom-center" gutter={12}>

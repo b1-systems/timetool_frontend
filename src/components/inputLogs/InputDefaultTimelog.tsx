@@ -7,7 +7,7 @@ import {
   RadioGroup,
   TextField,
 } from "@mui/material";
-import React from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilState } from "recoil";
 
@@ -25,6 +25,9 @@ export default function InputDefaultTimelog(props: {
   const { t } = useTranslation();
 
   const [dateFrom, setDateFrom] = useRecoilState(dateFromState);
+
+  const [datePickerFrom, setDatePickerFrom] = useState(dateFrom);
+
   const [dateTo, setDateTo] = useRecoilState(dateToState);
   return (
     <>
@@ -32,11 +35,12 @@ export default function InputDefaultTimelog(props: {
         <FormControl fullWidth>
           <TimePicker
             label={t("from")}
-            value={dateFrom}
+            value={datePickerFrom}
             ampm={false}
             ampmInClock={false}
             onChange={(newValue) => {
               if (newValue) {
+                setDatePickerFrom(newValue.set({ second: 0, millisecond: 0 }));
                 if (newValue.isValid) {
                   setDateFrom(newValue.set({ second: 0, millisecond: 0 }));
                 }

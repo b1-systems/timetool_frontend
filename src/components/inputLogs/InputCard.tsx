@@ -133,8 +133,8 @@ export default function InputCard(props: {
                   views={["day"]}
                   label={t("day")}
                   disabled={!props.uuidProject}
-                  minDate={dateFrom}
-                  maxDate={dateFrom.plus({ months: 1 }).minus({ day: 1 })}
+                  minDate={dateFrom.set({ day: 1 })}
+                  maxDate={dateFrom.endOf("month")}
                   value={dateFrom}
                   onChange={(newValue) => {
                     if (newValue) {
