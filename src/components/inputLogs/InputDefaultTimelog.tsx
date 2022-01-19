@@ -37,7 +37,9 @@ export default function InputDefaultTimelog(props: {
             ampmInClock={false}
             onChange={(newValue) => {
               if (newValue) {
-                setDateFrom(newValue.set({ second: 0, millisecond: 0 }));
+                if (newValue.isValid) {
+                  setDateFrom(newValue.set({ second: 0, millisecond: 0 }));
+                }
               }
             }}
             renderInput={(params) => <TextField {...params} />}
