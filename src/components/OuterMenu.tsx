@@ -13,6 +13,7 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import Toolbar from "@mui/material/Toolbar";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { Link as RouterLink } from "react-router-dom";
 
 import MainGrid from "./MainGrid";
 
@@ -76,7 +77,14 @@ const OuterMenu = (props: Props) => {
           <Toolbar />
           <Box sx={{ overflow: "auto" }}>
             <List>
-              <Link color="inherit" href="/" underline="hover">
+              <Link
+                // this component makes this routing client-side, i.e. it happens inside react
+                // the component requires `to` instead of `href`
+                component={RouterLink}
+                color="inherit"
+                to={"/ui/entry"}
+                underline="hover"
+              >
                 <ListItemButton>
                   <ListItemIcon>
                     <CalendarTodayIcon fontSize="large" />
