@@ -11,19 +11,17 @@ import {
 import { useTranslation } from "react-i18next";
 import { useRecoilState } from "recoil";
 
-import { fetchCloseMonth, fetchIsMonthClosed } from "../api";
-import { dateFromState } from "../atom";
+import { fetchCloseMonth } from "../api";
+import { dateFromState, useUpdateIsMonthClosed } from "../atom";
 
-const MonthEndDialog = (props: {
-  setMonthIsClosed(isClosed: boolean): void;
-  close: () => void;
-}) => {
+const MonthEndDialog = (props: { close: () => void }) => {
   const { t } = useTranslation();
   const cancelHandler = async () => {
     props.close();
   };
 
   const [dateFrom] = useRecoilState(dateFromState);
+  const updateIsMonthClosed = useUpdateIsMonthClosed();
 
   const handleEndMonth = () => {
     fetchCloseMonth({
@@ -33,26 +31,10 @@ const MonthEndDialog = (props: {
         format: "traditional",
         scope: "me",
       },
+    }).then(() => {
+      cancelHandler();
+      updateIsMonthClosed();
     });
-    fetchIsMonthClosed({
-      params: {
-        year: dateFrom.year,
-        month: dateFrom.month,
-        format: "traditional",
-        scope: "me",
-      },
-    })
-      .then((response) => {
-        return response.json();
-      })
-      .then((response) => {
-        if (response.locks.length === 0) {
-          props.setMonthIsClosed(false);
-        } else {
-          props.setMonthIsClosed(true);
-        }
-      });
-    cancelHandler();
   };
 
   return (

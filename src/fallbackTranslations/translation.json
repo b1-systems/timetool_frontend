@@ -24,6 +24,7 @@
     "type": "Type: "
   },
   "model": "Model",
+  "month_is_closed": "This month is closed.",
   "my_projects": "My Projects",
   "no": "no",
   "no_timelogs_have_been_made_yet": "No timelogs have been made yet.",

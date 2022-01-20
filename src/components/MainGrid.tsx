@@ -17,10 +17,13 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilState, useRecoilValue } from "recoil";
 
-import { fetchIsMonthClosed } from "../api";
-import { dateFromState, editTimelogState, monthState, projectsState } from "../atom";
-import DummyCard from "../dummyData/DummyCard";
-import { PerdiemModelsToProjectUuid, ShiftModelsToProjectUuid } from "../models";
+import {
+  dateFromState,
+  editTimelogState,
+  isMonthClosedState,
+  monthState,
+  projectsState,
+} from "../atom";
 import MonthEndDialog from "./MonthEndDialog";
 import InputCard from "./inputLogs/InputCard";
 import TimelogItemList from "./outputLogs/TimelogItemList";
@@ -40,36 +43,12 @@ export default function MainGrid() {
   const [endMonthOpen, setEndMonthOpen] = useState(false);
   const [projectShiftModels, setProjectShiftModels] = useState<string[]>([]);
   const [perdiemModels, setPerdiemModels] = useState<string[]>([]);
-  const [monthIsClosed, setMonthIsClosed] = useState<boolean>(true);
-  const [projectShiftModelsAsObject, setProjectShiftModelsAsObject] =
-    useState<ShiftModelsToProjectUuid>({});
-  const [projectPerdiemModelsAsObject, setProjectPerdiemtModelsAsObject] =
-    useState<PerdiemModelsToProjectUuid>({});
 
   const editShift = useRecoilValue(editTimelogState);
   const [month, setMonth] = useRecoilState(monthState);
+  const isMonthClosed = useRecoilValue(isMonthClosedState);
 
   useEffect(() => {
-    // copy of setMonthGetProjectsHandler, because first load leaved month closed
-    fetchIsMonthClosed({
-      params: {
-        year: dateFrom.year,
-        month: dateFrom.month,
-        format: "traditional",
-        scope: "me",
-      },
-    })
-      .then((response) => {
-        return response.json();
-      })
-      .then((response) => {
-        if (response.locks.length === 0) {
-          setMonthIsClosed(false);
-        } else {
-          setMonthIsClosed(true);
-        }
-      });
-    // end copy of setMonthGetProjectsHandler
     if (editShift.project_uuid !== "-1" && editShift.start_dt !== -1) {
       setUuidLog(editShift.uuid);
       setProjectUuid(editShift.project_uuid);
@@ -82,7 +61,7 @@ export default function MainGrid() {
         setProjectShiftModels(Object.values(projectFiltered[0].worktypes.shift));
       }
     }
-  }, [availableProjects, editShift, dateFrom, monthIsClosed]);
+  }, [availableProjects, editShift, dateFrom, isMonthClosed]);
 
   const monthEndHandler = () => {
     setEndMonthOpen(false);
@@ -107,21 +86,9 @@ export default function MainGrid() {
 
   return (
     <Grid container spacing={3}>
-      {process.env.NODE_ENV === "development" && (
-        <DummyCard
-          setMonthIsClosed={setMonthIsClosed}
-          setProjectShiftModelsAsObject={setProjectShiftModelsAsObject}
-          setProjectPerdiemtModelsAsObject={setProjectPerdiemtModelsAsObject}
-        ></DummyCard>
-      )}
       <Grid item xs={12}>
         <Card elevation={0} sx={{ border: 1, borderColor: "grey.300", ml: 1, mr: 1 }}>
-          {endMonthOpen && (
-            <MonthEndDialog
-              close={monthEndHandler}
-              setMonthIsClosed={setMonthIsClosed}
-            />
-          )}
+          {endMonthOpen && <MonthEndDialog close={monthEndHandler} />}
           <CardHeader></CardHeader>
           <CardContent>
             <Grid container spacing={3}>
@@ -177,9 +144,7 @@ export default function MainGrid() {
           setUuidLog={setUuidLog}
           setProjectUuid={setProjectUuid}
           perdiemModels={perdiemModels}
-          monthIsClosed={monthIsClosed}
-          projectPerdiemModelsAsObject={projectPerdiemModelsAsObject}
-          projectShiftModelsAsObject={projectShiftModelsAsObject}
+          monthIsClosed={isMonthClosed}
           types={projectTypes}
           uuidProject={projectUuid}
           uuidLog={uuidLog}
@@ -188,7 +153,7 @@ export default function MainGrid() {
       </Grid>
       <Grid item xs={12}>
         <TimelogItemList
-          monthIsClosed={monthIsClosed}
+          monthIsClosed={isMonthClosed}
           setEndMonthOpen={setEndMonthOpen}
         />
       </Grid>

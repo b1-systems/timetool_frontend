@@ -1,6 +1,7 @@
 import NoteAddIcon from "@mui/icons-material/NoteAdd";
 import DatePicker from "@mui/lab/DatePicker";
 import {
+  Alert,
   Button,
   Card,
   CardActions,
@@ -17,7 +18,7 @@ import {
 import { DateTime } from "luxon";
 import React, { FormEvent, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { v4 as uuidv4 } from "uuid";
 
 import { fetchSubmit } from "../../api";
@@ -25,20 +26,16 @@ import {
   dateFromState,
   dateToState,
   editTimelogState,
+  isMonthClosedState,
   useUpdateLogs,
 } from "../../atom";
-import {
-  Incident,
-  PerdiemModelsToProjectUuid,
-  ShiftModelsToProjectUuid,
-} from "../../models";
+import { Incident } from "../../models";
 import InputDefaultTimelog from "./InputDefaultTimelog";
 import InputPerdiem from "./InputPerdiem";
 import Inputshift from "./InputShift";
 
 export default function InputCard(props: {
   monthIsClosed: boolean;
-  projectShiftModelsAsObject: ShiftModelsToProjectUuid;
   types: string[];
   setProjectUuid(uuid: string): void;
   setUuidLog(uuid: string | null): void;
@@ -46,7 +43,6 @@ export default function InputCard(props: {
   uuidLog: string | null;
   projectShiftModels: string[];
   perdiemModels: string[];
-  projectPerdiemModelsAsObject: PerdiemModelsToProjectUuid;
 }) {
   const { t } = useTranslation();
   const [model, setModel] = useState<string>("");
@@ -65,6 +61,7 @@ export default function InputCard(props: {
   const [editShift, setEditShift] = useRecoilState(editTimelogState);
 
   const updateLogs = useUpdateLogs();
+  const isMonthClosed = useRecoilValue(isMonthClosedState);
 
   useEffect(() => {
     if (editShift.project_uuid !== "-1" && editShift.start_dt !== -1) {
@@ -162,6 +159,19 @@ export default function InputCard(props: {
   const handleRemote = () => {
     setRemote(!remote);
   };
+
+  if (isMonthClosed) {
+    return (
+      <Card elevation={0} sx={{ border: 1, borderColor: "grey.300", ml: 1, mr: 1 }}>
+        <CardContent>
+          <Alert severity="info" sx={{ textAlign: "center" }}>
+            {t("month_is_closed")}
+          </Alert>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <Card elevation={0} sx={{ border: 1, borderColor: "grey.300", ml: 1, mr: 1 }}>
       <form onSubmit={handleSubmit}>
@@ -215,7 +225,6 @@ export default function InputCard(props: {
               <Inputshift
                 setUuidLog={props.setUuidLog}
                 uuidProject={props.uuidProject}
-                projectShiftModelsAsObject={props.projectShiftModelsAsObject}
                 shiftModels={props.projectShiftModels}
                 setShift={setShift}
                 shift={shift}

@@ -17,11 +17,10 @@ import { useTranslation } from "react-i18next";
 import { useRecoilState, useRecoilValue } from "recoil";
 
 import { dateFromState, editTimelogState, shiftModelsState } from "../../atom";
-import { Incident, ShiftModelsToProjectUuid } from "../../models";
+import { Incident } from "../../models";
 
 export default function InputShift(props: {
   uuidProject: string;
-  projectShiftModelsAsObject: ShiftModelsToProjectUuid;
   shiftModels: string[];
   shift: string;
   setUuidLog(uuid: string | null): void;

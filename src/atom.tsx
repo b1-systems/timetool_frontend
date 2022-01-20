@@ -1,7 +1,7 @@
 import { DateTime } from "luxon";
 import { DefaultValue, atom, selector, useRecoilState } from "recoil";
 
-import { fetchCurrentMonthLogs, fetchProjects } from "./api";
+import { fetchCurrentMonthLogs, fetchIsMonthClosed, fetchProjects } from "./api";
 import { Logs, Perdiem, Project, Timelog } from "./models";
 
 export const monthBackingState = atom({
@@ -51,6 +51,46 @@ export const dateToState = atom({
     second: 0,
     millisecond: 0,
   }),
+});
+
+export const isMonthClosedRequestIdState = atom({
+  key: "isMonthClosedRequestIdState",
+  default: 0,
+});
+
+export const useUpdateIsMonthClosed = () => {
+  const [isMonthClosedRequestId, setIsMonthClosedRequestId] = useRecoilState(
+    isMonthClosedRequestIdState,
+  );
+  return () => {
+    setIsMonthClosedRequestId(isMonthClosedRequestId + 1);
+  };
+};
+
+export const isMonthClosedState = selector({
+  key: "isMonthClosedState",
+  get: ({ get }) => {
+    get(isMonthClosedRequestIdState);
+    const month = get(monthState);
+    return fetchIsMonthClosed({
+      params: {
+        year: month.year,
+        month: month.month,
+        format: "traditional",
+        scope: "me",
+      },
+    })
+      .then((response) => {
+        return response.json();
+      })
+      .then((response) => {
+        if (response.locks.length === 0) {
+          return false;
+        } else {
+          return true;
+        }
+      });
+  },
 });
 
 export const shiftModelsState = selector({
