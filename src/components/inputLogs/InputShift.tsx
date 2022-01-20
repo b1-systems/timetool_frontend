@@ -3,7 +3,10 @@ import DoDisturbIcon from "@mui/icons-material/DoDisturb";
 import NoteAddIcon from "@mui/icons-material/NoteAdd";
 import { TimePicker } from "@mui/lab";
 import {
+  Alert,
+  Box,
   Button,
+  Container,
   FormControl,
   Grid,
   InputLabel,
@@ -14,9 +17,14 @@ import {
 import { DateTime } from "luxon";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 
-import { dateFromState, editTimelogState, shiftModelsState } from "../../atom";
+import {
+  alertShownInInputState,
+  dateFromState,
+  editTimelogState,
+  shiftModelsState,
+} from "../../atom";
 import { Incident } from "../../models";
 
 export default function InputShift(props: {
@@ -35,6 +43,8 @@ export default function InputShift(props: {
   const shiftModels = useRecoilValue(shiftModelsState);
   const [editShift, setEditShift] = useRecoilState(editTimelogState);
   const [dateFrom] = useRecoilState(dateFromState);
+
+  const setAlertShownInInput = useSetRecoilState(alertShownInInputState);
 
   useEffect(() => {
     if (editShift.project_uuid !== "-1" && editShift.start_dt !== -1) {
@@ -55,8 +65,19 @@ export default function InputShift(props: {
 
   const shiftModel = shiftModels.get(props.uuidProject);
   if (!shiftModel) {
-    return <p>No Shifts</p>;
+    setAlertShownInInput(true);
+    return (
+      <Container>
+        <Box sx={{ mx: "auto", textAlign: "center", p: 5 }}>
+          <Alert severity="info" sx={{ textAlign: "center" }}>
+            {t("no_shifts_in_this_project")}
+          </Alert>
+        </Box>
+      </Container>
+    );
   }
+
+  setAlertShownInInput(false);
 
   return (
     <>

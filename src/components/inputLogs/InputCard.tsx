@@ -23,6 +23,7 @@ import { v4 as uuidv4 } from "uuid";
 
 import { fetchSubmit } from "../../api";
 import {
+  alertShownInInputState,
   dateFromState,
   dateToState,
   editTimelogState,
@@ -62,7 +63,7 @@ export default function InputCard(props: {
 
   const updateLogs = useUpdateLogs();
   const isMonthClosed = useRecoilValue(isMonthClosedState);
-
+  const alertShownInInput = useRecoilValue(alertShownInInputState);
   useEffect(() => {
     if (editShift.project_uuid !== "-1" && editShift.start_dt !== -1) {
       setType("shift");
@@ -236,6 +237,7 @@ export default function InputCard(props: {
 
             {type === "timelog" && (
               <InputDefaultTimelog
+                types={props.types}
                 handleRemote={handleRemote}
                 setBreakTime={setBreakTime}
                 breakTime={breakTime}
@@ -269,7 +271,7 @@ export default function InputCard(props: {
                 variant="contained"
                 startIcon={<NoteAddIcon />}
                 type="submit"
-                disabled={props.monthIsClosed || submitBtnDisabled}
+                disabled={props.monthIsClosed || submitBtnDisabled || alertShownInInput}
               >
                 {t("commit")}
               </Button>

@@ -1,5 +1,8 @@
 import { TimePicker } from "@mui/lab";
 import {
+  Alert,
+  Box,
+  Container,
   FormControl,
   FormControlLabel,
   Grid,
@@ -9,9 +12,9 @@ import {
 } from "@mui/material";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 
-import { dateFromState, dateToState } from "../../atom";
+import { alertShownInInputState, dateFromState, dateToState } from "../../atom";
 
 export default function InputDefaultTimelog(props: {
   handleRemote(): void;
@@ -21,14 +24,31 @@ export default function InputDefaultTimelog(props: {
   travelTime: number;
   setLogMsg(msg: string): void;
   logMsg: string;
+  types: string[];
 }) {
   const { t } = useTranslation();
 
   const [dateFrom, setDateFrom] = useRecoilState(dateFromState);
-
+  const setAlertShownInInput = useSetRecoilState(alertShownInInputState);
   const [datePickerFrom, setDatePickerFrom] = useState(dateFrom);
 
   const [dateTo, setDateTo] = useRecoilState(dateToState);
+
+  console.log("props.types", props.types);
+
+  if (!props.types.includes("timelog")) {
+    setAlertShownInInput(true);
+    return (
+      <Container>
+        <Box sx={{ mx: "auto", textAlign: "center", p: 5 }}>
+          <Alert severity="info" sx={{ textAlign: "center" }}>
+            {t("no_timelogs_in_this_project")}
+          </Alert>
+        </Box>
+      </Container>
+    );
+  }
+  setAlertShownInInput(false);
   return (
     <>
       <Grid item xs={12} sm={11} md={6} lg={3}>

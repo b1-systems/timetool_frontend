@@ -209,3 +209,8 @@ export const editTimelogState = atom<Timelog>({
     type: "-1",
   },
 });
+
+export const alertShownInInputState = atom({
+  key: "alertShownInInputState",
+  default: false,
+});

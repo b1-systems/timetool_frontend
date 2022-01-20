@@ -1,4 +1,7 @@
 import {
+  Alert,
+  Box,
+  Container,
   FormControl,
   Grid,
   InputLabel,
@@ -8,9 +11,9 @@ import {
 } from "@mui/material";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useRecoilValue } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 
-import { perdiemModelsState } from "../../atom";
+import { alertShownInInputState, perdiemModelsState } from "../../atom";
 
 export default function InputPerdiem(props: {
   uuidProject: string;
@@ -24,11 +27,24 @@ export default function InputPerdiem(props: {
   const perdiemModels = useRecoilValue(perdiemModelsState);
   const [modelSelected, setModelSelected] = useState(props.model);
   const { t } = useTranslation();
+  const setAlertShownInInput = useSetRecoilState(alertShownInInputState);
 
   const projectPerdiem = perdiemModels.get(props.uuidProject);
   if (!projectPerdiem) {
-    return <p>has no perdiems</p>;
+    setAlertShownInInput(true);
+    return (
+      <Container>
+        <Box sx={{ mx: "auto", textAlign: "center", p: 5 }}>
+          <Alert severity="info" sx={{ textAlign: "center" }}>
+            {t("no_perdiems_in_this_project")}
+          </Alert>
+        </Box>
+      </Container>
+    );
   }
+
+  setAlertShownInInput(false);
+
   return (
     <>
       <Grid item xs={12} sm={4} md={3} lg={2}>
