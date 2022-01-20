@@ -63,7 +63,6 @@ export default function InputCard(props: {
     if (editShift.project_uuid !== "-1" && editShift.start_dt !== -1) {
       setType("shift");
       setDateFrom(DateTime.fromSeconds(editShift.start_dt));
-      console.log(shiftModel);
       setShiftModel(editShift.shift_model || "unknown shift");
       setShift(editShift.shift_model || "unknown shift");
       setIncidents(editShift.incidents || []);
@@ -93,7 +92,6 @@ export default function InputCard(props: {
     let submitData;
     let incidentsChecked: Incident[] = [];
     if (type === "shift" && props.uuidProject) {
-      console.log("incidents", incidents);
       incidents.forEach((incident) => {
         if (incident.end_dt < incident.start_dt) {
           incidentsChecked.push({
@@ -106,7 +104,6 @@ export default function InputCard(props: {
           incidentsChecked.push(incident);
         }
       });
-      console.log("incidentsChecked", incidentsChecked);
       submitData = {
         ...commonData,
         end_dt: Math.round(dateFrom.plus({ hours: 23, minutes: 59 }).valueOf() / 1000),
@@ -138,7 +135,7 @@ export default function InputCard(props: {
       throw new Error("not a valid submit");
     }
     fetchSubmit(submitData).then(() => {
-      setDateFrom(dateFrom.plus({ days: 1 }));
+      setDateFrom(dateFrom.plus({ days: 1 })); //TODO this line changes atom and therefore a new request for projects is made, which is not necessary
       setDateTo(dateTo.plus({ days: 1 }));
       setIncidents([]);
       setEditShift({
