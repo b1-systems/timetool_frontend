@@ -21,12 +21,7 @@ import { useRecoilState } from "recoil";
 import { v4 as uuidv4 } from "uuid";
 
 import { fetchSubmit } from "../../api";
-import {
-  dateFromState,
-  dateToState,
-  editTimelogState,
-  useUpdateProjects,
-} from "../../atom";
+import { dateFromState, dateToState, editTimelogState } from "../../atom";
 import {
   Incident,
   PerdiemModelsToProjectUuid,
@@ -63,16 +58,17 @@ export default function InputCard(props: {
   const [typeOfPerdiem, setTypeOfPerdiem] = useState<number>(-1);
   const [submitBtnDisabled, setSubmitBtnDisabled] = useState(false);
   const [editShift, setEditShift] = useRecoilState(editTimelogState);
-  const updateProjects = useUpdateProjects();
 
   useEffect(() => {
     if (editShift.project_uuid !== "-1" && editShift.start_dt !== -1) {
       setType("shift");
       setDateFrom(DateTime.fromSeconds(editShift.start_dt));
+      console.log(shiftModel);
+      setShiftModel(editShift.shift_model || "unknown shift");
       setShift(editShift.shift_model || "unknown shift");
       setIncidents(editShift.incidents || []);
     }
-  }, [editShift, setDateFrom]);
+  }, [editShift, setDateFrom, shiftModel]);
 
   const setTypeHandler = (event: SelectChangeEvent) => {
     setType(event.target.value as string);
@@ -142,7 +138,6 @@ export default function InputCard(props: {
       throw new Error("not a valid submit");
     }
     fetchSubmit(submitData).then(() => {
-      updateProjects();
       setDateFrom(dateFrom.plus({ days: 1 }));
       setDateTo(dateTo.plus({ days: 1 }));
       setIncidents([]);
@@ -156,7 +151,6 @@ export default function InputCard(props: {
         type: "-1",
       });
       props.setUuidLog(null);
-      updateProjects();
     });
   };
 

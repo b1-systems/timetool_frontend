@@ -50,8 +50,7 @@ export default function MainGrid() {
 
   useEffect(() => {
     // copy of setMonthGetProjectsHandler, because first load leaved month closed
-    setDateFrom(dateFrom);
-    if (dateFrom !== null) {
+    if (monthIsClosed) {
       fetchIsMonthClosed({
         params: {
           year: dateFrom.year,
@@ -84,48 +83,52 @@ export default function MainGrid() {
         setProjectShiftModels(Object.values(projectFiltered[0].worktypes.shift));
       }
     }
-  }, [availableProjects, editShift, dateFrom, setDateFrom]);
+  }, [availableProjects, editShift, dateFrom, monthIsClosed]);
 
   const monthEndHandler = () => {
     setEndMonthOpen(false);
   };
 
   const setMonthGetProjectsHandler = (newDate: DateTime) => {
-    setDateFrom(newDate);
-    if (newDate !== null) {
-      fetchIsMonthClosed({
-        params: {
-          year: newDate.year,
-          month: newDate.month,
-          format: "traditional",
-          scope: "me",
-        },
-      })
-        .then((response) => {
-          return response.json();
+    if (newDate.year !== dateFrom.year && newDate.month !== dateFrom.month) {
+      setDateFrom(newDate);
+      if (newDate !== null) {
+        fetchIsMonthClosed({
+          params: {
+            year: newDate.year,
+            month: newDate.month,
+            format: "traditional",
+            scope: "me",
+          },
         })
-        .then((response) => {
-          if (response.locks.length === 0) {
-            setMonthIsClosed(false);
-          } else {
-            setMonthIsClosed(true);
-          }
-        });
+          .then((response) => {
+            return response.json();
+          })
+          .then((response) => {
+            if (response.locks.length === 0) {
+              setMonthIsClosed(false);
+            } else {
+              setMonthIsClosed(true);
+            }
+          });
+      }
     }
   };
 
   const setProjectGetLogsHandler = (event: SelectChangeEvent) => {
-    const projectFiltered = availableProjects.filter(
-      (project) => project.name === (event.target.value as string),
-    );
-    setProject(event.target.value as string);
-    setProjectUuid(projectFiltered[0].uuid);
-    setProjectTypes(Object.keys(projectFiltered[0].worktypes));
-    if (projectFiltered[0].worktypes.shift !== undefined) {
-      setProjectShiftModels(Object.values(projectFiltered[0].worktypes.shift));
-    }
-    if (projectFiltered[0].worktypes.perdiem !== undefined) {
-      setPerdiemModels(Object.values(projectFiltered[0].worktypes.perdiem));
+    if (project !== (event.target.value as string)) {
+      const projectFiltered = availableProjects.filter(
+        (project) => project.name === (event.target.value as string),
+      );
+      setProject(event.target.value as string);
+      setProjectUuid(projectFiltered[0].uuid);
+      setProjectTypes(Object.keys(projectFiltered[0].worktypes));
+      if (projectFiltered[0].worktypes.shift !== undefined) {
+        setProjectShiftModels(Object.values(projectFiltered[0].worktypes.shift));
+      }
+      if (projectFiltered[0].worktypes.perdiem !== undefined) {
+        setPerdiemModels(Object.values(projectFiltered[0].worktypes.perdiem));
+      }
     }
   };
 

@@ -59,7 +59,6 @@ export default function OutputShift(props: {
   };
 
   const editHandler = (log: Timelog) => {
-    console.log("log in OutputShift", log);
     setEditShift(log);
   };
 

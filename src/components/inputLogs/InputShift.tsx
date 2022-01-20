@@ -12,7 +12,7 @@ import {
   TextField,
 } from "@mui/material";
 import { DateTime } from "luxon";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilState, useRecoilValue } from "recoil";
 
@@ -36,6 +36,12 @@ export default function InputShift(props: {
   const shiftModels = useRecoilValue(shiftModelsState);
   const [editShift, setEditShift] = useRecoilState(editTimelogState);
   const [dateFrom] = useRecoilState(dateFromState);
+
+  useEffect(() => {
+    if (editShift.project_uuid !== "-1" && editShift.start_dt !== -1) {
+      setShiftSelected(editShift.shift_model || "unknown shift");
+    }
+  }, [editShift]);
 
   const addHandler = () => {
     props.setIncidents([
