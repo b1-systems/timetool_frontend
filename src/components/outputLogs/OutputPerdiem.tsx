@@ -9,7 +9,7 @@ import { useTranslation } from "react-i18next";
 import { useRecoilValue } from "recoil";
 
 import { fetchDelete } from "../../api";
-import { perdiemModelsState, useUpdateProjects } from "../../atom";
+import { perdiemModelsState, useUpdateLogs } from "../../atom";
 import { Perdiem } from "../../models";
 import OutputChip from "./OutputChip";
 
@@ -20,7 +20,7 @@ export default function OutputPerdiem(props: {
 }) {
   const { t } = useTranslation();
 
-  const updateProjects = useUpdateProjects();
+  const updateLogs = useUpdateLogs();
 
   const perdiemModels = useRecoilValue(perdiemModelsState);
 
@@ -41,26 +41,11 @@ export default function OutputPerdiem(props: {
     return "unknown type";
   };
 
-  //const perdiemModelHandler = (uuid: string, type: number): string => {
-  //if (Object.keys(props.projectPerdiemtModelsAsObject).length !== 0) {
-  //  if (props.projectPerdiemtModelsAsObject[uuid]) {
-  //       for (const [key, value] of Object.entries(
-  //         props.projectPerdiemtModelsAsObject[uuid],
-  //       )) {
-  //         if (key === type.toString()) {
-  //           return value;
-  //         }
-  //       }
-  //     }
-  //   }
-  //   return "unknown type";
-  // };
-
   const deleteHandler = (uuid: string) => {
     const requestPrototype = {
       request: { uuid: uuid },
     };
-    fetchDelete(requestPrototype).then(() => updateProjects());
+    fetchDelete(requestPrototype).then(() => updateLogs());
   };
 
   return (

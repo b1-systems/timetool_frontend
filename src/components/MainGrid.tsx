@@ -18,7 +18,7 @@ import { useTranslation } from "react-i18next";
 import { useRecoilState, useRecoilValue } from "recoil";
 
 import { fetchIsMonthClosed } from "../api";
-import { dateFromState, editTimelogState, projectsState } from "../atom";
+import { dateFromState, editTimelogState, monthState, projectsState } from "../atom";
 import DummyCard from "../dummyData/DummyCard";
 import { PerdiemModelsToProjectUuid, ShiftModelsToProjectUuid } from "../models";
 import MonthEndDialog from "./MonthEndDialog";
@@ -31,7 +31,7 @@ import TimelogItemList from "./outputLogs/TimelogItemList";
 
 export default function MainGrid() {
   const { t } = useTranslation();
-  const [dateFrom, setDateFrom] = useRecoilState(dateFromState);
+  const dateFrom = useRecoilValue(dateFromState);
   const availableProjects = useRecoilValue(projectsState);
   const [project, setProject] = useState<string>("");
   const [projectUuid, setProjectUuid] = useState<string>("");
@@ -46,30 +46,29 @@ export default function MainGrid() {
   const [projectPerdiemModelsAsObject, setProjectPerdiemtModelsAsObject] =
     useState<PerdiemModelsToProjectUuid>({});
 
-  const [editShift] = useRecoilState(editTimelogState);
+  const editShift = useRecoilValue(editTimelogState);
+  const [month, setMonth] = useRecoilState(monthState);
 
   useEffect(() => {
     // copy of setMonthGetProjectsHandler, because first load leaved month closed
-    if (monthIsClosed) {
-      fetchIsMonthClosed({
-        params: {
-          year: dateFrom.year,
-          month: dateFrom.month,
-          format: "traditional",
-          scope: "me",
-        },
+    fetchIsMonthClosed({
+      params: {
+        year: dateFrom.year,
+        month: dateFrom.month,
+        format: "traditional",
+        scope: "me",
+      },
+    })
+      .then((response) => {
+        return response.json();
       })
-        .then((response) => {
-          return response.json();
-        })
-        .then((response) => {
-          if (response.locks.length === 0) {
-            setMonthIsClosed(false);
-          } else {
-            setMonthIsClosed(true);
-          }
-        });
-    }
+      .then((response) => {
+        if (response.locks.length === 0) {
+          setMonthIsClosed(false);
+        } else {
+          setMonthIsClosed(true);
+        }
+      });
     // end copy of setMonthGetProjectsHandler
     if (editShift.project_uuid !== "-1" && editShift.start_dt !== -1) {
       setUuidLog(editShift.uuid);
@@ -87,32 +86,6 @@ export default function MainGrid() {
 
   const monthEndHandler = () => {
     setEndMonthOpen(false);
-  };
-
-  const setMonthGetProjectsHandler = (newDate: DateTime) => {
-    if (newDate.year !== dateFrom.year && newDate.month !== dateFrom.month) {
-      setDateFrom(newDate);
-      if (newDate !== null) {
-        fetchIsMonthClosed({
-          params: {
-            year: newDate.year,
-            month: newDate.month,
-            format: "traditional",
-            scope: "me",
-          },
-        })
-          .then((response) => {
-            return response.json();
-          })
-          .then((response) => {
-            if (response.locks.length === 0) {
-              setMonthIsClosed(false);
-            } else {
-              setMonthIsClosed(true);
-            }
-          });
-      }
-    }
   };
 
   const setProjectGetLogsHandler = (event: SelectChangeEvent) => {
@@ -159,10 +132,10 @@ export default function MainGrid() {
                     label={t("year_and_month")}
                     minDate={DateTime.fromISO("2000-01-01T00:00")}
                     maxDate={DateTime.fromISO("2100-01-01T00:00")}
-                    value={dateFrom}
+                    value={month}
                     onChange={(newValue) => {
                       if (newValue) {
-                        setMonthGetProjectsHandler(newValue);
+                        setMonth(newValue);
                       }
                     }}
                     renderInput={(params) => (

@@ -1,8 +1,35 @@
 import { DateTime } from "luxon";
-import { atom, selector, useRecoilState } from "recoil";
+import { DefaultValue, atom, selector, useRecoilState } from "recoil";
 
 import { fetchCurrentMonthLogs, fetchProjects } from "./api";
 import { Logs, Perdiem, Project, Timelog } from "./models";
+
+export const monthBackingState = atom({
+  key: "monthBackingState",
+  default: DateTime.now(),
+});
+
+export const monthState = selector<DateTime>({
+  key: "monthState",
+  get: ({ get }) => {
+    return get(monthBackingState);
+  },
+  set: ({ set, get }, newMonth) => {
+    set(
+      dateFromState,
+      newMonth instanceof DefaultValue
+        ? newMonth
+        : newMonth.set({
+            day: 1,
+            hour: 0,
+            minute: 0,
+            second: 0,
+            millisecond: 0,
+          }),
+    );
+    set(monthBackingState, newMonth instanceof DefaultValue ? newMonth : newMonth);
+  },
+});
 
 export const dateFromState = atom({
   key: "dateFromState",
@@ -68,11 +95,11 @@ export const projectsState = selector<Project[]>({
   key: "projectsState",
   get: async ({ get }) => {
     get(projectsRequestIdState);
-    const dateFrom = get(dateFromState);
+    const month = get(monthState);
     return fetchProjects({
       params: {
-        year: dateFrom.year,
-        month: dateFrom.month,
+        year: month.year,
+        month: month.month,
         format: "traditional",
         scope: "me",
       },
@@ -84,15 +111,27 @@ export const projectsState = selector<Project[]>({
   },
 });
 
+export const logsRequestIdState = atom({
+  key: "logsRequestIdState",
+  default: 0,
+});
+
+export const useUpdateLogs = () => {
+  const [logsRequestId, setLogsRequestId] = useRecoilState(logsRequestIdState);
+  return () => {
+    setLogsRequestId(logsRequestId + 1);
+  };
+};
+
 export const currentMonthLogsState = selector<Logs>({
   key: "currentMonthLogsState",
   get: async ({ get }) => {
-    get(projectsRequestIdState);
-    const dateFrom = get(dateFromState);
+    get(logsRequestIdState);
+    const month = get(monthState);
     return fetchCurrentMonthLogs({
       params: {
-        year: dateFrom.year,
-        month: dateFrom.month,
+        year: month.year,
+        month: month.month,
         format: "traditional",
         scope: "me",
       },

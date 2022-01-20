@@ -21,7 +21,12 @@ import { useRecoilState } from "recoil";
 import { v4 as uuidv4 } from "uuid";
 
 import { fetchSubmit } from "../../api";
-import { dateFromState, dateToState, editTimelogState } from "../../atom";
+import {
+  dateFromState,
+  dateToState,
+  editTimelogState,
+  useUpdateLogs,
+} from "../../atom";
 import {
   Incident,
   PerdiemModelsToProjectUuid,
@@ -58,6 +63,8 @@ export default function InputCard(props: {
   const [typeOfPerdiem, setTypeOfPerdiem] = useState<number>(-1);
   const [submitBtnDisabled, setSubmitBtnDisabled] = useState(false);
   const [editShift, setEditShift] = useRecoilState(editTimelogState);
+
+  const updateLogs = useUpdateLogs();
 
   useEffect(() => {
     if (editShift.project_uuid !== "-1" && editShift.start_dt !== -1) {
@@ -135,7 +142,7 @@ export default function InputCard(props: {
       throw new Error("not a valid submit");
     }
     fetchSubmit(submitData).then(() => {
-      setDateFrom(dateFrom.plus({ days: 1 })); //TODO this line changes atom and therefore a new request for projects is made, which is not necessary
+      setDateFrom(dateFrom.plus({ days: 1 }));
       setDateTo(dateTo.plus({ days: 1 }));
       setIncidents([]);
       setEditShift({
@@ -148,6 +155,7 @@ export default function InputCard(props: {
         type: "-1",
       });
       props.setUuidLog(null);
+      updateLogs();
     });
   };
 

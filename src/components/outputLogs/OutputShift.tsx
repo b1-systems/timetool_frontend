@@ -13,10 +13,10 @@ import { Box, Button, Card, CardActions, Collapse, Grid } from "@mui/material";
 import { DateTime } from "luxon";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 
 import { fetchDelete } from "../../api";
-import { editTimelogState, shiftModelsState, useUpdateProjects } from "../../atom";
+import { editTimelogState, shiftModelsState, useUpdateLogs } from "../../atom";
 import { Timelog } from "../../models";
 import OutputChip from "./OutputChip";
 
@@ -30,7 +30,9 @@ export default function OutputShift(props: {
   const [entriesVisible, setEntriesVisible] = useState<boolean>(false);
 
   const shiftModels = useRecoilValue(shiftModelsState);
-  const [, setEditShift] = useRecoilState(editTimelogState);
+  const setEditShift = useSetRecoilState(editTimelogState);
+
+  const updateLogs = useUpdateLogs();
 
   const shiftModelHandler = (uuid: string, type: string | undefined): string => {
     if (shiftModels.size !== 0 && type) {
@@ -49,13 +51,11 @@ export default function OutputShift(props: {
     return "unknown type";
   };
 
-  const updateProjects = useUpdateProjects();
-
   const deleteHandler = (uuid: string) => {
     const requestPrototype = {
       request: { uuid: uuid },
     };
-    fetchDelete(requestPrototype).then(() => updateProjects());
+    fetchDelete(requestPrototype).then(() => updateLogs());
   };
 
   const editHandler = (log: Timelog) => {
