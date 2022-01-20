@@ -49,6 +49,29 @@ export default function MainGrid() {
   const [editShift] = useRecoilState(editTimelogState);
 
   useEffect(() => {
+    // copy of setMonthGetProjectsHandler, because first load leaved month closed
+    setDateFrom(dateFrom);
+    if (dateFrom !== null) {
+      fetchIsMonthClosed({
+        params: {
+          year: dateFrom.year,
+          month: dateFrom.month,
+          format: "traditional",
+          scope: "me",
+        },
+      })
+        .then((response) => {
+          return response.json();
+        })
+        .then((response) => {
+          if (response.locks.length === 0) {
+            setMonthIsClosed(false);
+          } else {
+            setMonthIsClosed(true);
+          }
+        });
+    }
+    // end copy of setMonthGetProjectsHandler
     if (editShift.project_uuid !== "-1" && editShift.start_dt !== -1) {
       setUuidLog(editShift.uuid);
       setProjectUuid(editShift.project_uuid);
@@ -61,7 +84,7 @@ export default function MainGrid() {
         setProjectShiftModels(Object.values(projectFiltered[0].worktypes.shift));
       }
     }
-  }, [availableProjects, editShift]);
+  }, [availableProjects, editShift, dateFrom, setDateFrom]);
 
   const monthEndHandler = () => {
     setEndMonthOpen(false);
