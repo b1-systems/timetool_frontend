@@ -82,7 +82,7 @@ export default function InputShift(props: {
           </Select>
         </FormControl>
       </Grid>
-      <Grid item xs={12} sm={6} md={3} lg={2} sx={{ mt: 1 }}>
+      <Grid item xs={12} sm={4} md={3} lg={2} sx={{ mt: 1 }}>
         <Button
           disabled={!shiftSelected}
           fullWidth
@@ -94,7 +94,7 @@ export default function InputShift(props: {
           {t("add_entry")}
         </Button>
       </Grid>
-      <Grid item xs={12} sm={6} md={3} lg={2} sx={{ mt: 1 }}>
+      <Grid item xs={12} sm={4} md={3} lg={2} sx={{ mt: 1 }}>
         {editShift.project_uuid !== "-1" && editShift.start_dt !== -1 && (
           <Button
             color="warning"

@@ -202,6 +202,14 @@ export default function OutputShift(props: {
               </Button>
             )}
             <Button
+              color="warning"
+              size="small"
+              variant="contained"
+              onClick={() => editHandler(props.log)}
+            >
+              <EditIcon />
+            </Button>
+            <Button
               color="error"
               size="small"
               variant="contained"
@@ -209,14 +217,6 @@ export default function OutputShift(props: {
               disabled={props.monthIsClosed}
             >
               <DeleteForeverIcon />
-            </Button>
-            <Button
-              color="warning"
-              size="small"
-              variant="contained"
-              onClick={() => editHandler(props.log)}
-            >
-              <EditIcon />
             </Button>
           </>
         )}

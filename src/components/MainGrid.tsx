@@ -1,15 +1,12 @@
 import DatePicker from "@mui/lab/DatePicker";
 import {
+  Autocomplete,
   Card,
   CardActions,
   CardContent,
   CardHeader,
   FormControl,
   Grid,
-  InputLabel,
-  MenuItem,
-  Select,
-  SelectChangeEvent,
   TextField,
 } from "@mui/material";
 import { DateTime } from "luxon";
@@ -67,19 +64,21 @@ export default function MainGrid() {
     setEndMonthOpen(false);
   };
 
-  const setProjectGetLogsHandler = (event: SelectChangeEvent) => {
-    if (project !== (event.target.value as string)) {
-      const projectFiltered = availableProjects.filter(
-        (project) => project.name === (event.target.value as string),
-      );
-      setProject(event.target.value as string);
-      setProjectUuid(projectFiltered[0].uuid);
-      setProjectTypes(Object.keys(projectFiltered[0].worktypes));
-      if (projectFiltered[0].worktypes.shift !== undefined) {
-        setProjectShiftModels(Object.values(projectFiltered[0].worktypes.shift));
-      }
-      if (projectFiltered[0].worktypes.perdiem !== undefined) {
-        setPerdiemModels(Object.values(projectFiltered[0].worktypes.perdiem));
+  const setProjectGetLogsHandler = (str: string | null) => {
+    if (str !== null) {
+      if (project !== str) {
+        const projectFiltered = availableProjects.filter(
+          (project) => project.name === str,
+        );
+        setProject(str);
+        setProjectUuid(projectFiltered[0].uuid);
+        setProjectTypes(Object.keys(projectFiltered[0].worktypes));
+        if (projectFiltered[0].worktypes.shift !== undefined) {
+          setProjectShiftModels(Object.values(projectFiltered[0].worktypes.shift));
+        }
+        if (projectFiltered[0].worktypes.perdiem !== undefined) {
+          setPerdiemModels(Object.values(projectFiltered[0].worktypes.perdiem));
+        }
       }
     }
   };
@@ -113,21 +112,16 @@ export default function MainGrid() {
               </Grid>
               <Grid item xs={12} sm={7} md={6} lg={4}>
                 <FormControl fullWidth>
-                  <InputLabel id="select-label-projectState">{t("project")}</InputLabel>
-                  <Select
-                    labelId="select-label-project"
-                    id="demo-simple-select-project"
+                  <Autocomplete
+                    id="select-label-projectState-autocomplete"
+                    options={availableProjects.map((project) => project.name)}
+                    renderInput={(params) => (
+                      <TextField {...params} label={t("project")} />
+                    )}
                     value={project}
-                    label={t("project")}
-                    onChange={setProjectGetLogsHandler}
+                    onChange={(event, value) => setProjectGetLogsHandler(value)}
                     disabled={!dateFrom}
-                  >
-                    {availableProjects.map((project) => (
-                      <MenuItem key={project.uuid} value={project.name}>
-                        {project.name}
-                      </MenuItem>
-                    ))}
-                  </Select>
+                  ></Autocomplete>
                 </FormControl>
               </Grid>
             </Grid>
