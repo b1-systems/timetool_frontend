@@ -141,7 +141,7 @@ export default function InputCard(props: {
     }
     fetchSubmit(submitData).then(() => {
       setDateFrom(dateFrom.plus({ days: 1 }));
-      setDateTo(dateTo.plus({ days: 1 }));
+      // setDateTo(dateTo.plus({ days: 1 }));
       setIncidents([]);
       setEditShift({
         uuid: "-1",

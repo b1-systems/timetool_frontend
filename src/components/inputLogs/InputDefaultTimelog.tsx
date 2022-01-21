@@ -60,9 +60,25 @@ export default function InputDefaultTimelog(props: {
             ampmInClock={false}
             onChange={(newValue) => {
               if (newValue) {
-                setDatePickerFrom(newValue.set({ second: 0, millisecond: 0 }));
+                setDatePickerFrom(
+                  newValue.set({
+                    year: dateFrom.year,
+                    month: dateFrom.month,
+                    day: dateFrom.day,
+                    second: 0,
+                    millisecond: 0,
+                  }),
+                );
                 if (newValue.isValid) {
-                  setDateFrom(newValue.set({ second: 0, millisecond: 0 }));
+                  setDateFrom(
+                    newValue.set({
+                      year: dateFrom.year,
+                      month: dateFrom.month,
+                      day: dateFrom.day,
+                      second: 0,
+                      millisecond: 0,
+                    }),
+                  );
                 }
               }
             }}
