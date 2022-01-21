@@ -97,16 +97,38 @@ export default function InputCard(props: {
     let submitData;
     let incidentsChecked: Incident[] = [];
     if (type === "shift" && props.uuidProject) {
+      let overZero = false;
+      let lastTimeChecked = -1;
       incidents.forEach((incident) => {
-        if (incident.end_dt < incident.start_dt) {
+        if (lastTimeChecked !== -1) {
+          if (lastTimeChecked > incident.start_dt) {
+            overZero = true;
+          }
+        }
+        if (!overZero) {
+          if (incident.end_dt < incident.start_dt) {
+            incidentsChecked.push({
+              start_dt: incident.start_dt,
+              end_dt:
+                DateTime.fromSeconds(incident.end_dt).plus({ days: 1 }).valueOf() /
+                1000,
+              comment: incident.comment,
+            });
+            lastTimeChecked = incident.end_dt;
+            overZero = true;
+          } else {
+            incidentsChecked.push(incident);
+            lastTimeChecked = incident.end_dt;
+          }
+        } else {
           incidentsChecked.push({
-            start_dt: incident.start_dt,
+            start_dt:
+              DateTime.fromSeconds(incident.start_dt).plus({ days: 1 }).valueOf() /
+              1000,
             end_dt:
               DateTime.fromSeconds(incident.end_dt).plus({ days: 1 }).valueOf() / 1000,
             comment: incident.comment,
           });
-        } else {
-          incidentsChecked.push(incident);
         }
       });
       submitData = {
@@ -116,6 +138,7 @@ export default function InputCard(props: {
         incidents: incidentsChecked,
         shift_model: shiftModel,
       };
+      overZero = false;
     } else if (type === "timelog" && props.uuidProject && dateFrom && dateTo) {
       submitData = {
         ...commonData,

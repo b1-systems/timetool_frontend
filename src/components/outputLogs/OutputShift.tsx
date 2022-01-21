@@ -141,11 +141,11 @@ export default function OutputShift(props: {
                                   sx={{ width: 18, height: 18, color: "white" }}
                                 />
                               }
-                              text={`${DateTime.fromSeconds(incident.start_dt).day} ${
-                                DateTime.fromSeconds(incident.start_dt).monthShort
-                              } at: ${DateTime.fromSeconds(incident.start_dt).toFormat(
-                                "T",
-                              )}`}
+                              text={`${DateTime.fromSeconds(
+                                incident.start_dt,
+                              ).toISODate()} ${DateTime.fromSeconds(
+                                incident.start_dt,
+                              ).toFormat("HH':'mm':'ss")}`}
                             />
                             <OutputChip
                               md={4}
@@ -157,11 +157,11 @@ export default function OutputShift(props: {
                                   sx={{ width: 18, height: 18, color: "white" }}
                                 />
                               }
-                              text={`${DateTime.fromSeconds(incident.end_dt).day} ${
-                                DateTime.fromSeconds(incident.end_dt).monthShort
-                              } at: ${DateTime.fromSeconds(incident.end_dt).toFormat(
-                                "T",
-                              )}`}
+                              text={`${DateTime.fromSeconds(
+                                incident.end_dt,
+                              ).toISODate()} ${DateTime.fromSeconds(
+                                incident.end_dt,
+                              ).toFormat("HH':'mm':'ss")}`}
                             />
 
                             <OutputChip
