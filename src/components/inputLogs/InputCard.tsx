@@ -141,7 +141,7 @@ export default function InputCard(props: {
     }
     fetchSubmit(submitData).then(() => {
       setDateFrom(dateFrom.plus({ days: 1 }));
-      // setDateTo(dateTo.plus({ days: 1 }));
+      setDateTo(dateTo.plus({ days: 1 }));
       setIncidents([]);
       setEditShift({
         uuid: "-1",
@@ -190,8 +190,12 @@ export default function InputCard(props: {
                   value={dateFrom}
                   onChange={(newValue) => {
                     if (newValue) {
-                      setDateFrom(newValue);
-                      setDateTo(newValue);
+                      setDateFrom((currentDateTo) =>
+                        currentDateTo.set({ day: newValue.day }),
+                      );
+                      setDateTo((currentDateTo) =>
+                        currentDateTo.set({ day: newValue.day }),
+                      );
                       setIncidents([]);
                       props.setUuidLog(null);
                     }

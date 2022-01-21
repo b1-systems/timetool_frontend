@@ -95,7 +95,15 @@ export default function InputDefaultTimelog(props: {
             value={dateTo}
             onChange={(newValue) => {
               if (newValue) {
-                setDateTo(newValue.set({ second: 0, millisecond: 0 }));
+                setDateTo(
+                  newValue.set({
+                    year: dateTo.year,
+                    month: dateTo.month,
+                    day: dateTo.day,
+                    second: 0,
+                    millisecond: 0,
+                  }),
+                );
               }
             }}
             renderInput={(params) => <TextField {...params} />}
