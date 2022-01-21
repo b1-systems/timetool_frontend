@@ -31,8 +31,8 @@ export default function InputDefaultTimelog(props: {
   const [dateFrom, setDateFrom] = useRecoilState(dateFromState);
   const setAlertShownInInput = useSetRecoilState(alertShownInInputState);
   const [datePickerFrom, setDatePickerFrom] = useState(dateFrom);
-
   const [dateTo, setDateTo] = useRecoilState(dateToState);
+  const [datePickerTo, setDatePickerTo] = useState(dateTo);
 
   console.log("props.types", props.types);
 
@@ -92,10 +92,10 @@ export default function InputDefaultTimelog(props: {
             label={t("to")}
             ampm={false}
             ampmInClock={false}
-            value={dateTo}
+            value={datePickerTo}
             onChange={(newValue) => {
               if (newValue) {
-                setDateTo(
+                setDatePickerTo(
                   newValue.set({
                     year: dateTo.year,
                     month: dateTo.month,
@@ -104,6 +104,17 @@ export default function InputDefaultTimelog(props: {
                     millisecond: 0,
                   }),
                 );
+                if (newValue.isValid) {
+                  setDateTo(
+                    newValue.set({
+                      year: dateTo.year,
+                      month: dateTo.month,
+                      day: dateTo.day,
+                      second: 0,
+                      millisecond: 0,
+                    }),
+                  );
+                }
               }
             }}
             renderInput={(params) => <TextField {...params} />}
