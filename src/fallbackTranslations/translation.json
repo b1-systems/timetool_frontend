@@ -43,5 +43,6 @@
   "travel_time_(minutes)": "Travel time (Minutes)",
   "type": "Type",
   "year_and_month": "Year and Month",
-  "yes": "yes"
+  "yes": "yes",
+  "you_are_closing": "You are closing: "
 }

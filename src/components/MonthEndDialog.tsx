@@ -9,10 +9,10 @@ import {
   Typography,
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
-import { useRecoilState } from "recoil";
+import { useRecoilValue } from "recoil";
 
 import { fetchCloseMonth } from "../api";
-import { dateFromState, useUpdateIsMonthClosed } from "../atom";
+import { monthState, useUpdateIsMonthClosed } from "../atom";
 
 const MonthEndDialog = (props: { close: () => void }) => {
   const { t } = useTranslation();
@@ -20,14 +20,14 @@ const MonthEndDialog = (props: { close: () => void }) => {
     props.close();
   };
 
-  const [dateFrom] = useRecoilState(dateFromState);
+  const monthYear = useRecoilValue(monthState);
   const updateIsMonthClosed = useUpdateIsMonthClosed();
 
   const handleEndMonth = () => {
     fetchCloseMonth({
       request: {
-        year: dateFrom.year.toString(),
-        month: dateFrom.month.toString(),
+        year: monthYear.year.toString(),
+        month: monthYear.month.toString(),
         format: "traditional",
         scope: "me",
       },
@@ -36,6 +36,7 @@ const MonthEndDialog = (props: { close: () => void }) => {
       updateIsMonthClosed();
     });
   };
+  const text = `${monthYear.year} ${monthYear.monthLong}`;
 
   return (
     <Dialog onClose={cancelHandler} open={true}>
@@ -49,6 +50,12 @@ const MonthEndDialog = (props: { close: () => void }) => {
         }}
       >
         <DialogContent>
+          <Typography variant="h6" component="div" align="center">
+            {t("you_are_closing")}
+          </Typography>
+          <Typography variant="h6" component="div" align="center">
+            {text}
+          </Typography>
           <Typography variant="h6" component="div" align="center">
             {t(
               "question_the_closing_of_this_month_is_irreversible_do_you_still_want_to_continue",
