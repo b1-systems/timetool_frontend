@@ -46,6 +46,28 @@ export default function MainGrid() {
   const isMonthClosed = useRecoilValue(isMonthClosedState);
 
   useEffect(() => {
+    if (availableProjects.length === 1) {
+      const str = availableProjects[0].name;
+      if (str !== null) {
+        if (project !== str) {
+          const projectFiltered = availableProjects.filter(
+            (project) => project.name === str,
+          );
+          setProject(str);
+          setProjectUuid(projectFiltered[0].uuid);
+          setProjectTypes(Object.keys(projectFiltered[0].worktypes));
+          if (projectFiltered[0].worktypes.shift !== undefined) {
+            setProjectShiftModels(Object.values(projectFiltered[0].worktypes.shift));
+          }
+          if (projectFiltered[0].worktypes.perdiem !== undefined) {
+            setPerdiemModels(Object.values(projectFiltered[0].worktypes.perdiem));
+          }
+        }
+      }
+    }
+  }, [availableProjects, project]);
+
+  useEffect(() => {
     if (editShift.project_uuid !== "-1" && editShift.start_dt !== -1) {
       setUuidLog(editShift.uuid);
       setProjectUuid(editShift.project_uuid);

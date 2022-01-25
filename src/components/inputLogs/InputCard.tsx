@@ -64,6 +64,13 @@ export default function InputCard(props: {
   const updateLogs = useUpdateLogs();
   const isMonthClosed = useRecoilValue(isMonthClosedState);
   const alertShownInInput = useRecoilValue(alertShownInInputState);
+
+  useEffect(() => {
+    if (props.types.length === 1) {
+      setType(props.types[0]);
+    }
+  }, [props.types]);
+
   useEffect(() => {
     if (editShift.project_uuid !== "-1" && editShift.start_dt !== -1) {
       setType("shift");
