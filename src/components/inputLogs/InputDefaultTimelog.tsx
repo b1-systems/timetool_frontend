@@ -10,11 +10,16 @@ import {
   RadioGroup,
   TextField,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 
-import { alertShownInInputState, dateFromState, dateToState } from "../../atom";
+import {
+  alertShownInInputState,
+  dateFromState,
+  dateToState,
+  monthState,
+} from "../../atom";
 
 export default function InputDefaultTimelog(props: {
   handleRemote(): void;
@@ -33,6 +38,12 @@ export default function InputDefaultTimelog(props: {
   const [datePickerFrom, setDatePickerFrom] = useState(dateFrom);
   const [dateTo, setDateTo] = useRecoilState(dateToState);
   const [datePickerTo, setDatePickerTo] = useState(dateTo);
+  const month = useRecoilValue(monthState);
+
+  useEffect(() => {
+    setDatePickerFrom(dateFrom);
+    setDatePickerTo(dateTo);
+  }, [dateFrom, dateTo, month]);
 
   console.log("props.types", props.types);
 

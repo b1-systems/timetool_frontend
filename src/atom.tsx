@@ -27,6 +27,18 @@ export const monthState = selector<DateTime>({
             millisecond: 0,
           }),
     );
+    set(
+      dateToState,
+      newMonth instanceof DefaultValue
+        ? newMonth
+        : newMonth.set({
+            day: 1,
+            hour: 0,
+            minute: 0,
+            second: 0,
+            millisecond: 0,
+          }),
+    );
     set(monthBackingState, newMonth instanceof DefaultValue ? newMonth : newMonth);
   },
 });
