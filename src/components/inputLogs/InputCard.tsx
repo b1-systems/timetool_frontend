@@ -169,22 +169,25 @@ export default function InputCard(props: {
     } else {
       throw new Error("not a valid submit");
     }
-    fetchSubmit(submitData).then(() => {
-      setDateFrom(dateFrom.plus({ days: 1 }));
-      setDateTo(dateTo.plus({ days: 1 }));
-      setIncidents([]);
-      setEditShift({
-        uuid: "-1",
-        employee_uuid: "-1",
-        project_uuid: "-1",
-        project_name: "-1",
-        start_dt: -1,
-        end_dt: -1,
-        type: "-1",
-      });
-      props.setUuidLog(null);
-      updateLogs();
-    });
+    fetchSubmit(submitData)
+      .then(() => {
+        setDateFrom(dateFrom.plus({ days: 1 }));
+        setDateTo(dateTo.plus({ days: 1 }));
+        setIncidents([]);
+        setEditShift({
+          uuid: "-1",
+          employee_uuid: "-1",
+          project_uuid: "-1",
+          project_name: "-1",
+          start_dt: -1,
+          end_dt: -1,
+          type: "-1",
+        });
+        props.setUuidLog(null);
+        updateLogs();
+        return;
+      })
+      .catch((errorNoSubmit) => console.error(errorNoSubmit));
   };
 
   const handleRemote = () => {

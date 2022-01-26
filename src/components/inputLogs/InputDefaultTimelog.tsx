@@ -45,8 +45,6 @@ export default function InputDefaultTimelog(props: {
     setDatePickerTo(dateTo);
   }, [dateFrom, dateTo, month]);
 
-  console.log("props.types", props.types);
-
   if (!props.types.includes("timelog")) {
     setAlertShownInInput(true);
     return (

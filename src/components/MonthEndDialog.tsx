@@ -31,10 +31,13 @@ const MonthEndDialog = (props: { close: () => void }) => {
         format: "traditional",
         scope: "me",
       },
-    }).then(() => {
-      cancelHandler();
-      updateIsMonthClosed();
-    });
+    })
+      .then(() => {
+        cancelHandler();
+        updateIsMonthClosed();
+        return;
+      })
+      .catch((errorNoClose) => console.error(errorNoClose));
   };
   const text = `${monthYear.year} ${monthYear.monthLong}`;
 

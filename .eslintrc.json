@@ -7,7 +7,8 @@
   "extends": [
     "react-app",
     "plugin:react/recommended",
-    "eslint:recommended"
+    "eslint:recommended",
+    "plugin:promise/recommended"
   ],
   "overrides": [
     {
@@ -40,6 +41,7 @@
   "plugins": [
     "react",
     "@typescript-eslint",
+    "promise",
     "react-hooks",
     "jest"
   ],

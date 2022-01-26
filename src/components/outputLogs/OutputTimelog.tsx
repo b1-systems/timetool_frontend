@@ -28,7 +28,9 @@ export default function OutputTimelogs(props: {
     const requestPrototype = {
       request: { uuid: uuid },
     };
-    fetchDelete(requestPrototype).then(() => updateLogs());
+    fetchDelete(requestPrototype)
+      .then(() => updateLogs())
+      .catch((errorUpdateLogs) => console.error(errorUpdateLogs));
   };
   return (
     <Card elevation={0} sx={{ backgroundColor: props.index % 2 ? "white" : "#eeeeee" }}>

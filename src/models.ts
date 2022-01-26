@@ -1,3 +1,10 @@
+export interface RequestPrototyp {
+  year: string;
+  month: string;
+  format: string;
+  scope: string;
+}
+
 export interface Project {
   name: string;
   uuid: string;

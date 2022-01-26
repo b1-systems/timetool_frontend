@@ -55,7 +55,9 @@ export default function OutputShift(props: {
     const requestPrototype = {
       request: { uuid: uuid },
     };
-    fetchDelete(requestPrototype).then(() => updateLogs());
+    fetchDelete(requestPrototype)
+      .then(() => updateLogs())
+      .catch((errorUpdateLogs) => console.error(errorUpdateLogs));
   };
 
   const editHandler = (log: Timelog) => {

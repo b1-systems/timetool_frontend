@@ -85,23 +85,11 @@ export const isMonthClosedState = selector({
     get(isMonthClosedRequestIdState);
     const month = get(monthState);
     return fetchIsMonthClosed({
-      params: {
-        year: month.year,
-        month: month.month,
-        format: "traditional",
-        scope: "me",
-      },
-    })
-      .then((response) => {
-        return response.json();
-      })
-      .then((response) => {
-        if (response.locks.length === 0) {
-          return false;
-        } else {
-          return true;
-        }
-      });
+      year: month.year.toString(),
+      month: month.month.toString(),
+      format: "traditional",
+      scope: "me",
+    });
   },
 });
 
@@ -149,17 +137,11 @@ export const projectsState = selector<Project[]>({
     get(projectsRequestIdState);
     const month = get(monthState);
     return fetchProjects({
-      params: {
-        year: month.year,
-        month: month.month,
-        format: "traditional",
-        scope: "me",
-      },
-    })
-      .then((response) => {
-        return response.json();
-      })
-      .then((projectObj) => projectObj.projects);
+      year: month.year.toString(),
+      month: month.month.toString(),
+      format: "traditional",
+      scope: "me",
+    });
   },
 });
 
@@ -181,14 +163,10 @@ export const currentMonthLogsState = selector<Logs>({
     get(logsRequestIdState);
     const month = get(monthState);
     return fetchCurrentMonthLogs({
-      params: {
-        year: month.year,
-        month: month.month,
-        format: "traditional",
-        scope: "me",
-      },
-    }).then((response) => {
-      return response.json();
+      year: month.year.toString(),
+      month: month.month.toString(),
+      format: "traditional",
+      scope: "me",
     });
   },
 });
