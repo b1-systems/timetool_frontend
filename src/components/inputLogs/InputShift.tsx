@@ -138,6 +138,7 @@ export default function InputShift(props: {
               props.setIncidents([]);
             }}
             variant="contained"
+            data-testid={`InputShift_cancel_edit-warning-btn`}
             startIcon={<DoDisturbIcon />}
           >
             {t("cancel_edit")}

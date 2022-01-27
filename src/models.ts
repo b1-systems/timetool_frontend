@@ -56,7 +56,7 @@ export interface Timelog {
   end_dt: number;
   type: string;
   breaklength?: number;
-  travel?: string;
+  travel?: string | null;
   comment?: string;
   onsite?: string;
   incidents?: Incident[];

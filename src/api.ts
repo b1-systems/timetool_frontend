@@ -33,7 +33,7 @@ interface BackendCallParams {
  * @returns The direct `Response` object from `fetch`. No error handling or the like is
  * done.
  */
-const callBackend = (params: BackendCallParams | BackendRoute) => {
+export const callBackend = (params: BackendCallParams | BackendRoute) => {
   let headers;
   if (typeof params === "string") {
     headers = new Headers({ "Horde-Session-Token": globalThis.horde.sessionToken });

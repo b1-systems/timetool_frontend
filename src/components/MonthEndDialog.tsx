@@ -14,7 +14,11 @@ import { useRecoilValue } from "recoil";
 import { fetchCloseMonth } from "../api";
 import { monthState, useUpdateIsMonthClosed } from "../atom";
 
-const MonthEndDialog = (props: { close: () => void }) => {
+const MonthEndDialog = (props: {
+  close: () => void;
+  monthLong: string;
+  year: number;
+}) => {
   const { t } = useTranslation();
   const cancelHandler = async () => {
     props.close();
@@ -39,7 +43,6 @@ const MonthEndDialog = (props: { close: () => void }) => {
       })
       .catch((errorNoClose) => console.error(errorNoClose));
   };
-  const text = `${monthYear.year} ${monthYear.monthLong}`;
 
   return (
     <Dialog onClose={cancelHandler} open={true}>
@@ -57,7 +60,7 @@ const MonthEndDialog = (props: { close: () => void }) => {
             {t("you_are_closing")}
           </Typography>
           <Typography variant="h6" component="div" align="center">
-            {text}
+            {`${props.year} ${props.monthLong}`}
           </Typography>
           <Typography variant="h6" component="div" align="center">
             {t(

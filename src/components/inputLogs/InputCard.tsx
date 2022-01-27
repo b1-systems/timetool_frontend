@@ -309,6 +309,7 @@ export default function InputCard(props: {
                 startIcon={<NoteAddIcon />}
                 type="submit"
                 disabled={props.monthIsClosed || submitBtnDisabled || alertShownInInput}
+                data-testid={"InputCard_commit-info-btn_index"}
               >
                 {t("commit")}
               </Button>

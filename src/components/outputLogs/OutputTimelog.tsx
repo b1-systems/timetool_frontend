@@ -103,6 +103,7 @@ export default function OutputTimelogs(props: {
             variant="contained"
             onClick={() => deleteHandler(props.log.uuid)}
             disabled={props.monthIsClosed}
+            data-testid={`OutputTimelog_delete-error-btn_index-${props.index}`}
           >
             <DeleteForeverIcon />
           </Button>

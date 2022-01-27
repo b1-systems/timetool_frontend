@@ -109,6 +109,7 @@ export default function OutputPerdiem(props: {
             variant="contained"
             onClick={() => deleteHandler(props.log.uuid)}
             disabled={props.monthIsClosed}
+            data-testid={`OutputPerdiem_delete-error-btn`}
           >
             <DeleteForeverIcon />
           </Button>
