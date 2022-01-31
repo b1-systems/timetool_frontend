@@ -45,7 +45,9 @@ export default function OutputPerdiem(props: {
     const requestPrototype = {
       request: { uuid: uuid },
     };
-    fetchDelete(requestPrototype).then(() => updateLogs());
+    fetchDelete(requestPrototype)
+      .then(() => updateLogs())
+      .catch((errorUpdateLogs) => console.error(errorUpdateLogs));
   };
 
   return (
@@ -107,6 +109,7 @@ export default function OutputPerdiem(props: {
             variant="contained"
             onClick={() => deleteHandler(props.log.uuid)}
             disabled={props.monthIsClosed}
+            data-testid={`OutputPerdiem_delete-error-btn`}
           >
             <DeleteForeverIcon />
           </Button>

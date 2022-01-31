@@ -23,6 +23,11 @@ repos:
         entry: make translations-check
         pass_filenames: false
         language: system
+      - id: tests
+        name: Run tests
+        entry: make test-noninteractive
+        pass_filenames: false
+        language: system
   - repo: https://github.com/codespell-project/codespell
     rev: v2.1.0
     hooks:

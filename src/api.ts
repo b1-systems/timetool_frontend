@@ -1,23 +1,58 @@
 import {
+  Logs,
+  Project,
+  RequestPrototyp,
   requestCloseMonth,
   requestPerdiem,
   requestShift,
   requestTimelog,
 } from "./models";
 
-const getParams = (params?: Object) => {
-  if (params === undefined) {
-    return "";
+type BackendRoute =
+  | "project"
+  | "employee/me/timelogs"
+  | "lockedperiod"
+  | `timelog/${string}`;
+
+interface BackendCallParams {
+  endpoint: BackendRoute;
+  method?: "GET" | "POST" | "PUT" | "DELETE";
+  queryParams?: { [key: string]: string };
+  headers?: { [key: string]: string };
+  body?: { [key: string]: string } | string;
+}
+
+/**
+ * Wrapper around `fetch` to make sure that all API calls honor `horde.appWebroot` and
+ * have the session token sent with them as well. The supported URL are partially
+ * checked by typescript, see `BackendRoute` above.
+ *
+ * @param params: Instead of an object you can also pass an URL directly in which case a
+ * GET request is performed against it.
+ *
+ * @returns The direct `Response` object from `fetch`. No error handling or the like is
+ * done.
+ */
+export const callBackend = (params: BackendCallParams | BackendRoute) => {
+  let headers;
+  if (typeof params === "string") {
+    headers = new Headers({ "Horde-Session-Token": globalThis.horde.sessionToken });
+    return fetch(`${baseUrl()}/rest/${params}`, { headers: headers });
   }
-  let buildString = [];
-  for (const [key, value] of Object.entries(params)) {
-    if (buildString.length === 0) {
-      buildString.push(`?${key}=${value}`);
-      continue;
-    }
-    buildString.push(`&${key}=${value}`);
+  headers = new Headers(params.headers || {});
+  headers.set("Horde-Session-Token", globalThis.horde.sessionToken);
+  if (params.queryParams) {
+    const queryParams = new URLSearchParams(params.queryParams);
+    params.endpoint += `?${queryParams}`;
   }
-  return buildString.join("");
+  if (params.body) {
+    headers.set("Content-Type", "application/json");
+  }
+  return fetch(`${baseUrl()}/rest/${params.endpoint}`, {
+    method: params.method || "GET",
+    headers: headers,
+    body: typeof params.body === "string" ? params.body : JSON.stringify(params.body),
+  });
 };
 
 const baseUrl = () =>
@@ -25,122 +60,128 @@ const baseUrl = () =>
     .filter((subPath) => !!subPath)
     .join("/");
 
-export const fetchProjects = async (requestPrototyp: {
-  params?: Object;
-}): Promise<Response> =>
-  fetch(`${baseUrl()}/rest/project${getParams(requestPrototyp.params)}`, {
-    method: "get",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
+export const fetchProjects = (requestPrototyp: RequestPrototyp): Promise<Project[]> =>
+  callBackend({
+    endpoint: `project`,
+    method: "GET",
+    queryParams: {
+      year: requestPrototyp.year,
+      month: requestPrototyp.month,
+      format: requestPrototyp.format,
+      scope: requestPrototyp.scope,
     },
-  }).then((response) => {
-    if (response.ok) {
-      return response;
-    } else {
-      throw new Error(
-        `Could not fetch auditlogs. Backend response code: ${response.status}`,
-      );
-    }
-  });
+  })
+    .then((response) => {
+      if (response.ok) {
+        return response.json();
+      } else {
+        throw new Error(
+          `Could not fetch project. Backend response code: ${response.status}`,
+        );
+      }
+    })
+    .then((projectObj) => projectObj.projects);
 
 /**
  * Get logs to display for the current month selected
  * @param newDate
  *
  */
-export const fetchCurrentMonthLogs = async (requestPrototyp: {
-  params?: Object;
-}): Promise<Response> =>
-  fetch(`${baseUrl()}/rest/employee/me/timelogs${getParams(requestPrototyp.params)}`, {
-    method: "get",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
+
+export const fetchCurrentMonthLogs = (
+  requestPrototyp: RequestPrototyp,
+): Promise<Logs> =>
+  callBackend({
+    endpoint: `employee/me/timelogs`,
+    method: "GET",
+    queryParams: {
+      year: requestPrototyp.year,
+      month: requestPrototyp.month,
+      format: requestPrototyp.format,
+      scope: requestPrototyp.scope,
     },
   }).then((response) => {
     if (response.ok) {
-      return response;
+      return response.json();
     } else {
       throw new Error(
-        `Could not fetch auditlogs. Backend response code: ${response.status}`,
+        `Could not fetch current month logs. Backend response code: ${response.status}`,
       );
     }
   });
 
-export const fetchDelete = async (requestPrototyp: {
+export const fetchDelete = (requestPrototyp: {
   request: { uuid: string };
 }): Promise<void> =>
-  fetch(`${baseUrl()}/rest/timelog/${requestPrototyp.request.uuid}`, {
-    method: "delete",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-    },
+  callBackend({
+    endpoint: `timelog/${requestPrototyp.request.uuid}`,
+    method: "DELETE",
+  }).then((response) => {
+    if (response.ok) {
+      return;
+    } else {
+      throw new Error(`Could delete Log. Backend response code: ${response.status}`);
+    }
+  });
+
+export const fetchSubmit = (
+  request: requestTimelog | requestPerdiem | requestShift,
+): Promise<void> =>
+  callBackend({
+    endpoint: `timelog/${request.uuid}`,
+    method: "PUT",
+    body: JSON.stringify(request),
+  }).then((response) => {
+    if (response.ok) {
+      return;
+    } else {
+      throw new Error(`Could not submit. Backend response code: ${response.status}`);
+    }
+  });
+
+export const fetchCloseMonth = (requestPrototyp: {
+  request: requestCloseMonth;
+}): Promise<void> =>
+  callBackend({
+    endpoint: `lockedperiod`,
+    method: "POST",
+    body: JSON.stringify(requestPrototyp.request),
   }).then((response) => {
     if (response.ok) {
       return;
     } else {
       throw new Error(
-        `Could not fetch auditlogs. Backend response code: ${response.status}`,
+        `Could not close month. Backend response code: ${response.status}`,
       );
     }
   });
 
-export const fetchSubmit = async (
-  request: requestTimelog | requestPerdiem | requestShift,
-): Promise<Response> =>
-  fetch(`${baseUrl()}/rest/timelog/${request.uuid}`, {
-    method: "put",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
+export const fetchIsMonthClosed = (
+  requestPrototyp: RequestPrototyp,
+): Promise<boolean> =>
+  callBackend({
+    endpoint: `lockedperiod`,
+    method: "GET",
+    queryParams: {
+      year: requestPrototyp.year,
+      month: requestPrototyp.month,
+      format: requestPrototyp.format,
+      scope: requestPrototyp.scope,
     },
-    body: JSON.stringify(request),
-  }).then((response) => {
-    if (response.ok) {
-      return response;
-    } else {
-      throw new Error(
-        `Could not fetch auditlogs. Backend response code: ${response.status}`,
-      );
-    }
-  });
-
-export const fetchCloseMonth = async (requestPrototyp: {
-  request: requestCloseMonth;
-}): Promise<Response> =>
-  fetch(`${baseUrl()}/rest/lockedperiod`, {
-    method: "post",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(requestPrototyp.request),
-  }).then((response) => {
-    if (response.ok) {
-      return response;
-    } else {
-      throw new Error(
-        `Could not fetch auditlogs. Backend response code: ${response.status}`,
-      );
-    }
-  });
-
-export const fetchIsMonthClosed = async (requestPrototyp: {
-  params?: Object;
-}): Promise<Response> =>
-  fetch(`${baseUrl()}/rest/lockedperiod${getParams(requestPrototyp.params)}`, {
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-    },
-  }).then((response) => {
-    if (response.ok) {
-      return response;
-    } else {
-      throw new Error(
-        `Could not fetch auditlogs. Backend response code: ${response.status}`,
-      );
-    }
-  });
+  })
+    .then((response) => {
+      if (response.ok) {
+        return response.json();
+      } else {
+        throw new Error(
+          `Could not fetch auditlogs. Backend response code: ${response.status}`,
+        );
+      }
+    })
+    .then((response) => {
+      if (response.locks.length === 0) {
+        return false;
+      } else {
+        return true;
+      }
+    });

@@ -1,3 +1,10 @@
+export interface RequestPrototyp {
+  year: string;
+  month: string;
+  format: string;
+  scope: string;
+}
+
 export interface Project {
   name: string;
   uuid: string;
@@ -49,7 +56,7 @@ export interface Timelog {
   end_dt: number;
   type: string;
   breaklength?: number;
-  travel?: string;
+  travel?: string | null;
   comment?: string;
   onsite?: string;
   incidents?: Incident[];

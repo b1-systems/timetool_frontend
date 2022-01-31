@@ -1,179 +1,94 @@
-// import { toMatchImageSnapshot } from "jest-image-snapshot";
-// import { generateImage } from "jsdom-screenshot";
-// import { act, fireEvent, render, snapshots } from "../../../test/utils";
-// import * as api from "../../api";
-import { render } from "../../../test/utils";
+import React from "react";
+import { RecoilRoot } from "recoil";
+
+import { act, fireEvent, flushPromisesAndTimers, render } from "../../../test/utils";
+import * as api from "../../api";
 import MainGrid from "../MainGrid";
+import { projectsListOne, timelogs } from "../__dummyDataForTests/__dummyData";
 
-// const projects = {
-//   projects: [
-//     {
-//       uuid: "618e8691-b290-4214-a64d-86516d67120b",
-//       name: "Shift Project",
-//       worktypes: {
-//         shift: {
-//           morning: "Fr\u00fchschicht",
-//           afternoon: "Nachmittag",
-//           night: "Nachtschicht",
-//         },
-//       },
-//     },
-//     {
-//       uuid: "61e6bb44-27a0-4da6-9265-0106ac120003",
-//       name: "Demo Project 1",
-//       worktypes: {
-//         perdiem: {
-//           "4": "VMA Ausland",
-//           "5": "32 \u20ac 24h ab 3 Mon",
-//           "6": "16 \u20ac Anreise ab 3 Mon",
-//           "7": "14 \u20ac VMA Anreise",
-//           "8": "28 \u20ac VMA 24h",
-//         },
-//         timelog: { timelog: "timelog" },
-//       },
-//     },
-//     {
-//       uuid: "61e6bc30-a448-4366-9f96-0106ac120003",
-//       name: "Demo Project 2",
-//       worktypes: {
-//         perdiem: {
-//           "4": "VMA Ausland",
-//           "5": "32 \u20ac 24h ab 3 Mon",
-//           "6": "16 \u20ac Anreise ab 3 Mon",
-//           "7": "14 \u20ac VMA Anreise",
-//           "8": "28 \u20ac VMA 24h",
-//         },
-//         timelog: { timelog: "timelog" },
-//       },
-//     },
-//   ],
-// };
-
-// const locks = { locks: [] };
-
-// const timelogs = {
-//   timelogs: [
-//     {
-//       uuid: "ba7ac69f-3a1f-483d-8a0a-ef240a192e51",
-//       employee_uuid: "61efa3d2-9bb4-4380-883e-0121ac150003",
-//       project_uuid: "61e6bb44-27a0-4da6-9265-0106ac120003",
-//       project_name: "Demo Project 1",
-//       start_dt: 1640995800,
-//       end_dt: 1641000000,
-//       type: "default",
-//       breaklength: 0,
-//       travel: null,
-//       comment: "1",
-//       onsite: "remote",
-//     },
-//     {
-//       uuid: "89bb9b28-3c2a-48e7-992a-7122491b4ab6",
-//       employee_uuid: "61efa3d2-9bb4-4380-883e-0121ac150003",
-//       project_uuid: "61e6bb44-27a0-4da6-9265-0106ac120003",
-//       project_name: "Demo Project 1",
-//       start_dt: 1641600600,
-//       end_dt: 1641604800,
-//       type: "default",
-//       breaklength: 0,
-//       travel: null,
-//       comment: "1",
-//       onsite: "remote",
-//     },
-//     {
-//       uuid: "74302355-496e-4350-bc75-a428aef4b232",
-//       employee_uuid: "61efa3d2-9bb4-4380-883e-0121ac150003",
-//       project_uuid: "618e8691-b290-4214-a64d-86516d67120b",
-//       project_name: "Shift Project",
-//       start_dt: 1641013200,
-//       end_dt: 1641013200,
-//       type: "shift",
-//       shift_model: "morning",
-//       incidents: [
-//         { comment: "1", start_dt: 1640995440, end_dt: 1641003360 },
-//         { comment: "2", start_dt: 1641004200, end_dt: 1641009540 },
-//       ],
-//     },
-//   ],
-//   perdiems: [
-//     {
-//       uuid: "fea39fbb-2798-429f-b0f8-22c83a6ec219",
-//       employee_uuid: "61efa3d2-9bb4-4380-883e-0121ac150003",
-//       project_uuid: "61e6bc30-a448-4366-9f96-0106ac120003",
-//       project_name: "Demo Project 2",
-//       start_dt: 1641078000,
-//       type: 5,
-//       comment: "1",
-//     },
-//   ],
-// };
-
-// const blobProjects = new Blob([JSON.stringify(projects)], {
-//   type: "application/json",
-// });
-
-// const blobLocks = new Blob([JSON.stringify(locks)], {
-//   type: "application/json",
-// });
-
-// const blobTimelogs = new Blob([JSON.stringify(timelogs)], {
-//   type: "application/json",
-// });
-
-// const init200 = { status: 200, statusText: "200" };
-
-// const renderMainGrid = () => {
-//   //setTimeout(render, 100000, <MainGrid />);
-//   render(<MainGrid />);
-// };
-
-it("test the test", async () => {
-  render(<MainGrid />);
-  expect(true).toBe(true);
+it("renders", async () => {
+  jest
+    .spyOn(api, "fetchProjects")
+    .mockImplementation((_) => Promise.resolve(projectsListOne));
+  jest
+    .spyOn(api, "fetchIsMonthClosed")
+    .mockImplementation((_) => Promise.resolve(false));
+  jest
+    .spyOn(api, "fetchCurrentMonthLogs")
+    .mockImplementation((_) => Promise.resolve(timelogs));
+  let element = render(
+    <RecoilRoot initializeState={(snap) => snap}>
+      <React.Suspense fallback="test">
+        <MainGrid />
+      </React.Suspense>
+    </RecoilRoot>,
+  );
+  await flushPromisesAndTimers();
+  //act(() => {});
+  //console.log(element.debug(undefined, 600000));
+  expect(element.container).toHaveTextContent("project");
+  expect(element.container).toHaveTextContent("type");
+  expect(element.container).toHaveTextContent("day");
+  expect(element.container).toHaveTextContent("Shift Project");
+  expect(element.container).toHaveTextContent("perdiem");
+  expect(element.container).toHaveTextContent("timelog");
+  expect(element.container).toHaveTextContent("shift");
+  expect(element.container).toHaveTextContent("keypoint.comment");
+  expect(element.container).toHaveTextContent("end_month");
 });
 
-// it("renders correctly", async () => {
-//   jest
-//     .spyOn(api, "fetchProjects")
-//     .mockImplementation((_) => Promise.resolve(new Response(blobProjects, init200)));
-//   jest
-//     .spyOn(api, "fetchIsMonthClosed")
-//     .mockImplementation((_) => Promise.resolve(new Response(blobLocks, init200)));
-//   jest
-//     .spyOn(api, "fetchCurrentMonthLogs")
-//     .mockImplementation((_) => Promise.resolve(new Response(blobTimelogs, init200)));
-//   renderMainGrid();
-//   const screenshot = await generateImage();
-//   expect(screenshot).toMatchImageSnapshot();
-// });
+it("edit shift is possible", async () => {
+  jest
+    .spyOn(api, "fetchProjects")
+    .mockImplementation((_) => Promise.resolve(projectsListOne));
+  jest
+    .spyOn(api, "fetchIsMonthClosed")
+    .mockImplementation((_) => Promise.resolve(false));
+  jest
+    .spyOn(api, "fetchCurrentMonthLogs")
+    .mockImplementation((_) => Promise.resolve(timelogs));
+  let element = render(
+    <RecoilRoot initializeState={(snap) => snap}>
+      <React.Suspense fallback="test">
+        <MainGrid />
+      </React.Suspense>
+    </RecoilRoot>,
+  );
+  await flushPromisesAndTimers();
+  await act(async () => {
+    fireEvent.click(element.getByTestId("OutputTimelog_edit-warning-btn_index-0"));
+  });
+  //console.log(element.debug(undefined, 600000));
+  expect(element.getByTestId("InputShift_cancel_edit-warning-btn")).toBeInTheDocument();
+});
 
-// test("dom", async () => {
-//   jest
-//     .spyOn(api, "fetchProjects")
-//     .mockImplementation((_) => Promise.resolve(new Response(blobProjects, init200)));
-//   jest
-//     .spyOn(api, "fetchIsMonthClosed")
-//     .mockImplementation((_) => Promise.resolve(new Response(blobLocks, init200)));
-//   jest
-//     .spyOn(api, "fetchCurrentMonthLogs")
-//     .mockImplementation((_) => Promise.resolve(new Response(blobTimelogs, init200)));
-//   const element = render(<MainGrid />);
-//   // expect(element.getAllByText("user", { exact: false }).length === 3);
-//   // await act(async () => {
-//   //   fireEvent.click(element.getAllByTestId("DeleteIcon")[0]);
-//   // });
-// });
-
-// it("renders 3 users", () => {
-//   const element = render(<Alerts alerts={allAlerts} simcards={simcards} />);
-//   expect(element.getAllByText("user", { exact: false }).length === 3);
-// });
-
-// it("renders 7 mails", () => {
-//   const element = render(<Alerts alerts={allAlerts} simcards={simcards} />);
-//   expect(element.getAllByText("test@example.com", { exact: false }).length === 7);
-// });
-
-// it('renders "something went wrong"', () => {
-//   const element = render(<Alerts alerts={allAlerts} simcards={simcards} />);
-//   expect(element.getAllByText("inactive_due_to_no_resources", { exact: false }));
-// });
+it("edit shift is committed", async () => {
+  const mockFetchSubmit = jest
+    .spyOn(api, "fetchSubmit")
+    .mockImplementation((_) => Promise.resolve());
+  jest
+    .spyOn(api, "fetchProjects")
+    .mockImplementation((_) => Promise.resolve(projectsListOne));
+  jest
+    .spyOn(api, "fetchIsMonthClosed")
+    .mockImplementation((_) => Promise.resolve(false));
+  jest
+    .spyOn(api, "fetchCurrentMonthLogs")
+    .mockImplementation((_) => Promise.resolve(timelogs));
+  let element = render(
+    <RecoilRoot initializeState={(snap) => snap}>
+      <React.Suspense fallback="test">
+        <MainGrid />
+      </React.Suspense>
+    </RecoilRoot>,
+  );
+  await flushPromisesAndTimers();
+  await act(async () => {
+    fireEvent.click(element.getByTestId("OutputTimelog_edit-warning-btn_index-0"));
+  });
+  await act(async () => {
+    fireEvent.click(element.getByTestId("InputCard_commit-info-btn_index"));
+  });
+  //console.log(element.debug(undefined, 600000));
+  expect(mockFetchSubmit).toHaveBeenCalled();
+});

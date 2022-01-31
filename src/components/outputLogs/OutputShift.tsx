@@ -55,7 +55,9 @@ export default function OutputShift(props: {
     const requestPrototype = {
       request: { uuid: uuid },
     };
-    fetchDelete(requestPrototype).then(() => updateLogs());
+    fetchDelete(requestPrototype)
+      .then(() => updateLogs())
+      .catch((errorUpdateLogs) => console.error(errorUpdateLogs));
   };
 
   const editHandler = (log: Timelog) => {
@@ -196,8 +198,13 @@ export default function OutputShift(props: {
                 size="small"
                 variant="contained"
                 onClick={() => setEntriesVisible(!entriesVisible)}
+                data-testid={`OutputTimelog_expand-info-btn_index-${props.index}`}
               >
-                {entriesVisible && <ExpandLessIcon />}
+                {entriesVisible && (
+                  <ExpandLessIcon
+                    data-testid={`OutputTimelog_expandLess-icon_index-${props.index}`}
+                  />
+                )}
                 {!entriesVisible && <ExpandMoreIcon />}
               </Button>
             )}
@@ -206,6 +213,7 @@ export default function OutputShift(props: {
               size="small"
               variant="contained"
               onClick={() => editHandler(props.log)}
+              data-testid={`OutputTimelog_edit-warning-btn_index-${props.index}`}
             >
               <EditIcon />
             </Button>

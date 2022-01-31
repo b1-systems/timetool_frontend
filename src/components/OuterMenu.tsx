@@ -57,7 +57,13 @@ const OuterMenu = (props: Props) => {
           languageMenu={{
             currentLanguage: i18n.language,
             onLanguageChange: (key: string) => {
-              i18n.changeLanguage(key).then(() => toasty.info(t("changed_language")));
+              i18n
+                .changeLanguage(key)
+                .then(() => toasty.info(t("changed_language")))
+                .catch((error) => {
+                  console.error(error);
+                  toasty.error("an_error_occurred.could_not_change_language");
+                });
             },
             entries: Array.from(props.supportedLanguages).map(([key, value]) => ({
               key: key,

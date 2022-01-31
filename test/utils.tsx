@@ -1,8 +1,10 @@
 import { FC, ReactElement, Suspense } from 'react';
 import { RecoilRoot } from 'recoil';
 
+import { LocalizationProvider } from '@mui/lab';
+import DateAdapter from '@mui/lab/AdapterLuxon';
 import { createTheme, ThemeProvider } from '@mui/material';
-import { render, RenderOptions } from '@testing-library/react';
+import { act, render, RenderOptions } from '@testing-library/react';
 
 const AllTheProviders: FC = ({ children }) => {
   // We're using a different theme for test snapshots since the custom font
@@ -12,13 +14,26 @@ const AllTheProviders: FC = ({ children }) => {
     shadows: Array.from({ length: 25 }, (_) => "none"),
   });
   return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <ThemeProvider theme={theme}>
-        <RecoilRoot>{children}</RecoilRoot>
-      </ThemeProvider>
-    </Suspense>
+    <RecoilRoot>
+      <LocalizationProvider dateAdapter={DateAdapter} locale={"de"}>
+        <ThemeProvider theme={theme}>
+          <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>
+        </ThemeProvider>
+      </LocalizationProvider>
+    </RecoilRoot>
   );
 };
+
+// act and advance jest timers
+function flushPromisesAndTimers(): Promise<void> {
+  return act(
+    () =>
+      new Promise((resolve) => {
+        setTimeout(resolve, 1000);
+        jest.runAllTimers();
+      }),
+  );
+}
 
 const customRender = (ui: ReactElement, options?: Omit<RenderOptions, "wrapper">) =>
   render(ui, { wrapper: AllTheProviders, ...options });
@@ -30,4 +45,4 @@ const snapshots = (testSuite: () => void) =>
   );
 
 export * from "@testing-library/react";
-export { customRender as render, snapshots };
+export { customRender as render, snapshots, flushPromisesAndTimers };

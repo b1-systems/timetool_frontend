@@ -109,13 +109,20 @@ export default function MainGrid() {
     <Grid container spacing={3}>
       <Grid item xs={12}>
         <Card elevation={0} sx={{ border: 1, borderColor: "grey.300", ml: 1, mr: 1 }}>
-          {endMonthOpen && <MonthEndDialog close={monthEndHandler} />}
+          {endMonthOpen && (
+            <MonthEndDialog
+              close={monthEndHandler}
+              year={month.year}
+              monthLong={month.monthLong}
+            />
+          )}
           <CardHeader></CardHeader>
           <CardContent>
             <Grid container spacing={3}>
               <Grid item xs={12} sm={4} md={3} lg={2}>
                 <FormControl fullWidth>
                   <DatePicker
+                    data-testid={`MainGrid_year-and-month-DatPicker`}
                     views={["year", "month"]}
                     label={t("year_and_month")}
                     minDate={DateTime.fromISO("2000-01-01T00:00")}
