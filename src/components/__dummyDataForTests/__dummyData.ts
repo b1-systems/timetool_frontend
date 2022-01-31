@@ -45,7 +45,7 @@ export const projectsList: Project[] = [
     name: "Demo Project 2",
     worktypes: {
       perdiem: {
-        "1": "testMe",
+        "1": "testMeTypeofDemo2",
         "4": "VMA Ausland",
         "5": "32 \u20ac 24h ab 3 Mon",
         "6": "16 \u20ac Anreise ab 3 Mon",

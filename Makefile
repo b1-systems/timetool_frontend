@@ -97,7 +97,7 @@ build: ${REACT_BUILD_INDICATOR} ${INSTALL_INDICATOR} ## Straight build by `react
 
 .PHONY: test
 test: ${INSTALL_INDICATOR} ## Run test suite and rerun any modified test
-	react-scripts test --coverage
+	react-scripts test --coverage --watchAll
 
 .PHONY: test-noninteractive
 test-noninteractive: ${INSTALL_INDICATOR} ## Run all tests and exit afterwards

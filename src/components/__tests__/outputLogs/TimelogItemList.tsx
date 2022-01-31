@@ -110,3 +110,19 @@ it("expand Icon shows more", async () => {
     element.getByTestId("OutputTimelog_expandLess-icon_index-0"),
   ).toBeInTheDocument();
 });
+
+it("month is closed", async () => {
+  jest
+    .spyOn(api, "fetchCurrentMonthLogs")
+    .mockImplementation((_) => Promise.resolve(timelogs));
+  let element = render(
+    <RecoilRoot initializeState={(snap) => snap}>
+      <React.Suspense fallback="test">
+        <TimelogItemList setEndMonthOpen={() => {}} monthIsClosed={true} />
+      </React.Suspense>
+    </RecoilRoot>,
+  );
+  await flushPromisesAndTimers();
+  //console.log(element.debug(undefined, 600000));
+  expect(element.queryByTestId("OutputTimelog_delete-error-btn_index-0")).toBeNull();
+});

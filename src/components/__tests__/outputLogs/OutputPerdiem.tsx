@@ -1,14 +1,14 @@
 import React from "react";
 import { RecoilRoot } from "recoil";
 
-import { flushPromisesAndTimers, render } from "../../../../test/utils";
+import { act, fireEvent, flushPromisesAndTimers, render } from "../../../../test/utils";
 import * as api from "../../../api";
-import {
-  projectsList,
-  projectsListOne,
-  timelogs,
-} from "../../__dummyDataForTests/__dummyData";
+import { projectsListOne, timelogs } from "../../__dummyDataForTests/__dummyData";
 import OutputPerdiem from "../../outputLogs/OutputPerdiem";
+
+beforeEach(() => {
+  jest.clearAllMocks();
+});
 
 it("is rendert", async () => {
   jest
@@ -79,17 +79,24 @@ it("delete btn is not there when month is closed", async () => {
   expect(element.queryByTestId("OutputPerdiem_delete-error-btn")).toBeNull();
 });
 
-it.skip("right perdiem model is shown", async () => {
-  //! need set perdiemModelTyp
+// it("right perdiem model is shown", async () => {
+//!this test needs to run in its own suit
+// });
+
+it("click delete calls function", async () => {
+  const mockFetchDelete = jest
+    .spyOn(api, "fetchDelete")
+    .mockImplementation((_) => Promise.resolve());
   jest
     .spyOn(api, "fetchProjects")
-    .mockImplementation((_) => Promise.resolve(projectsList));
+    .mockImplementation((_) => Promise.resolve(projectsListOne));
   jest
     .spyOn(api, "fetchIsMonthClosed")
     .mockImplementation((_) => Promise.resolve(false));
   jest
     .spyOn(api, "fetchCurrentMonthLogs")
     .mockImplementation((_) => Promise.resolve(timelogs));
+  jest.spyOn(api, "fetchDelete").mockImplementation((_) => Promise.resolve());
   let element = render(
     <RecoilRoot initializeState={(snap) => snap}>
       <React.Suspense fallback="test">
@@ -98,6 +105,9 @@ it.skip("right perdiem model is shown", async () => {
     </RecoilRoot>,
   );
   await flushPromisesAndTimers();
-  //act(() => {});
-  console.log(element.debug(undefined, 600000));
+  await act(async () => {
+    fireEvent.click(element.getByTestId("OutputPerdiem_delete-error-btn"));
+  });
+  //console.log(element.debug(undefined, 600000));
+  expect(mockFetchDelete).toHaveBeenCalled();
 });

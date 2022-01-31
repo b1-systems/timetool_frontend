@@ -4,12 +4,7 @@ import { RecoilRoot } from "recoil";
 import { act, fireEvent, flushPromisesAndTimers, render } from "../../../test/utils";
 import * as api from "../../api";
 import MainGrid from "../MainGrid";
-import {
-  projectsListEmpty,
-  projectsListOne,
-  timelogs,
-  timelogsEmpty,
-} from "../__dummyDataForTests/__dummyData";
+import { projectsListOne, timelogs } from "../__dummyDataForTests/__dummyData";
 
 it("renders", async () => {
   jest
@@ -65,33 +60,6 @@ it("edit shift is possible", async () => {
   });
   //console.log(element.debug(undefined, 600000));
   expect(element.getByTestId("InputShift_cancel_edit-warning-btn")).toBeInTheDocument();
-});
-
-it.skip("month is closed", async () => {
-  //!can't find testId to get new isMonthClosed, does not care if month is closed to begin with
-  jest
-    .spyOn(api, "fetchProjects")
-    .mockImplementation((_) => Promise.resolve(projectsListEmpty));
-  jest
-    .spyOn(api, "fetchIsMonthClosed")
-    .mockImplementation((_) => Promise.resolve(true));
-  jest
-    .spyOn(api, "fetchCurrentMonthLogs")
-    .mockImplementation((_) => Promise.resolve(timelogsEmpty));
-  let element = render(
-    <RecoilRoot initializeState={(snap) => snap}>
-      <React.Suspense fallback="test">
-        <MainGrid />
-      </React.Suspense>
-    </RecoilRoot>,
-  );
-  await flushPromisesAndTimers();
-  act(() => {
-    fireEvent.change(element.getByTestId("MainGrid_year-and-month-DatPicker"), {
-      target: { value: "January 2021" },
-    });
-  });
-  console.log(element.debug(undefined, 60000));
 });
 
 it("edit shift is committed", async () => {
