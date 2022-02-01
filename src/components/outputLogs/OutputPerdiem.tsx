@@ -51,7 +51,15 @@ export default function OutputPerdiem(props: {
   };
 
   return (
-    <Card elevation={0} sx={{ backgroundColor: props.index % 2 ? "white" : "#eeeeee" }}>
+    <Card
+      elevation={0}
+      sx={{
+        backgroundColor: props.index % 2 ? "white" : "#eeeeee",
+        p: 0,
+        border: 1,
+        borderColor: "#dedede",
+      }}
+    >
       <Grid container spacing={1}>
         <Grid item xs={12}>
           <Box

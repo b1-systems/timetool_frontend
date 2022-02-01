@@ -53,7 +53,7 @@ export default function OutputChip(props: {
         }
       ></CardHeader>
       <CardContent style={{ padding: 2 }}>
-        <Typography variant="body1" align="center">
+        <Typography variant="body1" align="center" noWrap={false}>
           {props.text}
         </Typography>
       </CardContent>

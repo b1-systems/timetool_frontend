@@ -20,6 +20,9 @@
     "onsite": "Onsite: ",
     "project": "Project: ",
     "project_name": "Project name: ",
+    "times_break": "Break: ",
+    "times_travel": "Travel: ",
+    "times_work": "Work: ",
     "to": "To: ",
     "type": "Type: "
   },

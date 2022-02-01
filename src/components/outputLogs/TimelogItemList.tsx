@@ -73,12 +73,14 @@ export default function InputCard(props: {
             </Grid>
             <Collapse orientation="vertical" in={timelogsVisible}>
               {defaultTimelogs.map((log, index) => (
-                <OutputTimelogs
-                  monthIsClosed={props.monthIsClosed}
-                  log={log}
-                  index={index}
-                  key={log.uuid}
-                />
+                <Box sx={{ p: 0, mt: 1, mb: 1 }} key={log.uuid}>
+                  <OutputTimelogs
+                    monthIsClosed={props.monthIsClosed}
+                    log={log}
+                    index={index}
+                    key={log.uuid}
+                  />
+                </Box>
               ))}
             </Collapse>
           </ul>
@@ -102,12 +104,14 @@ export default function InputCard(props: {
             </Grid>
             <Collapse orientation="vertical" in={shiftsVisible}>
               {shiftTimelogs.map((log, index) => (
-                <OutputShift
-                  index={index}
-                  monthIsClosed={props.monthIsClosed}
-                  log={log}
-                  key={log.uuid}
-                />
+                <Box sx={{ p: 0, mt: 1, mb: 1 }} key={log.uuid}>
+                  <OutputShift
+                    index={index}
+                    monthIsClosed={props.monthIsClosed}
+                    log={log}
+                    key={log.uuid}
+                  />
+                </Box>
               ))}
             </Collapse>
           </ul>
@@ -131,12 +135,14 @@ export default function InputCard(props: {
             </Grid>
             <Collapse orientation="vertical" in={perdiemsVisible}>
               {perdiems.map((log, index) => (
-                <OutputPerdiem
-                  index={index}
-                  monthIsClosed={props.monthIsClosed}
-                  log={log}
-                  key={log.uuid}
-                />
+                <Box sx={{ p: 0, mt: 1, mb: 1 }} key={log.uuid}>
+                  <OutputPerdiem
+                    index={index}
+                    monthIsClosed={props.monthIsClosed}
+                    log={log}
+                    key={log.uuid}
+                  />
+                </Box>
               ))}
             </Collapse>
           </ul>
