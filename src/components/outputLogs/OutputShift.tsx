@@ -16,7 +16,12 @@ import { useTranslation } from "react-i18next";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 
 import { fetchDelete } from "../../api";
-import { editTimelogState, shiftModelsState, useUpdateLogs } from "../../atom";
+import {
+  editPerdiemState,
+  editTimelogState,
+  shiftModelsState,
+  useUpdateLogs,
+} from "../../atom";
 import { Timelog } from "../../models";
 import OutputChip from "./OutputChip";
 
@@ -31,6 +36,7 @@ export default function OutputShift(props: {
 
   const shiftModels = useRecoilValue(shiftModelsState);
   const setEditShift = useSetRecoilState(editTimelogState);
+  const setEditPerdiem = useSetRecoilState(editPerdiemState);
 
   const updateLogs = useUpdateLogs();
 
@@ -62,6 +68,15 @@ export default function OutputShift(props: {
 
   const editHandler = (log: Timelog) => {
     setEditShift(log);
+    setEditPerdiem({
+      uuid: "-1",
+      employee_uuid: "-1",
+      project_uuid: "-1",
+      project_name: "-1",
+      start_dt: -1,
+      type: -1,
+      comment: "-1",
+    });
   };
 
   return (
@@ -221,7 +236,7 @@ export default function OutputShift(props: {
               size="small"
               variant="contained"
               onClick={() => editHandler(props.log)}
-              data-testid={`OutputTimelog_edit-warning-btn_index-${props.index}`}
+              data-testid={`OutputShift_edit-warning-btn_index-${props.index}`}
             >
               <EditIcon />
             </Button>

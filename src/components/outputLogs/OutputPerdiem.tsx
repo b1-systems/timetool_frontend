@@ -1,15 +1,21 @@
 import ChatIcon from "@mui/icons-material/Chat";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import DriveFileRenameOutlineIcon from "@mui/icons-material/DriveFileRenameOutline";
+import EditIcon from "@mui/icons-material/Edit";
 import EventIcon from "@mui/icons-material/Event";
 import PaidIcon from "@mui/icons-material/Paid";
 import { Box, Button, Card, CardActions, Grid } from "@mui/material";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { useRecoilValue } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 
 import { fetchDelete } from "../../api";
-import { perdiemModelsState, useUpdateLogs } from "../../atom";
+import {
+  editPerdiemState,
+  editTimelogState,
+  perdiemModelsState,
+  useUpdateLogs,
+} from "../../atom";
 import { Perdiem } from "../../models";
 import OutputChip from "./OutputChip";
 
@@ -19,7 +25,8 @@ export default function OutputPerdiem(props: {
   index: number;
 }) {
   const { t } = useTranslation();
-
+  const setEditPerdiem = useSetRecoilState(editPerdiemState);
+  const setEditShift = useSetRecoilState(editTimelogState);
   const updateLogs = useUpdateLogs();
 
   const perdiemModels = useRecoilValue(perdiemModelsState);
@@ -48,6 +55,19 @@ export default function OutputPerdiem(props: {
     fetchDelete(requestPrototype)
       .then(() => updateLogs())
       .catch((errorUpdateLogs) => console.error(errorUpdateLogs));
+  };
+
+  const editHandler = (log: Perdiem) => {
+    setEditPerdiem(log);
+    setEditShift({
+      uuid: "-1",
+      employee_uuid: "-1",
+      project_uuid: "-1",
+      project_name: "-1",
+      start_dt: -1,
+      end_dt: -1,
+      type: "-1",
+    });
   };
 
   return (
@@ -111,16 +131,27 @@ export default function OutputPerdiem(props: {
       </Grid>
       <CardActions>
         {!props.monthIsClosed && (
-          <Button
-            color="error"
-            size="small"
-            variant="contained"
-            onClick={() => deleteHandler(props.log.uuid)}
-            disabled={props.monthIsClosed}
-            data-testid={`OutputPerdiem_delete-error-btn`}
-          >
-            <DeleteForeverIcon />
-          </Button>
+          <>
+            <Button
+              color="warning"
+              size="small"
+              variant="contained"
+              onClick={() => editHandler(props.log)}
+              data-testid={`OutputPerdiem_edit-warning-btn_index-${props.index}`}
+            >
+              <EditIcon />
+            </Button>
+            <Button
+              color="error"
+              size="small"
+              variant="contained"
+              onClick={() => deleteHandler(props.log.uuid)}
+              disabled={props.monthIsClosed}
+              data-testid={`OutputPerdiem_delete-error-btn`}
+            >
+              <DeleteForeverIcon />
+            </Button>
+          </>
         )}
       </CardActions>
     </Card>

@@ -4,12 +4,12 @@ import { RecoilRoot } from "recoil";
 import { act, fireEvent, flushPromisesAndTimers, render } from "../../../test/utils";
 import * as api from "../../api";
 import MainGrid from "../MainGrid";
-import { projectsListOne, timelogs } from "../__dummyDataForTests/__dummyData";
+import { projectsList, timelogs } from "../__dummyDataForTests/__dummyData";
 
 it("renders", async () => {
   jest
     .spyOn(api, "fetchProjects")
-    .mockImplementation((_) => Promise.resolve(projectsListOne));
+    .mockImplementation((_) => Promise.resolve(projectsList));
   jest
     .spyOn(api, "fetchIsMonthClosed")
     .mockImplementation((_) => Promise.resolve(false));
@@ -24,8 +24,6 @@ it("renders", async () => {
     </RecoilRoot>,
   );
   await flushPromisesAndTimers();
-  //act(() => {});
-  //console.log(element.debug(undefined, 600000));
   expect(element.container).toHaveTextContent("project");
   expect(element.container).toHaveTextContent("type");
   expect(element.container).toHaveTextContent("day");
@@ -40,7 +38,7 @@ it("renders", async () => {
 it("edit shift is possible", async () => {
   jest
     .spyOn(api, "fetchProjects")
-    .mockImplementation((_) => Promise.resolve(projectsListOne));
+    .mockImplementation((_) => Promise.resolve(projectsList));
   jest
     .spyOn(api, "fetchIsMonthClosed")
     .mockImplementation((_) => Promise.resolve(false));
@@ -56,9 +54,8 @@ it("edit shift is possible", async () => {
   );
   await flushPromisesAndTimers();
   await act(async () => {
-    fireEvent.click(element.getByTestId("OutputTimelog_edit-warning-btn_index-0"));
+    fireEvent.click(element.getByTestId("OutputShift_edit-warning-btn_index-0"));
   });
-  //console.log(element.debug(undefined, 600000));
   expect(element.getByTestId("InputShift_cancel_edit-warning-btn")).toBeInTheDocument();
 });
 
@@ -68,7 +65,7 @@ it("edit shift is committed", async () => {
     .mockImplementation((_) => Promise.resolve());
   jest
     .spyOn(api, "fetchProjects")
-    .mockImplementation((_) => Promise.resolve(projectsListOne));
+    .mockImplementation((_) => Promise.resolve(projectsList));
   jest
     .spyOn(api, "fetchIsMonthClosed")
     .mockImplementation((_) => Promise.resolve(false));
@@ -84,11 +81,10 @@ it("edit shift is committed", async () => {
   );
   await flushPromisesAndTimers();
   await act(async () => {
-    fireEvent.click(element.getByTestId("OutputTimelog_edit-warning-btn_index-0"));
+    fireEvent.click(element.getByTestId("OutputShift_edit-warning-btn_index-0"));
   });
   await act(async () => {
     fireEvent.click(element.getByTestId("InputCard_commit-info-btn_index"));
   });
-  //console.log(element.debug(undefined, 600000));
   expect(mockFetchSubmit).toHaveBeenCalled();
 });

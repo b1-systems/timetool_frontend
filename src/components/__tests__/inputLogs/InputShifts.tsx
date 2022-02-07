@@ -36,7 +36,5 @@ it("warning no_shifts_in_this_project shows up", async () => {
     </RecoilRoot>,
   );
   await flushPromisesAndTimers();
-  //act(() => {});
-  //console.log(element.debug());
   expect(element.container).toHaveTextContent("no_shifts_in_this_project");
 });

@@ -7,7 +7,6 @@ it.skip("fetchDelete", async () => {
       resolve(new Response(null, { status: 200 }));
     });
   });
-  const ReponseFetchDelete = api.fetchDelete({ request: { uuid: "testUuid1234" } });
-  console.log(ReponseFetchDelete);
+  // const ReponseFetchDelete = api.fetchDelete({ request: { uuid: "testUuid1234" } });
   expect(mockCallBackEnd).toHaveBeenCalled();
 });

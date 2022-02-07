@@ -28,7 +28,5 @@ it("right perdiem model is shown", async () => {
     </RecoilRoot>,
   );
   await flushPromisesAndTimers();
-  //act(() => {});
-  //console.log(element.debug(undefined, 600000));
   expect(element.container).toHaveTextContent("testMeTypeofDemo2");
 });

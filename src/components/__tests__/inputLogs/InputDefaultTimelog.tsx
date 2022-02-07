@@ -25,7 +25,9 @@ it("warning no_timelogs_in_this_project shows", async () => {
       <React.Suspense fallback="test">
         <InputDefaultTimelog
           types={["test1", "test2"]}
-          handleRemote={() => {}}
+          remote="remote"
+          setRemote={() => {}}
+          setUuidLog={() => {}}
           setBreakTime={() => {}}
           setTravelTime={() => {}}
           breakTime={10}
@@ -37,8 +39,6 @@ it("warning no_timelogs_in_this_project shows", async () => {
     </RecoilRoot>,
   );
   await flushPromisesAndTimers();
-  //act(() => {});
-  //console.log(element.debug());
   expect(element.container).toHaveTextContent("no_timelogs_in_this_project");
 });
 
@@ -56,8 +56,10 @@ it("input fields are shown", async () => {
     <RecoilRoot initializeState={(snap) => snap}>
       <React.Suspense fallback="test">
         <InputDefaultTimelog
+          remote="remote"
+          setRemote={() => {}}
+          setUuidLog={() => {}}
           types={["timelog"]}
-          handleRemote={() => {}}
           setBreakTime={() => {}}
           setTravelTime={() => {}}
           breakTime={10}
@@ -69,7 +71,5 @@ it("input fields are shown", async () => {
     </RecoilRoot>,
   );
   await flushPromisesAndTimers();
-  //act(() => {});
-  //console.log(element.debug());
   expect(element.container).toHaveTextContent("break_time_(minutes)");
 });

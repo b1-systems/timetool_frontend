@@ -23,6 +23,7 @@ it("warning no_perdiems_in_this_project", async () => {
     <RecoilRoot initializeState={(snap) => snap}>
       <React.Suspense fallback="test">
         <InputPerdiem
+          setUuidLog={() => {}}
           model={"testModel"}
           perdiemModels={[]}
           setModel={() => {}}
@@ -35,7 +36,5 @@ it("warning no_perdiems_in_this_project", async () => {
     </RecoilRoot>,
   );
   await flushPromisesAndTimers();
-  //act(() => {});
-  //console.log(element.debug());
   expect(element.container).toHaveTextContent("no_perdiems_in_this_project");
 });

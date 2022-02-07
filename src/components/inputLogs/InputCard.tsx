@@ -26,8 +26,10 @@ import {
   alertShownInInputState,
   dateFromState,
   dateToState,
+  editPerdiemState,
   editTimelogState,
   isMonthClosedState,
+  perdiemModelsState,
   useUpdateLogs,
 } from "../../atom";
 import { Incident } from "../../models";
@@ -53,18 +55,20 @@ export default function InputCard(props: {
   const [logMsg, setLogMsg] = useState<string>("");
   const [dateFrom, setDateFrom] = useRecoilState(dateFromState);
   const [dateTo, setDateTo] = useRecoilState(dateToState);
-  const [remote, setRemote] = useState<boolean>(true);
+  const [remote, setRemote] = useState<"remote" | "onsite">("remote");
   const [shift, setShift] = useState<string>("");
   const [shiftModel, setShiftModel] = useState<string>("");
   const [incidents, setIncidents] = useState<Incident[]>([]);
   const [typeOfPerdiem, setTypeOfPerdiem] = useState<number>(-1);
   const [submitBtnDisabled, setSubmitBtnDisabled] = useState(false);
-  const [editShift, setEditShift] = useRecoilState(editTimelogState);
+  const [autoNextDay, setAutoNextDay] = useState<boolean>(true);
 
   const updateLogs = useUpdateLogs();
   const isMonthClosed = useRecoilValue(isMonthClosedState);
   const alertShownInInput = useRecoilValue(alertShownInInputState);
-
+  const [editShift, setEditShift] = useRecoilState(editTimelogState);
+  const [editPerdiem, setEditPerdiem] = useRecoilState(editPerdiemState);
+  const perdiemModelsMapsUuidLog = useRecoilValue(perdiemModelsState);
   useEffect(() => {
     if (props.types.length === 1) {
       setType(props.types[0]);
@@ -73,13 +77,48 @@ export default function InputCard(props: {
 
   useEffect(() => {
     if (editShift.project_uuid !== "-1" && editShift.start_dt !== -1) {
-      setType("shift");
-      setDateFrom(DateTime.fromSeconds(editShift.start_dt));
-      setShiftModel(editShift.shift_model || "unknown shift");
-      setShift(editShift.shift_model || "unknown shift");
-      setIncidents(editShift.incidents || []);
+      if (editShift.type === "shift") {
+        setType("shift");
+        setDateFrom(DateTime.fromSeconds(editShift.start_dt));
+        setShiftModel(editShift.shift_model || "unknown shift");
+        setShift(editShift.shift_model || "unknown shift");
+        setIncidents(editShift.incidents || []);
+      } else if (editShift.type === "timelog" || editShift.type === "default") {
+        if (editShift.comment) {
+          setType("timelog");
+          setDateFrom(DateTime.fromSeconds(editShift.start_dt));
+          setDateTo(DateTime.fromSeconds(editShift.end_dt));
+          if (editShift.breaklength) {
+            setBreakTime(editShift.breaklength / 60);
+          }
+
+          if (editShift.travel) {
+            setTravelTime(editShift.travel / 60);
+          }
+          if (editShift.onsite === "remote" || editShift.onsite === "onsite") {
+            setRemote(editShift.onsite);
+          }
+          setLogMsg(editShift.comment);
+        }
+      }
+    } else if (editPerdiem.project_uuid !== "-1" && editPerdiem.start_dt !== -1) {
+      setType("perdiem");
+      setDateFrom(DateTime.fromSeconds(editPerdiem.start_dt));
+      setLogMsg(editPerdiem.comment);
+      setTypeOfPerdiem(editPerdiem.type);
+      setModel(editPerdiem.type.toString() || "-1");
     }
-  }, [editShift, setDateFrom, shiftModel]);
+  }, [
+    editPerdiem.comment,
+    editPerdiem.project_uuid,
+    editPerdiem.start_dt,
+    editPerdiem.type,
+    editShift,
+    perdiemModelsMapsUuidLog,
+    setDateFrom,
+    setDateTo,
+    shiftModel,
+  ]);
 
   const setTypeHandler = (event: SelectChangeEvent) => {
     setType(event.target.value as string);
@@ -91,10 +130,6 @@ export default function InputCard(props: {
     setTimeout(function () {
       setSubmitBtnDisabled(false);
     }, 1000);
-    let onsiteRemote = "remote";
-    if (remote === false) {
-      onsiteRemote = "onsite";
-    }
     const commonData = {
       uuid: props.uuidLog || uuidv4(),
       project_uuid: props.uuidProject,
@@ -157,7 +192,7 @@ export default function InputCard(props: {
         breakTime: breakTime * 60,
         travelTime: travelTime * 60,
         comment: logMsg,
-        onsite: onsiteRemote,
+        onsite: remote,
       };
     } else if (type === "perdiem" && props.uuidProject && dateFrom) {
       submitData = {
@@ -171,8 +206,10 @@ export default function InputCard(props: {
     }
     fetchSubmit(submitData)
       .then(() => {
-        setDateFrom(dateFrom.plus({ days: 1 }));
-        setDateTo(dateTo.plus({ days: 1 }));
+        if (autoNextDay) {
+          setDateFrom(dateFrom.plus({ days: 1 }));
+          setDateTo(dateTo.plus({ days: 1 }));
+        }
         setIncidents([]);
         setEditShift({
           uuid: "-1",
@@ -183,15 +220,20 @@ export default function InputCard(props: {
           end_dt: -1,
           type: "-1",
         });
+        setEditPerdiem({
+          uuid: "-1",
+          employee_uuid: "-1",
+          project_uuid: "-1",
+          project_name: "-1",
+          start_dt: -1,
+          type: -1,
+          comment: "-1",
+        });
         props.setUuidLog(null);
         updateLogs();
         return;
       })
       .catch((errorNoSubmit) => console.error(errorNoSubmit));
-  };
-
-  const handleRemote = () => {
-    setRemote(!remote);
   };
 
   if (isMonthClosed) {
@@ -274,8 +316,10 @@ export default function InputCard(props: {
 
             {type === "timelog" && (
               <InputDefaultTimelog
+                setUuidLog={props.setUuidLog}
                 types={props.types}
-                handleRemote={handleRemote}
+                remote={remote}
+                setRemote={setRemote}
                 setBreakTime={setBreakTime}
                 breakTime={breakTime}
                 setTravelTime={setTravelTime}
@@ -287,6 +331,7 @@ export default function InputCard(props: {
 
             {type === "perdiem" && (
               <InputPerdiem
+                setUuidLog={props.setUuidLog}
                 model={model}
                 perdiemModels={props.perdiemModels}
                 setModel={setModel}
@@ -299,7 +344,7 @@ export default function InputCard(props: {
           </Grid>
         </CardContent>
         <CardActions>
-          <Grid container>
+          <Grid container spacing={3}>
             <Grid item xs={12} sm={6} md={3} lg={2}>
               <Button
                 fullWidth
@@ -308,10 +353,26 @@ export default function InputCard(props: {
                 variant="contained"
                 startIcon={<NoteAddIcon />}
                 type="submit"
+                onClick={() => setAutoNextDay(true)}
                 disabled={props.monthIsClosed || submitBtnDisabled || alertShownInInput}
                 data-testid={"InputCard_commit-info-btn_index"}
               >
-                {t("commit")}
+                {t("commit_&_next_day")}
+              </Button>
+            </Grid>
+            <Grid item xs={12} sm={6} md={3} lg={2}>
+              <Button
+                fullWidth
+                sx={{ mt: 3, mb: 2, ml: 1, mr: 1 }}
+                size="large"
+                variant="contained"
+                startIcon={<NoteAddIcon />}
+                type="submit"
+                onClick={() => setAutoNextDay(false)}
+                disabled={props.monthIsClosed || submitBtnDisabled || alertShownInInput}
+                data-testid={"InputCard_commit-stay_date-btn_index"}
+              >
+                {t("commit_&_same_day")}
               </Button>
             </Grid>
           </Grid>

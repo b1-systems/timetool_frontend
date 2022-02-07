@@ -24,8 +24,6 @@ it("is rendert", async () => {
     </RecoilRoot>,
   );
   await flushPromisesAndTimers();
-  //act(() => {});
-  //console.log(element.debug(undefined, 600000));
   expect(element.container).toHaveTextContent("end_month");
 });
 
@@ -47,8 +45,6 @@ it("TimelogItemList has all 3 types", async () => {
     </RecoilRoot>,
   );
   await flushPromisesAndTimers();
-  //act(() => {});
-  //console.log(element.debug(undefined, 600000));
   expect(element.container).toHaveTextContent("perdiem");
   expect(element.container).toHaveTextContent("timelog");
   expect(element.container).toHaveTextContent("shift");
@@ -79,7 +75,6 @@ it("click delete calls function", async () => {
   await act(async () => {
     fireEvent.click(element.getByTestId("OutputTimelog_delete-error-btn_index-0"));
   });
-  //console.log(element.debug(undefined, 600000));
   expect(mockFetchDelete).toHaveBeenCalled();
 });
 
@@ -105,7 +100,6 @@ it("expand Icon shows more", async () => {
   await act(async () => {
     fireEvent.click(element.getByTestId("OutputTimelog_expand-info-btn_index-0"));
   });
-  //console.log(element.debug(undefined, 600000));
   expect(
     element.getByTestId("OutputTimelog_expandLess-icon_index-0"),
   ).toBeInTheDocument();
@@ -123,6 +117,5 @@ it("month is closed", async () => {
     </RecoilRoot>,
   );
   await flushPromisesAndTimers();
-  //console.log(element.debug(undefined, 600000));
   expect(element.queryByTestId("OutputTimelog_delete-error-btn_index-0")).toBeNull();
 });

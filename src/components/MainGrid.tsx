@@ -16,6 +16,7 @@ import { useRecoilState, useRecoilValue } from "recoil";
 
 import {
   dateFromState,
+  editPerdiemState,
   editTimelogState,
   isMonthClosedState,
   monthState,
@@ -31,8 +32,7 @@ import TimelogItemList from "./outputLogs/TimelogItemList";
 
 export default function MainGrid() {
   const { t } = useTranslation();
-  const dateFrom = useRecoilValue(dateFromState);
-  const availableProjects = useRecoilValue(projectsState);
+
   const [project, setProject] = useState<string>("");
   const [projectUuid, setProjectUuid] = useState<string>("");
   const [uuidLog, setUuidLog] = useState<string | null>(null);
@@ -41,9 +41,17 @@ export default function MainGrid() {
   const [projectShiftModels, setProjectShiftModels] = useState<string[]>([]);
   const [perdiemModels, setPerdiemModels] = useState<string[]>([]);
 
-  const editShift = useRecoilValue(editTimelogState);
+  const dateFrom = useRecoilValue(dateFromState);
+  const availableProjects = useRecoilValue(projectsState);
+  const editLog = useRecoilValue(editTimelogState);
+  const editPerdiem = useRecoilValue(editPerdiemState);
   const [month, setMonth] = useRecoilState(monthState);
   const isMonthClosed = useRecoilValue(isMonthClosedState);
+
+  /**
+   * This useEffect checs if only one project is available and sets it.
+   * It does the same for project types.
+   */
 
   useEffect(() => {
     if (availableProjects.length === 1) {
@@ -67,20 +75,58 @@ export default function MainGrid() {
     }
   }, [availableProjects, project]);
 
+  /**
+   * This useEffect checks if edit Log and edit Perdiem is placeholder.
+   * - if not -> checks if editLog is timelog or shift.
+   * Than it sets all states in input Card, most important is setUuidLog
+   * because this determines if a new Log is commit or an old one is changed
+   */
+
   useEffect(() => {
-    if (editShift.project_uuid !== "-1" && editShift.start_dt !== -1) {
-      setUuidLog(editShift.uuid);
-      setProjectUuid(editShift.project_uuid);
+    if (editLog.project_uuid !== "-1" && editLog.start_dt !== -1) {
+      setUuidLog(editLog.uuid);
+      setProjectUuid(editLog.project_uuid);
+      console.log(
+        "===========================availableProjects==================================>",
+        availableProjects,
+      );
       const projectFiltered = availableProjects.filter(
-        (project) => project.uuid === editShift.project_uuid,
+        (project) => project.uuid === editLog.project_uuid,
+      );
+      console.log(
+        "===========================projectFiltered==================================>",
+        projectFiltered,
       );
       setProject(projectFiltered[0].name);
-      setProjectTypes(Object.keys(projectFiltered[0].worktypes));
-      if (projectFiltered[0].worktypes.shift !== undefined) {
-        setProjectShiftModels(Object.values(projectFiltered[0].worktypes.shift));
+      if (editLog.type === "shift") {
+        setProjectTypes(["shift"]);
+        if (projectFiltered[0].worktypes.shift !== undefined) {
+          setProjectShiftModels(Object.values(projectFiltered[0].worktypes.shift));
+        }
+      } else if (editLog.type === "timelog" || editLog.type === "default") {
+        setProjectTypes(["timelog"]);
+      }
+    } else if (editPerdiem.project_uuid !== "-1" && editPerdiem.start_dt !== -1) {
+      setUuidLog(editPerdiem.uuid);
+      setProjectUuid(editPerdiem.project_uuid);
+      const projectFiltered = availableProjects.filter(
+        (project) => project.uuid === editPerdiem.project_uuid,
+      );
+      setProject(projectFiltered[0].name);
+      setProjectTypes(["perdiem"]);
+      if (projectFiltered[0].worktypes.perdiem !== undefined) {
+        setPerdiemModels(Object.values(projectFiltered[0].worktypes.perdiem));
       }
     }
-  }, [availableProjects, editShift, dateFrom, isMonthClosed]);
+  }, [
+    availableProjects,
+    editLog,
+    dateFrom,
+    isMonthClosed,
+    editPerdiem.project_uuid,
+    editPerdiem.start_dt,
+    editPerdiem.uuid,
+  ]);
 
   const monthEndHandler = () => {
     setEndMonthOpen(false);

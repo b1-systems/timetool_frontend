@@ -2,6 +2,7 @@ import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import ChatIcon from "@mui/icons-material/Chat";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import DriveFileRenameOutlineIcon from "@mui/icons-material/DriveFileRenameOutline";
+import EditIcon from "@mui/icons-material/Edit";
 import EventIcon from "@mui/icons-material/Event";
 import FlightIcon from "@mui/icons-material/Flight";
 import FreeBreakfastIcon from "@mui/icons-material/FreeBreakfast";
@@ -12,9 +13,10 @@ import { Box, Button, Card, CardActions, Grid } from "@mui/material";
 import { DateTime, Duration } from "luxon";
 import React from "react";
 import { useTranslation } from "react-i18next";
+import { useSetRecoilState } from "recoil";
 
 import { fetchDelete } from "../../api";
-import { useUpdateLogs } from "../../atom";
+import { editPerdiemState, editTimelogState, useUpdateLogs } from "../../atom";
 import { Timelog } from "../../models";
 import OutputChip from "./OutputChip";
 
@@ -25,7 +27,8 @@ export default function OutputTimelogs(props: {
   index: number;
 }) {
   const updateLogs = useUpdateLogs();
-
+  const setEditTimelog = useSetRecoilState(editTimelogState);
+  const setEditPerdiem = useSetRecoilState(editPerdiemState);
   const { t } = useTranslation();
   const deleteHandler = (uuid: string) => {
     const requestPrototype = {
@@ -53,6 +56,18 @@ export default function OutputTimelogs(props: {
         ).toISOTime({ suppressSeconds: true })
       : "00:00";
 
+  const editHandler = (log: Timelog) => {
+    setEditTimelog(log);
+    setEditPerdiem({
+      uuid: "-1",
+      employee_uuid: "-1",
+      project_uuid: "-1",
+      project_name: "-1",
+      start_dt: -1,
+      type: -1,
+      comment: "-1",
+    });
+  };
   return (
     <Card
       elevation={0}
@@ -151,16 +166,27 @@ export default function OutputTimelogs(props: {
       </Grid>
       <CardActions>
         {!props.monthIsClosed && (
-          <Button
-            color="error"
-            size="small"
-            variant="contained"
-            onClick={() => deleteHandler(props.log.uuid)}
-            disabled={props.monthIsClosed}
-            data-testid={`OutputTimelog_delete-error-btn_index-${props.index}`}
-          >
-            <DeleteForeverIcon />
-          </Button>
+          <>
+            <Button
+              color="warning"
+              size="small"
+              variant="contained"
+              onClick={() => editHandler(props.log)}
+              data-testid={`OutputTimelog_edit-warning-btn_index-${props.index}`}
+            >
+              <EditIcon />
+            </Button>
+            <Button
+              color="error"
+              size="small"
+              variant="contained"
+              onClick={() => deleteHandler(props.log.uuid)}
+              disabled={props.monthIsClosed}
+              data-testid={`OutputTimelog_delete-error-btn_index-${props.index}`}
+            >
+              <DeleteForeverIcon />
+            </Button>
+          </>
         )}
       </CardActions>
     </Card>

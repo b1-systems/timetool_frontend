@@ -13,8 +13,6 @@ it("renders", () => {
       </React.Suspense>
     </RecoilRoot>,
   );
-  //act(() => {});
-  //console.log(element.debug());
   expect(element.getByText("you_are_closing")).toBeInTheDocument();
 });
 
@@ -32,6 +30,5 @@ it("click yes calls function", async () => {
   await act(async () => {
     fireEvent.click(element.getByText("yes"));
   });
-  //console.log(element.debug(undefined, 600000));
   expect(mockFetchCloseMonth).toHaveBeenCalled();
 });

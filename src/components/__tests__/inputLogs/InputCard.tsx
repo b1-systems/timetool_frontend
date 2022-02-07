@@ -36,8 +36,6 @@ it("InputCard with empty projects", async () => {
     </RecoilRoot>,
   );
   await flushPromisesAndTimers();
-  //act(() => {});
-  //console.log(element.debug());
   expect(element.container).toHaveTextContent("day");
   expect(element.container).toHaveTextContent("type");
 });

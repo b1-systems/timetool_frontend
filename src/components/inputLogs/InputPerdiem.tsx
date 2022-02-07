@@ -1,6 +1,8 @@
+import DoDisturbIcon from "@mui/icons-material/DoDisturb";
 import {
   Alert,
   Box,
+  Button,
   Container,
   FormControl,
   Grid,
@@ -11,11 +13,16 @@ import {
 } from "@mui/material";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 
-import { alertShownInInputState, perdiemModelsState } from "../../atom";
+import {
+  alertShownInInputState,
+  editPerdiemState,
+  perdiemModelsState,
+} from "../../atom";
 
 export default function InputPerdiem(props: {
+  setUuidLog(uuid: string | null): void;
   uuidProject: string;
   perdiemModels: string[];
   model: string;
@@ -28,8 +35,9 @@ export default function InputPerdiem(props: {
   const [modelSelected, setModelSelected] = useState(props.model);
   const { t } = useTranslation();
   const setAlertShownInInput = useSetRecoilState(alertShownInInputState);
-
+  const [editPerdiem, setEditPerdiem] = useRecoilState(editPerdiemState);
   const projectPerdiem = perdiemModels.get(props.uuidProject);
+
   if (!projectPerdiem) {
     setAlertShownInInput(true);
     return (
@@ -77,6 +85,33 @@ export default function InputPerdiem(props: {
           value={props.logMsg}
           onChange={(e) => props.setLogMsg(e.target.value)}
         />
+      </Grid>
+      <Grid item xs={12} sm={6} md={3} lg={2} sx={{ mt: 1 }}>
+        {editPerdiem.project_uuid !== "-1" && editPerdiem.start_dt !== -1 && (
+          <Button
+            color="warning"
+            fullWidth
+            size="large"
+            onClick={() => {
+              setEditPerdiem({
+                uuid: "-1",
+                employee_uuid: "-1",
+                project_uuid: "-1",
+                project_name: "-1",
+                start_dt: -1,
+                type: -1,
+                comment: "-1",
+              });
+              props.setLogMsg("");
+              props.setUuidLog(null);
+            }}
+            variant="contained"
+            data-testid={`InputTimelog_cancel_edit-warning-btn`}
+            startIcon={<DoDisturbIcon />}
+          >
+            {t("cancel_edit")}
+          </Button>
+        )}
       </Grid>
     </>
   );

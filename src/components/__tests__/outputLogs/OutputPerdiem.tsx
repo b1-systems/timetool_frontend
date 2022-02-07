@@ -28,8 +28,6 @@ it("is rendert", async () => {
     </RecoilRoot>,
   );
   await flushPromisesAndTimers();
-  //act(() => {});
-  //console.log(element.debug(undefined, 600000));
   expect(element.container).toHaveTextContent("testMePerdiem");
 });
 
@@ -51,8 +49,7 @@ it("delete btn is there when month is open", async () => {
     </RecoilRoot>,
   );
   await flushPromisesAndTimers();
-  //act(() => {});
-  //console.log(element.debug(undefined, 600000));
+
   expect(element.getByTestId(`OutputPerdiem_delete-error-btn`)).toBeInTheDocument();
 });
 
@@ -74,8 +71,7 @@ it("delete btn is not there when month is closed", async () => {
     </RecoilRoot>,
   );
   await flushPromisesAndTimers();
-  //act(() => {});
-  //console.log(element.debug(undefined, 600000));
+
   expect(element.queryByTestId("OutputPerdiem_delete-error-btn")).toBeNull();
 });
 
@@ -108,6 +104,5 @@ it("click delete calls function", async () => {
   await act(async () => {
     fireEvent.click(element.getByTestId("OutputPerdiem_delete-error-btn"));
   });
-  //console.log(element.debug(undefined, 600000));
   expect(mockFetchDelete).toHaveBeenCalled();
 });

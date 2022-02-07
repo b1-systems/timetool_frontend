@@ -1,7 +1,9 @@
+import DoDisturbIcon from "@mui/icons-material/DoDisturb";
 import { TimePicker } from "@mui/lab";
 import {
   Alert,
   Box,
+  Button,
   Container,
   FormControl,
   FormControlLabel,
@@ -18,11 +20,14 @@ import {
   alertShownInInputState,
   dateFromState,
   dateToState,
+  editTimelogState,
   monthState,
 } from "../../atom";
 
 export default function InputDefaultTimelog(props: {
-  handleRemote(): void;
+  setUuidLog(uuid: string | null): void;
+  remote: "remote" | "onsite";
+  setRemote(to: "remote" | "onsite"): void;
   setBreakTime(time: number): void;
   breakTime: number;
   setTravelTime(time: number): void;
@@ -32,18 +37,21 @@ export default function InputDefaultTimelog(props: {
   types: string[];
 }) {
   const { t } = useTranslation();
-
   const [dateFrom, setDateFrom] = useRecoilState(dateFromState);
   const setAlertShownInInput = useSetRecoilState(alertShownInInputState);
   const [datePickerFrom, setDatePickerFrom] = useState(dateFrom);
   const [dateTo, setDateTo] = useRecoilState(dateToState);
   const [datePickerTo, setDatePickerTo] = useState(dateTo);
+  const [remotePicker, setRemotePicker] = useState(props.remote);
+
   const month = useRecoilValue(monthState);
+  const [editShift, setEditShift] = useRecoilState(editTimelogState);
 
   useEffect(() => {
     setDatePickerFrom(dateFrom);
     setDatePickerTo(dateTo);
-  }, [dateFrom, dateTo, month]);
+    setRemotePicker(props.remote);
+  }, [dateFrom, dateTo, month, props.remote]);
 
   if (!props.types.includes("timelog")) {
     setAlertShownInInput(true);
@@ -58,6 +66,17 @@ export default function InputDefaultTimelog(props: {
     );
   }
   setAlertShownInInput(false);
+
+  const handleRemote = (str: string) => {
+    if (str === "remote") {
+      props.setRemote(str);
+      setRemotePicker(str);
+    } else if (str === "onsite") {
+      props.setRemote(str);
+      setRemotePicker(str);
+    }
+  };
+
   return (
     <>
       <Grid item xs={12} sm={11} md={6} lg={3}>
@@ -159,14 +178,14 @@ export default function InputDefaultTimelog(props: {
           onChange={(e) => props.setLogMsg(e.target.value)}
         />
       </Grid>
-      <Grid item xs={12} sm={11} md={6} lg={3}>
+      <Grid item xs={12} sm={5} md={3} lg={3}>
         <FormControl component="fieldset">
           <RadioGroup
             row
             aria-label="position"
             name="position"
-            defaultValue="remote"
-            onChange={props.handleRemote}
+            value={remotePicker}
+            onChange={(e) => handleRemote(e.target.value)}
           >
             <FormControlLabel
               value="remote"
@@ -182,6 +201,36 @@ export default function InputDefaultTimelog(props: {
             />
           </RadioGroup>
         </FormControl>
+      </Grid>
+      <Grid item xs={12} sm={6} md={3} lg={2} sx={{ mt: 1 }}>
+        {editShift.project_uuid !== "-1" && editShift.start_dt !== -1 && (
+          <Button
+            color="warning"
+            fullWidth
+            size="large"
+            onClick={() => {
+              setEditShift({
+                uuid: "-1",
+                employee_uuid: "-1",
+                project_uuid: "-1",
+                project_name: "-1",
+                start_dt: -1,
+                end_dt: -1,
+                type: "-1",
+              });
+              props.setRemote("remote");
+              props.setBreakTime(0);
+              props.setTravelTime(0);
+              props.setLogMsg("");
+              props.setUuidLog(null);
+            }}
+            variant="contained"
+            data-testid={`InputTimelog_cancel_edit-warning-btn`}
+            startIcon={<DoDisturbIcon />}
+          >
+            {t("cancel_edit")}
+          </Button>
+        )}
       </Grid>
     </>
   );

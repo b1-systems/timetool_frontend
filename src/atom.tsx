@@ -95,7 +95,7 @@ export const isMonthClosedState = selector({
 
 export const shiftModelsState = selector({
   key: "shiftModelsState",
-  get: async ({ get }) => {
+  get: ({ get }) => {
     const projects = get(projectsState);
     const m = new Map(
       projects
@@ -108,13 +108,14 @@ export const shiftModelsState = selector({
 
 export const perdiemModelsState = selector({
   key: "perdiemModelsState",
-  get: async ({ get }) => {
+  get: ({ get }) => {
     const projects = get(projectsState);
-    return new Map(
+    const m = new Map(
       projects
         .filter((project) => project.worktypes.perdiem !== undefined)
         .map((project) => [project.uuid, project.worktypes.perdiem]),
     );
+    return m;
   },
 });
 
@@ -197,6 +198,19 @@ export const editTimelogState = atom<Timelog>({
     start_dt: -1,
     end_dt: -1,
     type: "-1",
+  },
+});
+
+export const editPerdiemState = atom<Perdiem>({
+  key: "editPerdiemState",
+  default: {
+    uuid: "-1",
+    employee_uuid: "-1",
+    project_uuid: "-1",
+    project_name: "-1",
+    start_dt: -1,
+    type: -1,
+    comment: "-1",
   },
 });
 
