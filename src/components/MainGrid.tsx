@@ -86,16 +86,8 @@ export default function MainGrid() {
     if (editLog.project_uuid !== "-1" && editLog.start_dt !== -1) {
       setUuidLog(editLog.uuid);
       setProjectUuid(editLog.project_uuid);
-      console.log(
-        "===========================availableProjects==================================>",
-        availableProjects,
-      );
       const projectFiltered = availableProjects.filter(
         (project) => project.uuid === editLog.project_uuid,
-      );
-      console.log(
-        "===========================projectFiltered==================================>",
-        projectFiltered,
       );
       setProject(projectFiltered[0].name);
       if (editLog.type === "shift") {

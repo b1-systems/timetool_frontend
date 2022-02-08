@@ -106,7 +106,7 @@ export default function InputPerdiem(props: {
               props.setUuidLog(null);
             }}
             variant="contained"
-            data-testid={`InputTimelog_cancel_edit-warning-btn`}
+            data-testid={`InputPerdiem_cancel_edit-warning-btn`}
             startIcon={<DoDisturbIcon />}
           >
             {t("cancel_edit")}
