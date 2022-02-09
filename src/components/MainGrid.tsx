@@ -32,46 +32,38 @@ import TimelogItemList from "./outputLogs/TimelogItemList";
 export default function MainGrid() {
   const { t } = useTranslation();
 
-  const [project, setProject] = useState<string>("");
-  const [projectUuid, setProjectUuid] = useState<string>("");
   const [uuidLog, setUuidLog] = useState<string | null>(null);
-  const [projectTypes, setProjectTypes] = useState<string[]>([]);
   const [endMonthOpen, setEndMonthOpen] = useState(false);
-  const [projectShiftModels, setProjectShiftModels] = useState<string[]>([]);
-  const [perdiemModels, setPerdiemModels] = useState<string[]>([]);
 
   const dateFrom = useRecoilValue(dateFromState);
+
   const availableProjects = useRecoilValue(projectsState);
+  const [project, setProject] = useState<string>(
+    availableProjects.length === 1 ? availableProjects[0].name : "",
+  );
+  const [projectUuid, setProjectUuid] = useState<string>(
+    availableProjects.length === 1 ? availableProjects[0].uuid : "",
+  );
+  const [projectTypes, setProjectTypes] = useState<string[]>(
+    availableProjects.length === 1 ? Object.keys(availableProjects[0].worktypes) : [],
+  );
+  const [projectShiftModels, setProjectShiftModels] = useState<string[]>(
+    availableProjects.length === 1
+      ? availableProjects[0].worktypes.shift !== undefined
+        ? Object.values(availableProjects[0].worktypes.shift)
+        : []
+      : [],
+  );
+  const [perdiemModels, setPerdiemModels] = useState<string[]>(
+    availableProjects.length === 1
+      ? availableProjects[0].worktypes.perdiem !== undefined
+        ? Object.values(availableProjects[0].worktypes.perdiem)
+        : []
+      : [],
+  );
   const editTimelog = useRecoilValue(editTimelogState);
   const [month, setMonth] = useRecoilState(monthState);
   const isMonthClosed = useRecoilValue(isMonthClosedState);
-
-  /**
-   * This useEffect checs if only one project is available and sets it.
-   * It does the same for project types.
-   */
-
-  useEffect(() => {
-    if (availableProjects.length === 1) {
-      const str = availableProjects[0].name;
-      if (str !== null) {
-        if (project !== str) {
-          const projectFiltered = availableProjects.filter(
-            (project) => project.name === str,
-          );
-          setProject(str);
-          setProjectUuid(projectFiltered[0].uuid);
-          setProjectTypes(Object.keys(projectFiltered[0].worktypes));
-          if (projectFiltered[0].worktypes.shift !== undefined) {
-            setProjectShiftModels(Object.values(projectFiltered[0].worktypes.shift));
-          }
-          if (projectFiltered[0].worktypes.perdiem !== undefined) {
-            setPerdiemModels(Object.values(projectFiltered[0].worktypes.perdiem));
-          }
-        }
-      }
-    }
-  }, [availableProjects, project]);
 
   /**
    * This useEffect checks if edit Log and edit Perdiem is placeholder.

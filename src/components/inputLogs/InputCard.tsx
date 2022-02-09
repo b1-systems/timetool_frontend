@@ -46,9 +46,12 @@ export default function InputCard(props: {
   projectShiftModels: string[];
   perdiemModels: string[];
 }) {
+  console.log("InputCard props.types", props.types);
   const { t } = useTranslation();
   const [model, setModel] = useState<string>("");
-  const [type, setType] = useState<string>("");
+  const [type, setType] = useState<string>(
+    props.types.length === 1 ? props.types[0] : "",
+  );
   const [breakTime, setBreakTime] = useState<number>(0);
   const [travelTime, setTravelTime] = useState<number>(0);
   const [logMsg, setLogMsg] = useState<string>("");
@@ -67,12 +70,6 @@ export default function InputCard(props: {
   const alertShownInInput = useRecoilValue(alertShownInInputState);
   const [editTimelog, setEditTimelog] = useRecoilState(editTimelogState);
   const perdiemModelsMapsUuidLog = useRecoilValue(perdiemModelsState);
-
-  useEffect(() => {
-    if (props.types.length === 1) {
-      setType(props.types[0]);
-    }
-  }, [props.types]);
 
   useEffect(() => {
     if (editTimelog) {
