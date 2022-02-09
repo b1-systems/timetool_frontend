@@ -88,15 +88,12 @@ export default function MainGrid() {
         (project) => project.uuid === editTimelog.project_uuid,
       );
       setProject(projectFiltered[0].name);
+      setProjectTypes(Object.keys(projectFiltered[0].worktypes));
       if (editTimelog.type === "shift") {
-        setProjectTypes(["shift"]);
         if (projectFiltered[0].worktypes.shift !== undefined) {
           setProjectShiftModels(Object.values(projectFiltered[0].worktypes.shift));
         }
-      } else if (editTimelog.type === "timelog" || editTimelog.type === "default") {
-        setProjectTypes(["timelog"]);
       } else if (editTimelog.end_dt === undefined) {
-        setProjectTypes(["perdiem"]);
         if (projectFiltered[0].worktypes.perdiem !== undefined) {
           setPerdiemModels(Object.values(projectFiltered[0].worktypes.perdiem));
         }

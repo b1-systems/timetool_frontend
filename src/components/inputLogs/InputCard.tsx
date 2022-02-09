@@ -67,6 +67,7 @@ export default function InputCard(props: {
   const alertShownInInput = useRecoilValue(alertShownInInputState);
   const [editTimelog, setEditTimelog] = useRecoilState(editTimelogState);
   const perdiemModelsMapsUuidLog = useRecoilValue(perdiemModelsState);
+
   useEffect(() => {
     if (props.types.length === 1) {
       setType(props.types[0]);
@@ -106,7 +107,7 @@ export default function InputCard(props: {
         setType("perdiem");
         setDateFrom(DateTime.fromSeconds(editTimelog.start_dt));
         setLogMsg(typeof editTimelog.comment === "string" ? editTimelog.comment : "");
-        setTypeOfPerdiem(typeof editTimelog.type === "number" ? editTimelog.type : 0);
+        setTypeOfPerdiem(typeof editTimelog.type === "number" ? editTimelog.type : -1);
         setModel(editTimelog.type.toString() || "-1");
       }
     }
