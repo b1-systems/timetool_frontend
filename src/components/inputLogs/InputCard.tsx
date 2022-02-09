@@ -26,7 +26,6 @@ import {
   alertShownInInputState,
   dateFromState,
   dateToState,
-  editPerdiemState,
   editTimelogState,
   isMonthClosedState,
   perdiemModelsState,
@@ -66,8 +65,7 @@ export default function InputCard(props: {
   const updateLogs = useUpdateLogs();
   const isMonthClosed = useRecoilValue(isMonthClosedState);
   const alertShownInInput = useRecoilValue(alertShownInInputState);
-  const [editShift, setEditShift] = useRecoilState(editTimelogState);
-  const [editPerdiem, setEditPerdiem] = useRecoilState(editPerdiemState);
+  const [editTimelog, setEditTimelog] = useRecoilState(editTimelogState);
   const perdiemModelsMapsUuidLog = useRecoilValue(perdiemModelsState);
   useEffect(() => {
     if (props.types.length === 1) {
@@ -76,53 +74,43 @@ export default function InputCard(props: {
   }, [props.types]);
 
   useEffect(() => {
-    if (editShift.project_uuid !== "-1" && editShift.start_dt !== -1) {
-      if (editShift.type === "shift") {
+    if (editTimelog) {
+      if (editTimelog.type === "shift") {
         setType("shift");
-        setDateFrom(DateTime.fromSeconds(editShift.start_dt));
-        setShiftModel(editShift.shift_model || "unknown shift");
-        setShift(editShift.shift_model || "unknown shift");
-        setIncidents(editShift.incidents || []);
-      } else if (editShift.type === "timelog" || editShift.type === "default") {
-        if (editShift.comment) {
+        setDateFrom(DateTime.fromSeconds(editTimelog.start_dt));
+        setShiftModel(editTimelog.shift_model || "unknown shift");
+        setShift(editTimelog.shift_model || "unknown shift");
+        setIncidents(editTimelog.incidents || []);
+      } else if (editTimelog.type === "timelog" || editTimelog.type === "default") {
+        if (editTimelog.comment) {
           setType("timelog");
-          setDateFrom(DateTime.fromSeconds(editShift.start_dt));
+          setDateFrom(DateTime.fromSeconds(editTimelog.start_dt));
           setDateTo(
             DateTime.fromSeconds(
-              typeof editShift.end_dt === "number" ? editShift.end_dt : 0,
+              typeof editTimelog.end_dt === "number" ? editTimelog.end_dt : 0,
             ),
           );
-          if (editShift.breaklength) {
-            setBreakTime(editShift.breaklength / 60);
+          if (editTimelog.breaklength) {
+            setBreakTime(editTimelog.breaklength / 60);
           }
 
-          if (editShift.travel) {
-            setTravelTime(editShift.travel / 60);
+          if (editTimelog.travel) {
+            setTravelTime(editTimelog.travel / 60);
           }
-          if (editShift.onsite === "remote" || editShift.onsite === "onsite") {
-            setRemote(editShift.onsite);
+          if (editTimelog.onsite === "remote" || editTimelog.onsite === "onsite") {
+            setRemote(editTimelog.onsite);
           }
-          setLogMsg(editShift.comment);
+          setLogMsg(editTimelog.comment);
         }
+      } else if (editTimelog.end_dt === undefined) {
+        setType("perdiem");
+        setDateFrom(DateTime.fromSeconds(editTimelog.start_dt));
+        setLogMsg(typeof editTimelog.comment === "string" ? editTimelog.comment : "");
+        setTypeOfPerdiem(typeof editTimelog.type === "number" ? editTimelog.type : 0);
+        setModel(editTimelog.type.toString() || "-1");
       }
-    } else if (editPerdiem.project_uuid !== "-1" && editPerdiem.start_dt !== -1) {
-      setType("perdiem");
-      setDateFrom(DateTime.fromSeconds(editPerdiem.start_dt));
-      setLogMsg(typeof editPerdiem.comment === "string" ? editPerdiem.comment : "");
-      setTypeOfPerdiem(typeof editPerdiem.type === "number" ? editPerdiem.type : 0);
-      setModel(editPerdiem.type.toString() || "-1");
     }
-  }, [
-    editPerdiem.comment,
-    editPerdiem.project_uuid,
-    editPerdiem.start_dt,
-    editPerdiem.type,
-    editShift,
-    perdiemModelsMapsUuidLog,
-    setDateFrom,
-    setDateTo,
-    shiftModel,
-  ]);
+  }, [editTimelog, perdiemModelsMapsUuidLog, setDateFrom, setDateTo, shiftModel]);
 
   const setTypeHandler = (event: SelectChangeEvent) => {
     setType(event.target.value as string);
@@ -215,24 +203,7 @@ export default function InputCard(props: {
           setDateTo(dateTo.plus({ days: 1 }));
         }
         setIncidents([]);
-        setEditShift({
-          uuid: "-1",
-          employee_uuid: "-1",
-          project_uuid: "-1",
-          project_name: "-1",
-          start_dt: -1,
-          end_dt: -1,
-          type: "-1",
-        });
-        setEditPerdiem({
-          uuid: "-1",
-          employee_uuid: "-1",
-          project_uuid: "-1",
-          project_name: "-1",
-          start_dt: -1,
-          type: -1,
-          comment: "-1",
-        });
+        setEditTimelog(null);
         props.setUuidLog(null);
         updateLogs();
         return;

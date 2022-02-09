@@ -10,12 +10,7 @@ import { useTranslation } from "react-i18next";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 
 import { fetchDelete } from "../../api";
-import {
-  editPerdiemState,
-  editTimelogState,
-  perdiemModelsState,
-  useUpdateLogs,
-} from "../../atom";
+import { editTimelogState, perdiemModelsState, useUpdateLogs } from "../../atom";
 import { Timelog } from "../../models";
 import OutputChip from "./OutputChip";
 
@@ -25,8 +20,7 @@ export default function OutputPerdiem(props: {
   index: number;
 }) {
   const { t } = useTranslation();
-  const setEditPerdiem = useSetRecoilState(editPerdiemState);
-  const setEditShift = useSetRecoilState(editTimelogState);
+  const setEditTimelog = useSetRecoilState(editTimelogState);
   const updateLogs = useUpdateLogs();
 
   const perdiemModels = useRecoilValue(perdiemModelsState);
@@ -58,16 +52,7 @@ export default function OutputPerdiem(props: {
   };
 
   const editHandler = (log: Timelog) => {
-    setEditPerdiem(log);
-    setEditShift({
-      uuid: "-1",
-      employee_uuid: "-1",
-      project_uuid: "-1",
-      project_name: "-1",
-      start_dt: -1,
-      end_dt: -1,
-      type: "-1",
-    });
+    setEditTimelog(log);
   };
 
   return (

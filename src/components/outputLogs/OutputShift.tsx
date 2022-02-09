@@ -16,12 +16,7 @@ import { useTranslation } from "react-i18next";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 
 import { fetchDelete } from "../../api";
-import {
-  editPerdiemState,
-  editTimelogState,
-  shiftModelsState,
-  useUpdateLogs,
-} from "../../atom";
+import { editTimelogState, shiftModelsState, useUpdateLogs } from "../../atom";
 import { Timelog } from "../../models";
 import OutputChip from "./OutputChip";
 
@@ -35,8 +30,7 @@ export default function OutputShift(props: {
   const [entriesVisible, setEntriesVisible] = useState<boolean>(false);
 
   const shiftModels = useRecoilValue(shiftModelsState);
-  const setEditShift = useSetRecoilState(editTimelogState);
-  const setEditPerdiem = useSetRecoilState(editPerdiemState);
+  const setEditTimelog = useSetRecoilState(editTimelogState);
 
   const updateLogs = useUpdateLogs();
 
@@ -67,16 +61,7 @@ export default function OutputShift(props: {
   };
 
   const editHandler = (log: Timelog) => {
-    setEditShift(log);
-    setEditPerdiem({
-      uuid: "-1",
-      employee_uuid: "-1",
-      project_uuid: "-1",
-      project_name: "-1",
-      start_dt: -1,
-      type: -1,
-      comment: "-1",
-    });
+    setEditTimelog(log);
   };
 
   return (

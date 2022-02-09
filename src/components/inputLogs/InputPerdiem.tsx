@@ -17,7 +17,7 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 
 import {
   alertShownInInputState,
-  editPerdiemState,
+  editTimelogState,
   perdiemModelsState,
 } from "../../atom";
 
@@ -35,7 +35,7 @@ export default function InputPerdiem(props: {
   const [modelSelected, setModelSelected] = useState(props.model);
   const { t } = useTranslation();
   const setAlertShownInInput = useSetRecoilState(alertShownInInputState);
-  const [editPerdiem, setEditPerdiem] = useRecoilState(editPerdiemState);
+  const [editTimelog, setEditTimelog] = useRecoilState(editTimelogState);
   const projectPerdiem = perdiemModels.get(props.uuidProject);
 
   if (!projectPerdiem) {
@@ -87,21 +87,13 @@ export default function InputPerdiem(props: {
         />
       </Grid>
       <Grid item xs={12} sm={6} md={3} lg={2} sx={{ mt: 1 }}>
-        {editPerdiem.project_uuid !== "-1" && editPerdiem.start_dt !== -1 && (
+        {editTimelog && (
           <Button
             color="warning"
             fullWidth
             size="large"
             onClick={() => {
-              setEditPerdiem({
-                uuid: "-1",
-                employee_uuid: "-1",
-                project_uuid: "-1",
-                project_name: "-1",
-                start_dt: -1,
-                type: -1,
-                comment: "-1",
-              });
+              setEditTimelog(null);
               props.setLogMsg("");
               props.setUuidLog(null);
             }}

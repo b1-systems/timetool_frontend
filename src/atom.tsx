@@ -188,30 +188,9 @@ export const currentMonthLogsTimelogsState = selector<Timelog[]>({
   },
 });
 
-export const editTimelogState = atom<Timelog>({
+export const editTimelogState = atom<Timelog | null>({
   key: "editTimelogState",
-  default: {
-    uuid: "-1",
-    employee_uuid: "-1",
-    project_uuid: "-1",
-    project_name: "-1",
-    start_dt: -1,
-    end_dt: -1,
-    type: "-1",
-  },
-});
-
-export const editPerdiemState = atom<Timelog>({
-  key: "editPerdiemState",
-  default: {
-    uuid: "-1",
-    employee_uuid: "-1",
-    project_uuid: "-1",
-    project_name: "-1",
-    start_dt: -1,
-    type: -1,
-    comment: "-1",
-  },
+  default: null,
 });
 
 export const alertShownInInputState = atom({

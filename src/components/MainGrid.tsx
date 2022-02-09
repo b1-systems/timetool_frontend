@@ -16,7 +16,6 @@ import { useRecoilState, useRecoilValue } from "recoil";
 
 import {
   dateFromState,
-  editPerdiemState,
   editTimelogState,
   isMonthClosedState,
   monthState,
@@ -43,8 +42,7 @@ export default function MainGrid() {
 
   const dateFrom = useRecoilValue(dateFromState);
   const availableProjects = useRecoilValue(projectsState);
-  const editLog = useRecoilValue(editTimelogState);
-  const editPerdiem = useRecoilValue(editPerdiemState);
+  const editTimelog = useRecoilValue(editTimelogState);
   const [month, setMonth] = useRecoilState(monthState);
   const isMonthClosed = useRecoilValue(isMonthClosedState);
 
@@ -83,42 +81,28 @@ export default function MainGrid() {
    */
 
   useEffect(() => {
-    if (editLog.project_uuid !== "-1" && editLog.start_dt !== -1) {
-      setUuidLog(editLog.uuid);
-      setProjectUuid(editLog.project_uuid);
+    if (editTimelog) {
+      setUuidLog(editTimelog.uuid);
+      setProjectUuid(editTimelog.project_uuid);
       const projectFiltered = availableProjects.filter(
-        (project) => project.uuid === editLog.project_uuid,
+        (project) => project.uuid === editTimelog.project_uuid,
       );
       setProject(projectFiltered[0].name);
-      if (editLog.type === "shift") {
+      if (editTimelog.type === "shift") {
         setProjectTypes(["shift"]);
         if (projectFiltered[0].worktypes.shift !== undefined) {
           setProjectShiftModels(Object.values(projectFiltered[0].worktypes.shift));
         }
-      } else if (editLog.type === "timelog" || editLog.type === "default") {
+      } else if (editTimelog.type === "timelog" || editTimelog.type === "default") {
         setProjectTypes(["timelog"]);
-      }
-    } else if (editPerdiem.project_uuid !== "-1" && editPerdiem.start_dt !== -1) {
-      setUuidLog(editPerdiem.uuid);
-      setProjectUuid(editPerdiem.project_uuid);
-      const projectFiltered = availableProjects.filter(
-        (project) => project.uuid === editPerdiem.project_uuid,
-      );
-      setProject(projectFiltered[0].name);
-      setProjectTypes(["perdiem"]);
-      if (projectFiltered[0].worktypes.perdiem !== undefined) {
-        setPerdiemModels(Object.values(projectFiltered[0].worktypes.perdiem));
+      } else if (editTimelog.end_dt === undefined) {
+        setProjectTypes(["perdiem"]);
+        if (projectFiltered[0].worktypes.perdiem !== undefined) {
+          setPerdiemModels(Object.values(projectFiltered[0].worktypes.perdiem));
+        }
       }
     }
-  }, [
-    availableProjects,
-    editLog,
-    dateFrom,
-    isMonthClosed,
-    editPerdiem.project_uuid,
-    editPerdiem.start_dt,
-    editPerdiem.uuid,
-  ]);
+  }, [availableProjects, editTimelog, dateFrom, isMonthClosed]);
 
   const monthEndHandler = () => {
     setEndMonthOpen(false);

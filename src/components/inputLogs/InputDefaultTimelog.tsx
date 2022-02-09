@@ -45,7 +45,7 @@ export default function InputDefaultTimelog(props: {
   const [remotePicker, setRemotePicker] = useState(props.remote);
 
   const month = useRecoilValue(monthState);
-  const [editShift, setEditShift] = useRecoilState(editTimelogState);
+  const [editTimelog, setEditTimelog] = useRecoilState(editTimelogState);
 
   useEffect(() => {
     setDatePickerFrom(dateFrom);
@@ -203,21 +203,13 @@ export default function InputDefaultTimelog(props: {
         </FormControl>
       </Grid>
       <Grid item xs={12} sm={6} md={3} lg={2} sx={{ mt: 1 }}>
-        {editShift.project_uuid !== "-1" && editShift.start_dt !== -1 && (
+        {editTimelog && (
           <Button
             color="warning"
             fullWidth
             size="large"
             onClick={() => {
-              setEditShift({
-                uuid: "-1",
-                employee_uuid: "-1",
-                project_uuid: "-1",
-                project_name: "-1",
-                start_dt: -1,
-                end_dt: -1,
-                type: "-1",
-              });
+              setEditTimelog(null);
               props.setRemote("remote");
               props.setBreakTime(0);
               props.setTravelTime(0);
