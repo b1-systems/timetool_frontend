@@ -2,7 +2,7 @@ import { DateTime } from "luxon";
 import { DefaultValue, atom, selector, useRecoilState } from "recoil";
 
 import { fetchCurrentMonthLogs, fetchIsMonthClosed, fetchProjects } from "./api";
-import { Logs, Perdiem, Project, Timelog } from "./models";
+import { Logs, Project, Timelog } from "./models";
 
 export const monthBackingState = atom({
   key: "monthBackingState",
@@ -172,7 +172,7 @@ export const currentMonthLogsState = selector<Logs>({
   },
 });
 
-export const currentMonthLogsPerdiemsState = selector<Perdiem[]>({
+export const currentMonthLogsPerdiemsState = selector<Timelog[]>({
   key: "currentMonthLogsPerdiemsState",
   get: async ({ get }) => {
     const monthLogs = get(currentMonthLogsState);
@@ -201,7 +201,7 @@ export const editTimelogState = atom<Timelog>({
   },
 });
 
-export const editPerdiemState = atom<Perdiem>({
+export const editPerdiemState = atom<Timelog>({
   key: "editPerdiemState",
   default: {
     uuid: "-1",

@@ -16,12 +16,12 @@ import {
   perdiemModelsState,
   useUpdateLogs,
 } from "../../atom";
-import { Perdiem } from "../../models";
+import { Timelog } from "../../models";
 import OutputChip from "./OutputChip";
 
 export default function OutputPerdiem(props: {
   monthIsClosed: boolean;
-  log: Perdiem;
+  log: Timelog;
   index: number;
 }) {
   const { t } = useTranslation();
@@ -57,7 +57,7 @@ export default function OutputPerdiem(props: {
       .catch((errorUpdateLogs) => console.error(errorUpdateLogs));
   };
 
-  const editHandler = (log: Perdiem) => {
+  const editHandler = (log: Timelog) => {
     setEditPerdiem(log);
     setEditShift({
       uuid: "-1",
@@ -116,7 +116,10 @@ export default function OutputPerdiem(props: {
                 index={props.index}
                 heading={t("keypoint.type")}
                 Icon={<PaidIcon sx={{ width: 18, height: 18, color: "white" }} />}
-                text={perdiemModelHandler(props.log.project_uuid, props.log.type)}
+                text={perdiemModelHandler(
+                  props.log.project_uuid,
+                  typeof props.log.type === "number" ? props.log.type : -1,
+                )}
               />
               <OutputChip
                 lg={4}

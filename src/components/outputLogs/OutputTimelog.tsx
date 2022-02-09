@@ -47,9 +47,10 @@ export default function OutputTimelogs(props: {
       ? new Date(props.log.travel * 1000).toISOString().substring(11, 16)
       : "00:00";
   const worktime =
-    props.log.end_dt - props.log.start_dt > 0
+    (typeof props.log.end_dt === "number" ? props.log.end_dt : 0) - props.log.start_dt >
+    0
       ? Duration.fromMillis(
-          (props.log.end_dt -
+          ((typeof props.log.end_dt === "number" ? props.log.end_dt : 0) -
             props.log.start_dt -
             (props.log.breaklength ? props.log.breaklength : 0)) *
             1000,
@@ -121,7 +122,9 @@ export default function OutputTimelogs(props: {
                 index={props.index}
                 heading={t("keypoint.to")}
                 Icon={<MoreTimeIcon sx={{ width: 18, height: 18, color: "white" }} />}
-                text={DateTime.fromSeconds(props.log.end_dt).toFormat("T")}
+                text={DateTime.fromSeconds(
+                  typeof props.log.end_dt === "number" ? props.log.end_dt : 0,
+                ).toFormat("T")}
               />
               <OutputChip
                 lg={3}

@@ -4,7 +4,6 @@ export interface RequestPrototyp {
   format: string;
   scope: string;
 }
-
 export interface Project {
   name: string;
   uuid: string;
@@ -36,16 +35,7 @@ export interface ShiftModelsToProjectUuid {
 }
 export interface Logs {
   timelogs: Timelog[];
-  perdiems: Perdiem[];
-}
-export interface Perdiem {
-  uuid: string;
-  project_uuid: string;
-  project_name: string;
-  start_dt: number;
-  employee_uuid: string;
-  type: number;
-  comment: string;
+  perdiems: Timelog[];
 }
 export interface Timelog {
   uuid: string;
@@ -53,8 +43,8 @@ export interface Timelog {
   project_uuid: string;
   project_name: string;
   start_dt: number;
-  end_dt: number;
-  type: string;
+  end_dt?: number;
+  type: string | number;
   breaklength?: number;
   travel?: number;
   comment?: string;

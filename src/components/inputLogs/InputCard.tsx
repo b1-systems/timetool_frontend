@@ -87,7 +87,11 @@ export default function InputCard(props: {
         if (editShift.comment) {
           setType("timelog");
           setDateFrom(DateTime.fromSeconds(editShift.start_dt));
-          setDateTo(DateTime.fromSeconds(editShift.end_dt));
+          setDateTo(
+            DateTime.fromSeconds(
+              typeof editShift.end_dt === "number" ? editShift.end_dt : 0,
+            ),
+          );
           if (editShift.breaklength) {
             setBreakTime(editShift.breaklength / 60);
           }
@@ -104,8 +108,8 @@ export default function InputCard(props: {
     } else if (editPerdiem.project_uuid !== "-1" && editPerdiem.start_dt !== -1) {
       setType("perdiem");
       setDateFrom(DateTime.fromSeconds(editPerdiem.start_dt));
-      setLogMsg(editPerdiem.comment);
-      setTypeOfPerdiem(editPerdiem.type);
+      setLogMsg(typeof editPerdiem.comment === "string" ? editPerdiem.comment : "");
+      setTypeOfPerdiem(typeof editPerdiem.type === "number" ? editPerdiem.type : 0);
       setModel(editPerdiem.type.toString() || "-1");
     }
   }, [
