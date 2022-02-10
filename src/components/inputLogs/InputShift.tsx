@@ -15,55 +15,48 @@ import {
   TextField,
 } from "@mui/material";
 import { DateTime } from "luxon";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 
 import {
   alertShownInInputState,
   dateFromState,
-  editTimelogState,
+  projectState,
   shiftModelsState,
 } from "../../atom";
-import { Incident } from "../../models";
+import { Shift } from "../../models";
 
 export default function InputShift(props: {
-  uuidProject: string;
-  shiftModels: string[];
-  shift: string;
-  setUuidLog(uuid: string | null): void;
-  setShift(shiftModel: string): void;
-  incidents: Incident[];
-  setIncidents(Incidents: Incident[]): void;
-  setShiftModel(model: string): void;
+  shiftType: string;
+  shiftTimelog: Shift;
+  setShiftTimelog(timelog: Shift): void;
 }) {
   const { t } = useTranslation();
 
-  const [shiftSelected, setShiftSelected] = useState(props.shift);
+  const [shiftSelected, setShiftSelected] = useState(props.shiftType);
   const shiftModels = useRecoilValue(shiftModelsState);
-  const [editTimelog, setEditTimelog] = useRecoilState(editTimelogState);
   const [dateFrom] = useRecoilState(dateFromState);
 
   const setAlertShownInInput = useSetRecoilState(alertShownInInputState);
 
-  useEffect(() => {
-    if (editTimelog) {
-      setShiftSelected(editTimelog.shift_model || "unknown shift");
-    }
-  }, [editTimelog]);
+  const project = useRecoilValue(projectState);
 
   const addHandler = () => {
-    props.setIncidents([
-      ...props.incidents,
-      {
-        start_dt: dateFrom.valueOf() / 1000,
-        end_dt: dateFrom.valueOf() / 1000,
-        comment: "",
-      },
-    ]);
+    props.setShiftTimelog({
+      ...props.shiftTimelog,
+      incidents: [
+        ...props.shiftTimelog.incidents,
+        {
+          start_dt: dateFrom.valueOf() / 1000,
+          end_dt: dateFrom.valueOf() / 1000,
+          comment: "",
+        },
+      ],
+    });
   };
 
-  const shiftModel = shiftModels.get(props.uuidProject);
+  const shiftModel = project ? shiftModels.get(project.uuid) : undefined;
   if (!shiftModel) {
     setAlertShownInInput(true);
     return (
@@ -91,7 +84,10 @@ export default function InputShift(props: {
             required={true}
             label={t("shift_model")}
             onChange={(e) => {
-              props.setShiftModel(e.target.value);
+              props.setShiftTimelog({
+                ...props.shiftTimelog,
+                shift_model: e.target.value,
+              });
               setShiftSelected(e.target.value);
             }}
           >
@@ -116,18 +112,13 @@ export default function InputShift(props: {
         </Button>
       </Grid>
       <Grid item xs={12} sm={4} md={3} lg={2} sx={{ mt: 1 }}>
-        {editTimelog && (
+        {props.shiftTimelog.uuid && (
           <Button
             color="warning"
             fullWidth
             size="large"
             onClick={() => {
-              setEditTimelog(null);
-              setShiftSelected("");
-              props.setShift("");
-              props.setShiftModel("");
-              props.setUuidLog(null);
-              props.setIncidents([]);
+              props.setShiftTimelog({ ...props.shiftTimelog, uuid: null });
             }}
             variant="contained"
             data-testid={`InputShift_cancel_edit-warning-btn`}
@@ -137,7 +128,7 @@ export default function InputShift(props: {
           </Button>
         )}
       </Grid>
-      {props.incidents.map((incident, index) => (
+      {props.shiftTimelog.incidents.map((incident, index) => (
         <Grid container spacing={3} item xs={12} key={index}>
           <Grid item xs={12} sm={3} md={2} lg={2}>
             <FormControl fullWidth>
@@ -148,22 +139,25 @@ export default function InputShift(props: {
                 ampmInClock={false}
                 onChange={(newValue) => {
                   if (newValue) {
-                    props.setIncidents([
-                      ...props.incidents.slice(0, index),
-                      {
-                        ...incident,
-                        start_dt:
-                          dateFrom
-                            .set({
-                              hour: newValue.hour || 0,
-                              minute: newValue.minute || 0,
-                              second: 0,
-                              millisecond: 0,
-                            })
-                            .valueOf() / 1000,
-                      },
-                      ...props.incidents.slice(index + 1),
-                    ]);
+                    props.setShiftTimelog({
+                      ...props.shiftTimelog,
+                      incidents: [
+                        ...props.shiftTimelog.incidents.slice(0, index),
+                        {
+                          ...incident,
+                          start_dt:
+                            dateFrom
+                              .set({
+                                hour: newValue.hour || 0,
+                                minute: newValue.minute || 0,
+                                second: 0,
+                                millisecond: 0,
+                              })
+                              .valueOf() / 1000,
+                        },
+                        ...props.shiftTimelog.incidents.slice(index + 1),
+                      ],
+                    });
                   }
                 }}
                 renderInput={(params) => <TextField {...params} />}
@@ -179,22 +173,25 @@ export default function InputShift(props: {
                 value={DateTime.fromSeconds(incident.end_dt)}
                 onChange={(newValue) => {
                   if (newValue) {
-                    props.setIncidents([
-                      ...props.incidents.slice(0, index),
-                      {
-                        ...incident,
-                        end_dt:
-                          dateFrom
-                            .set({
-                              hour: newValue.hour || 0,
-                              minute: newValue.minute || 0,
-                              second: 0,
-                              millisecond: 0,
-                            })
-                            .valueOf() / 1000,
-                      },
-                      ...props.incidents.slice(index + 1),
-                    ]);
+                    props.setShiftTimelog({
+                      ...props.shiftTimelog,
+                      incidents: [
+                        ...props.shiftTimelog.incidents.slice(0, index),
+                        {
+                          ...incident,
+                          end_dt:
+                            dateFrom
+                              .set({
+                                hour: newValue.hour || 0,
+                                minute: newValue.minute || 0,
+                                second: 0,
+                                millisecond: 0,
+                              })
+                              .valueOf() / 1000,
+                        },
+                        ...props.shiftTimelog.incidents.slice(index + 1),
+                      ],
+                    });
                   }
                 }}
                 renderInput={(params) => <TextField {...params} />}
@@ -208,14 +205,17 @@ export default function InputShift(props: {
               required={true}
               value={incident.comment}
               onChange={(e) => {
-                props.setIncidents([
-                  ...props.incidents.slice(0, index),
-                  {
-                    ...incident,
-                    comment: e.target.value,
-                  },
-                  ...props.incidents.slice(index + 1),
-                ]);
+                props.setShiftTimelog({
+                  ...props.shiftTimelog,
+                  incidents: [
+                    ...props.shiftTimelog.incidents.slice(0, index),
+                    {
+                      ...incident,
+                      comment: e.target.value,
+                    },
+                    ...props.shiftTimelog.incidents.slice(index + 1),
+                  ],
+                });
               }}
             />
           </Grid>
@@ -225,10 +225,13 @@ export default function InputShift(props: {
               color="error"
               variant="contained"
               onClick={() => {
-                props.setIncidents([
-                  ...props.incidents.slice(0, index),
-                  ...props.incidents.slice(index + 1),
-                ]);
+                props.setShiftTimelog({
+                  ...props.shiftTimelog,
+                  incidents: [
+                    ...props.shiftTimelog.incidents.slice(0, index),
+                    ...props.shiftTimelog.incidents.slice(index + 1),
+                  ],
+                });
               }}
             >
               <DeleteIcon />

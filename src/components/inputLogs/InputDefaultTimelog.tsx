@@ -12,46 +12,28 @@ import {
   RadioGroup,
   TextField,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import { DateTime } from "luxon";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 
-import {
-  alertShownInInputState,
-  dateFromState,
-  dateToState,
-  editTimelogState,
-  monthState,
-} from "../../atom";
+import { alertShownInInputState } from "../../atom";
+import { DefaultTimelog } from "../../models";
 
 export default function InputDefaultTimelog(props: {
-  setUuidLog(uuid: string | null): void;
-  remote: "remote" | "onsite";
-  setRemote(to: "remote" | "onsite"): void;
-  setBreakTime(time: number): void;
-  breakTime: number;
-  setTravelTime(time: number): void;
-  travelTime: number;
-  setLogMsg(msg: string): void;
-  logMsg: string;
   types: string[];
+  defaultTimelog: DefaultTimelog;
+  setDefaultTimelog(timelog: DefaultTimelog): void;
 }) {
   const { t } = useTranslation();
-  const [dateFrom, setDateFrom] = useRecoilState(dateFromState);
   const setAlertShownInInput = useSetRecoilState(alertShownInInputState);
-  const [datePickerFrom, setDatePickerFrom] = useState(dateFrom);
-  const [dateTo, setDateTo] = useRecoilState(dateToState);
-  const [datePickerTo, setDatePickerTo] = useState(dateTo);
-  const [remotePicker, setRemotePicker] = useState(props.remote);
 
-  const month = useRecoilValue(monthState);
-  const [editTimelog, setEditTimelog] = useRecoilState(editTimelogState);
-
-  useEffect(() => {
-    setDatePickerFrom(dateFrom);
-    setDatePickerTo(dateTo);
-    setRemotePicker(props.remote);
-  }, [dateFrom, dateTo, month, props.remote]);
+  const [datePickerFrom, setDatePickerFrom] = useState(
+    DateTime.fromSeconds(props.defaultTimelog.start_dt),
+  );
+  const [datePickerTo, setDatePickerTo] = useState(
+    DateTime.fromSeconds(props.defaultTimelog.end_dt),
+  );
 
   if (!props.types.includes("timelog")) {
     setAlertShownInInput(true);
@@ -67,16 +49,6 @@ export default function InputDefaultTimelog(props: {
   }
   setAlertShownInInput(false);
 
-  const handleRemote = (str: string) => {
-    if (str === "remote") {
-      props.setRemote(str);
-      setRemotePicker(str);
-    } else if (str === "onsite") {
-      props.setRemote(str);
-      setRemotePicker(str);
-    }
-  };
-
   return (
     <>
       <Grid item xs={12} sm={11} md={6} lg={3}>
@@ -90,23 +62,29 @@ export default function InputDefaultTimelog(props: {
               if (newValue) {
                 setDatePickerFrom(
                   newValue.set({
-                    year: dateFrom.year,
-                    month: dateFrom.month,
-                    day: dateFrom.day,
+                    year: DateTime.fromSeconds(props.defaultTimelog.start_dt).year,
+                    month: DateTime.fromSeconds(props.defaultTimelog.start_dt).month,
+                    day: DateTime.fromSeconds(props.defaultTimelog.start_dt).day,
                     second: 0,
                     millisecond: 0,
                   }),
                 );
                 if (newValue.isValid) {
-                  setDateFrom(
-                    newValue.set({
-                      year: dateFrom.year,
-                      month: dateFrom.month,
-                      day: dateFrom.day,
-                      second: 0,
-                      millisecond: 0,
-                    }),
-                  );
+                  props.setDefaultTimelog({
+                    ...props.defaultTimelog,
+                    start_dt:
+                      newValue
+                        .set({
+                          year: DateTime.fromSeconds(props.defaultTimelog.start_dt)
+                            .year,
+                          month: DateTime.fromSeconds(props.defaultTimelog.start_dt)
+                            .month,
+                          day: DateTime.fromSeconds(props.defaultTimelog.start_dt).day,
+                          second: 0,
+                          millisecond: 0,
+                        })
+                        .valueOf() / 1000,
+                  });
                 }
               }
             }}
@@ -125,23 +103,29 @@ export default function InputDefaultTimelog(props: {
               if (newValue) {
                 setDatePickerTo(
                   newValue.set({
-                    year: dateTo.year,
-                    month: dateTo.month,
-                    day: dateTo.day,
+                    year: DateTime.fromSeconds(props.defaultTimelog.start_dt).year,
+                    month: DateTime.fromSeconds(props.defaultTimelog.start_dt).month,
+                    day: DateTime.fromSeconds(props.defaultTimelog.start_dt).day,
                     second: 0,
                     millisecond: 0,
                   }),
                 );
                 if (newValue.isValid) {
-                  setDateTo(
-                    newValue.set({
-                      year: dateTo.year,
-                      month: dateTo.month,
-                      day: dateTo.day,
-                      second: 0,
-                      millisecond: 0,
-                    }),
-                  );
+                  props.setDefaultTimelog({
+                    ...props.defaultTimelog,
+                    end_dt:
+                      newValue
+                        .set({
+                          year: DateTime.fromSeconds(props.defaultTimelog.start_dt)
+                            .year,
+                          month: DateTime.fromSeconds(props.defaultTimelog.start_dt)
+                            .month,
+                          day: DateTime.fromSeconds(props.defaultTimelog.start_dt).day,
+                          second: 0,
+                          millisecond: 0,
+                        })
+                        .valueOf() / 1000,
+                  });
                 }
               }
             }}
@@ -153,8 +137,13 @@ export default function InputDefaultTimelog(props: {
         <TextField
           fullWidth
           label={t("break_time_(minutes)")}
-          value={props.breakTime}
-          onChange={(e) => props.setBreakTime(parseInt(e.target.value))}
+          value={props.defaultTimelog.breaklength / 60}
+          onChange={(e) =>
+            props.setDefaultTimelog({
+              ...props.defaultTimelog,
+              breaklength: parseInt(e.target.value) * 60,
+            })
+          }
           type="number"
           inputProps={{ min: "0", max: "1000" }}
         />
@@ -163,8 +152,13 @@ export default function InputDefaultTimelog(props: {
         <TextField
           fullWidth
           label={t("travel_time_(minutes)")}
-          value={props.travelTime}
-          onChange={(e) => props.setTravelTime(parseInt(e.target.value))}
+          value={props.defaultTimelog.travel / 60}
+          onChange={(e) => {
+            props.setDefaultTimelog({
+              ...props.defaultTimelog,
+              travel: parseInt(e.target.value) * 60,
+            });
+          }}
           type="number"
           inputProps={{ min: "0" }}
         />
@@ -174,8 +168,13 @@ export default function InputDefaultTimelog(props: {
           fullWidth
           label={t("comment")}
           required={true}
-          value={props.logMsg}
-          onChange={(e) => props.setLogMsg(e.target.value)}
+          value={props.defaultTimelog.comment}
+          onChange={(e) =>
+            props.setDefaultTimelog({
+              ...props.defaultTimelog,
+              comment: e.target.value,
+            })
+          }
         />
       </Grid>
       <Grid item xs={12} sm={5} md={3} lg={3}>
@@ -184,8 +183,13 @@ export default function InputDefaultTimelog(props: {
             row
             aria-label="position"
             name="position"
-            value={remotePicker}
-            onChange={(e) => handleRemote(e.target.value)}
+            value={props.defaultTimelog.onsite}
+            onChange={(e) =>
+              props.setDefaultTimelog({
+                ...props.defaultTimelog,
+                onsite: e.target.value,
+              })
+            }
           >
             <FormControlLabel
               value="remote"
@@ -203,18 +207,16 @@ export default function InputDefaultTimelog(props: {
         </FormControl>
       </Grid>
       <Grid item xs={12} sm={6} md={3} lg={2} sx={{ mt: 1 }}>
-        {editTimelog && (
+        {props.defaultTimelog.uuid && (
           <Button
             color="warning"
             fullWidth
             size="large"
             onClick={() => {
-              setEditTimelog(null);
-              props.setRemote("remote");
-              props.setBreakTime(0);
-              props.setTravelTime(0);
-              props.setLogMsg("");
-              props.setUuidLog(null);
+              props.setDefaultTimelog({
+                ...props.defaultTimelog,
+                uuid: null,
+              });
             }}
             variant="contained"
             data-testid={`InputTimelog_cancel_edit-warning-btn`}

@@ -11,12 +11,12 @@ import { useRecoilValue, useSetRecoilState } from "recoil";
 
 import { fetchDelete } from "../../api";
 import { editTimelogState, perdiemModelsState, useUpdateLogs } from "../../atom";
-import { Timelog } from "../../models";
+import { Perdiem, Timelog } from "../../models";
 import OutputChip from "./OutputChip";
 
 export default function OutputPerdiem(props: {
   monthIsClosed: boolean;
-  log: Timelog;
+  log: Perdiem;
   index: number;
 }) {
   const { t } = useTranslation();
@@ -118,7 +118,7 @@ export default function OutputPerdiem(props: {
         </Grid>
       </Grid>
       <CardActions>
-        {!props.monthIsClosed && (
+        {!props.monthIsClosed && props.log.uuid && (
           <>
             <Button
               color="warning"
@@ -133,7 +133,7 @@ export default function OutputPerdiem(props: {
               color="error"
               size="small"
               variant="contained"
-              onClick={() => deleteHandler(props.log.uuid)}
+              onClick={() => deleteHandler(props.log.uuid ? props.log.uuid : "")}
               disabled={props.monthIsClosed}
               data-testid={`OutputPerdiem_delete-error-btn`}
             >

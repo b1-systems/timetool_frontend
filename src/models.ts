@@ -37,21 +37,54 @@ export interface Logs {
   timelogs: Timelog[];
   perdiems: Timelog[];
 }
-export interface Timelog {
-  uuid: string;
-  employee_uuid: string;
+interface TimelogBase {
+  uuid: string | null;
+  employee_uuid: string | null;
   project_uuid: string;
   project_name: string;
   start_dt: number;
-  end_dt?: number;
-  type: string | number;
-  breaklength?: number;
-  travel?: number;
-  comment?: string;
-  onsite?: string;
-  incidents?: Incident[];
-  shift_model?: string;
 }
+export interface Perdiem extends TimelogBase {
+  type: number;
+  comment: string;
+}
+export interface Shift extends TimelogBase {
+  end_dt: number;
+  type: "shift";
+  incidents: Incident[];
+  shift_model: string;
+}
+export interface DefaultTimelog extends TimelogBase {
+  end_dt: number;
+  type: "timelog" | "default";
+  breaklength: number;
+  travel: number;
+  comment: string;
+  onsite: string;
+}
+export type Timelog = Perdiem | Shift | DefaultTimelog;
+
+export function isPerdiem(timelog: Timelog): timelog is Perdiem {
+  if (timelog) {
+    return typeof timelog.type === "number";
+  }
+  return false;
+}
+
+export function isTimelog(timelog: Timelog): timelog is DefaultTimelog {
+  if (timelog) {
+    return timelog.type === "timelog" || timelog.type === "default";
+  }
+  return false;
+}
+
+export function isShift(timelog: Timelog): timelog is Shift {
+  if (timelog) {
+    return timelog.type === "shift";
+  }
+  return false;
+}
+
 export interface Incident {
   start_dt: number;
   end_dt: number;

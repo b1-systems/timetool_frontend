@@ -20,6 +20,7 @@ import {
   currentMonthLogsPerdiemsState,
   currentMonthLogsTimelogsState,
 } from "../../atom";
+import { isPerdiem, isShift, isTimelog } from "../../models";
 import OutputPerdiem from "./OutputPerdiem";
 import OutputShift from "./OutputShift";
 import OutputTimelogs from "./OutputTimelog";
@@ -37,13 +38,13 @@ export default function InputCard(props: {
   const oldPerdiems = useRecoilValue(currentMonthLogsPerdiemsState);
 
   let defaultTimelogs = oldTimelogs
-    .filter((log) => log.type === "default")
+    .filter((log) => (log ? log.type === "default" : []))
     .sort(function (x, y) {
       return x.start_dt - y.start_dt;
     });
 
   let shiftTimelogs = oldTimelogs
-    .filter((log) => log.type === "shift")
+    .filter((log) => (log ? log.type === "shift" : []))
     .sort(function (x, y) {
       return x.start_dt - y.start_dt;
     });
@@ -74,12 +75,14 @@ export default function InputCard(props: {
             <Collapse orientation="vertical" in={timelogsVisible}>
               {defaultTimelogs.map((log, index) => (
                 <Box sx={{ p: 0, mt: 1, mb: 1 }} key={log.uuid}>
-                  <OutputTimelogs
-                    monthIsClosed={props.monthIsClosed}
-                    log={log}
-                    index={index}
-                    key={log.uuid}
-                  />
+                  {isTimelog(log) && (
+                    <OutputTimelogs
+                      monthIsClosed={props.monthIsClosed}
+                      log={log}
+                      index={index}
+                      key={log.uuid}
+                    />
+                  )}
                 </Box>
               ))}
             </Collapse>
@@ -105,12 +108,14 @@ export default function InputCard(props: {
             <Collapse orientation="vertical" in={shiftsVisible}>
               {shiftTimelogs.map((log, index) => (
                 <Box sx={{ p: 0, mt: 1, mb: 1 }} key={log.uuid}>
-                  <OutputShift
-                    index={index}
-                    monthIsClosed={props.monthIsClosed}
-                    log={log}
-                    key={log.uuid}
-                  />
+                  {isShift(log) && (
+                    <OutputShift
+                      index={index}
+                      monthIsClosed={props.monthIsClosed}
+                      log={log}
+                      key={log.uuid}
+                    />
+                  )}
                 </Box>
               ))}
             </Collapse>
@@ -136,12 +141,14 @@ export default function InputCard(props: {
             <Collapse orientation="vertical" in={perdiemsVisible}>
               {perdiems.map((log, index) => (
                 <Box sx={{ p: 0, mt: 1, mb: 1 }} key={log.uuid}>
-                  <OutputPerdiem
-                    index={index}
-                    monthIsClosed={props.monthIsClosed}
-                    log={log}
-                    key={log.uuid}
-                  />
+                  {isPerdiem(log) && (
+                    <OutputPerdiem
+                      index={index}
+                      monthIsClosed={props.monthIsClosed}
+                      log={log}
+                      key={log.uuid}
+                    />
+                  )}
                 </Box>
               ))}
             </Collapse>

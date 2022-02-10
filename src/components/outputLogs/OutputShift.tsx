@@ -17,11 +17,11 @@ import { useRecoilValue, useSetRecoilState } from "recoil";
 
 import { fetchDelete } from "../../api";
 import { editTimelogState, shiftModelsState, useUpdateLogs } from "../../atom";
-import { Timelog } from "../../models";
+import { Shift, Timelog } from "../../models";
 import OutputChip from "./OutputChip";
 
 export default function OutputShift(props: {
-  log: Timelog;
+  log: Shift;
   index: number;
   monthIsClosed: boolean;
 }) {
@@ -198,7 +198,7 @@ export default function OutputShift(props: {
         </Grid>
       </Grid>
       <CardActions>
-        {!props.monthIsClosed && (
+        {!props.monthIsClosed && props.log.uuid && (
           <>
             {!!props.log.incidents?.length && (
               <Button
@@ -229,7 +229,7 @@ export default function OutputShift(props: {
               color="error"
               size="small"
               variant="contained"
-              onClick={() => deleteHandler(props.log.uuid)}
+              onClick={() => deleteHandler(props.log.uuid ? props.log.uuid : "")}
               disabled={props.monthIsClosed}
             >
               <DeleteForeverIcon />

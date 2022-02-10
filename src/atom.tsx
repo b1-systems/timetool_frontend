@@ -197,3 +197,38 @@ export const alertShownInInputState = atom({
   key: "alertShownInInputState",
   default: false,
 });
+
+export const projectState = atom<Project | null>({
+  key: "projectState",
+  default: null,
+});
+
+export const projectTypesState = selector({
+  key: "projectTypesState",
+  get: async ({ get }) => {
+    const project = get(projectState);
+    return project ? Object.keys(project.worktypes) : null;
+  },
+});
+
+export const projectShiftModelsState = selector({
+  key: "projectShiftModelsState",
+  get: async ({ get }) => {
+    const project = get(projectState);
+    if (project && project.worktypes.shift !== undefined) {
+      return Object.values(project.worktypes.shift);
+    }
+    return null;
+  },
+});
+
+export const projectPerdiemModelsState = selector({
+  key: "projectPerdiemModelsState",
+  get: async ({ get }) => {
+    const project = get(projectState);
+    if (project && project.worktypes.perdiem !== undefined) {
+      return Object.values(project.worktypes.perdiem);
+    }
+    return null;
+  },
+});

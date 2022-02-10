@@ -17,18 +17,18 @@ import { useSetRecoilState } from "recoil";
 
 import { fetchDelete } from "../../api";
 import { editTimelogState, useUpdateLogs } from "../../atom";
-import { Timelog } from "../../models";
+import { DefaultTimelog, Timelog } from "../../models";
 import OutputChip from "./OutputChip";
 
 export default function OutputTimelogs(props: {
   monthIsClosed: boolean;
-
-  log: Timelog;
+  log: DefaultTimelog;
   index: number;
 }) {
   const updateLogs = useUpdateLogs();
   const setEditTimelog = useSetRecoilState(editTimelogState);
   const { t } = useTranslation();
+
   const deleteHandler = (uuid: string) => {
     const requestPrototype = {
       request: { uuid: uuid },
@@ -37,6 +37,7 @@ export default function OutputTimelogs(props: {
       .then(() => updateLogs())
       .catch((errorUpdateLogs) => console.error(errorUpdateLogs));
   };
+
   const breaktime =
     typeof props.log.breaklength === "number" && props.log.breaklength > 0
       ? new Date(props.log.breaklength * 1000).toISOString().substring(11, 16)
@@ -128,7 +129,7 @@ export default function OutputTimelogs(props: {
                 index={props.index}
                 heading={t("keypoint.onsite")}
                 Icon={<MyLocationIcon sx={{ width: 18, height: 18, color: "white" }} />}
-                text={props.log.onsite || "remote"}
+                text={props.log.onsite || "unkown"}
               />
               <OutputChip
                 lg={1}
@@ -158,7 +159,7 @@ export default function OutputTimelogs(props: {
         </Grid>
       </Grid>
       <CardActions>
-        {!props.monthIsClosed && (
+        {!props.monthIsClosed && props.log.uuid && (
           <>
             <Button
               color="warning"
@@ -173,7 +174,7 @@ export default function OutputTimelogs(props: {
               color="error"
               size="small"
               variant="contained"
-              onClick={() => deleteHandler(props.log.uuid)}
+              onClick={() => deleteHandler(props.log.uuid ? props.log.uuid : "")}
               disabled={props.monthIsClosed}
               data-testid={`OutputTimelog_delete-error-btn_index-${props.index}`}
             >

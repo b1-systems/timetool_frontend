@@ -27,16 +27,7 @@ it("InputCard with empty projects", async () => {
   let element = render(
     <RecoilRoot initializeState={(snap) => snap}>
       <React.Suspense fallback="test">
-        <InputCard
-          monthIsClosed={false}
-          types={[]}
-          setProjectUuid={() => {}}
-          setUuidLog={() => {}}
-          uuidProject={""}
-          uuidLog={""}
-          projectShiftModels={[""]}
-          perdiemModels={[""]}
-        />
+        <InputCard monthIsClosed={false} />
       </React.Suspense>
     </RecoilRoot>,
   );
@@ -58,16 +49,7 @@ it("both commit btn are renderd", async () => {
   let element = render(
     <RecoilRoot initializeState={(snap) => snap}>
       <React.Suspense fallback="test">
-        <InputCard
-          monthIsClosed={false}
-          types={[]}
-          setProjectUuid={() => {}}
-          setUuidLog={() => {}}
-          uuidProject={""}
-          uuidLog={""}
-          projectShiftModels={[""]}
-          perdiemModels={[""]}
-        />
+        <InputCard monthIsClosed={false} />
       </React.Suspense>
     </RecoilRoot>,
   );

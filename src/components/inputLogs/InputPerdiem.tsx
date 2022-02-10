@@ -13,30 +13,25 @@ import {
 } from "@mui/material";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 
-import {
-  alertShownInInputState,
-  editTimelogState,
-  perdiemModelsState,
-} from "../../atom";
+import { alertShownInInputState, perdiemModelsState, projectState } from "../../atom";
+import { Perdiem } from "../../models";
 
 export default function InputPerdiem(props: {
-  setUuidLog(uuid: string | null): void;
-  uuidProject: string;
-  perdiemModels: string[];
+  perdiemTimelog: Perdiem;
+  setPerdiemTimelog(timelog: Perdiem): void;
   model: string;
-  setModel(model: string): void;
-  setTypeOfPerdiem(type: number): void;
-  setLogMsg(msg: string): void;
-  logMsg: string;
 }) {
-  const perdiemModels = useRecoilValue(perdiemModelsState);
-  const [modelSelected, setModelSelected] = useState(props.model);
   const { t } = useTranslation();
+
+  const [modelSelected, setModelSelected] = useState(props.model);
+
   const setAlertShownInInput = useSetRecoilState(alertShownInInputState);
-  const [editTimelog, setEditTimelog] = useRecoilState(editTimelogState);
-  const projectPerdiem = perdiemModels.get(props.uuidProject);
+  const project = useRecoilValue(projectState);
+
+  const perdiemModels = useRecoilValue(perdiemModelsState);
+  const projectPerdiem = project ? perdiemModels.get(project.uuid) : undefined;
 
   if (!projectPerdiem) {
     setAlertShownInInput(true);
@@ -65,7 +60,10 @@ export default function InputPerdiem(props: {
             value={modelSelected}
             label={t("model")}
             onChange={(e) => {
-              props.setTypeOfPerdiem(parseInt(e.target.value));
+              props.setPerdiemTimelog({
+                ...props.perdiemTimelog,
+                type: parseInt(e.target.value),
+              });
               setModelSelected(e.target.value);
             }}
           >
@@ -82,20 +80,23 @@ export default function InputPerdiem(props: {
           fullWidth
           label={t("comment")}
           required={true}
-          value={props.logMsg}
-          onChange={(e) => props.setLogMsg(e.target.value)}
+          value={props.perdiemTimelog.comment}
+          onChange={(e) =>
+            props.setPerdiemTimelog({
+              ...props.perdiemTimelog,
+              comment: e.target.value,
+            })
+          }
         />
       </Grid>
       <Grid item xs={12} sm={6} md={3} lg={2} sx={{ mt: 1 }}>
-        {editTimelog && (
+        {props.perdiemTimelog.uuid && (
           <Button
             color="warning"
             fullWidth
             size="large"
             onClick={() => {
-              setEditTimelog(null);
-              props.setLogMsg("");
-              props.setUuidLog(null);
+              props.setPerdiemTimelog({ ...props.perdiemTimelog, uuid: null });
             }}
             variant="contained"
             data-testid={`InputPerdiem_cancel_edit-warning-btn`}

@@ -3,6 +3,7 @@ import { RecoilRoot } from "recoil";
 
 import { act, fireEvent, flushPromisesAndTimers, render } from "../../../../test/utils";
 import * as api from "../../../api";
+import { isPerdiem } from "../../../models";
 import { projectsListOne, timelogs } from "../../__dummyDataForTests/__dummyData";
 import OutputPerdiem from "../../outputLogs/OutputPerdiem";
 
@@ -20,15 +21,17 @@ it("is rendert", async () => {
   jest
     .spyOn(api, "fetchCurrentMonthLogs")
     .mockImplementation((_) => Promise.resolve(timelogs));
-  let element = render(
-    <RecoilRoot initializeState={(snap) => snap}>
-      <React.Suspense fallback="test">
-        <OutputPerdiem monthIsClosed={false} log={timelogs.perdiems[0]} index={0} />
-      </React.Suspense>
-    </RecoilRoot>,
-  );
-  await flushPromisesAndTimers();
-  expect(element.container).toHaveTextContent("testMePerdiem");
+  if (isPerdiem(timelogs.perdiems[0])) {
+    let element = render(
+      <RecoilRoot initializeState={(snap) => snap}>
+        <React.Suspense fallback="test">
+          <OutputPerdiem monthIsClosed={false} log={timelogs.perdiems[0]} index={0} />
+        </React.Suspense>
+      </RecoilRoot>,
+    );
+    await flushPromisesAndTimers();
+    expect(element.container).toHaveTextContent("testMePerdiem");
+  }
 });
 
 it("delete btn is there when month is open", async () => {
@@ -41,16 +44,17 @@ it("delete btn is there when month is open", async () => {
   jest
     .spyOn(api, "fetchCurrentMonthLogs")
     .mockImplementation((_) => Promise.resolve(timelogs));
-  let element = render(
-    <RecoilRoot initializeState={(snap) => snap}>
-      <React.Suspense fallback="test">
-        <OutputPerdiem monthIsClosed={false} log={timelogs.perdiems[0]} index={0} />
-      </React.Suspense>
-    </RecoilRoot>,
-  );
-  await flushPromisesAndTimers();
-
-  expect(element.getByTestId(`OutputPerdiem_delete-error-btn`)).toBeInTheDocument();
+  if (isPerdiem(timelogs.perdiems[0])) {
+    let element = render(
+      <RecoilRoot initializeState={(snap) => snap}>
+        <React.Suspense fallback="test">
+          <OutputPerdiem monthIsClosed={false} log={timelogs.perdiems[0]} index={0} />
+        </React.Suspense>
+      </RecoilRoot>,
+    );
+    await flushPromisesAndTimers();
+    expect(element.getByTestId(`OutputPerdiem_delete-error-btn`)).toBeInTheDocument();
+  }
 });
 
 it("delete btn is not there when month is closed", async () => {
@@ -63,16 +67,17 @@ it("delete btn is not there when month is closed", async () => {
   jest
     .spyOn(api, "fetchCurrentMonthLogs")
     .mockImplementation((_) => Promise.resolve(timelogs));
-  let element = render(
-    <RecoilRoot initializeState={(snap) => snap}>
-      <React.Suspense fallback="test">
-        <OutputPerdiem monthIsClosed={true} log={timelogs.perdiems[0]} index={0} />
-      </React.Suspense>
-    </RecoilRoot>,
-  );
-  await flushPromisesAndTimers();
-
-  expect(element.queryByTestId("OutputPerdiem_delete-error-btn")).toBeNull();
+  if (isPerdiem(timelogs.perdiems[0])) {
+    let element = render(
+      <RecoilRoot initializeState={(snap) => snap}>
+        <React.Suspense fallback="test">
+          <OutputPerdiem monthIsClosed={true} log={timelogs.perdiems[0]} index={0} />
+        </React.Suspense>
+      </RecoilRoot>,
+    );
+    await flushPromisesAndTimers();
+    expect(element.queryByTestId("OutputPerdiem_delete-error-btn")).toBeNull();
+  }
 });
 
 // it("right perdiem model is shown", async () => {
@@ -93,16 +98,18 @@ it("click delete calls function", async () => {
     .spyOn(api, "fetchCurrentMonthLogs")
     .mockImplementation((_) => Promise.resolve(timelogs));
   jest.spyOn(api, "fetchDelete").mockImplementation((_) => Promise.resolve());
-  let element = render(
-    <RecoilRoot initializeState={(snap) => snap}>
-      <React.Suspense fallback="test">
-        <OutputPerdiem monthIsClosed={false} log={timelogs.perdiems[0]} index={0} />
-      </React.Suspense>
-    </RecoilRoot>,
-  );
-  await flushPromisesAndTimers();
-  await act(async () => {
-    fireEvent.click(element.getByTestId("OutputPerdiem_delete-error-btn"));
-  });
-  expect(mockFetchDelete).toHaveBeenCalled();
+  if (isPerdiem(timelogs.perdiems[0])) {
+    let element = render(
+      <RecoilRoot initializeState={(snap) => snap}>
+        <React.Suspense fallback="test">
+          <OutputPerdiem monthIsClosed={false} log={timelogs.perdiems[0]} index={0} />
+        </React.Suspense>
+      </RecoilRoot>,
+    );
+    await flushPromisesAndTimers();
+    await act(async () => {
+      fireEvent.click(element.getByTestId("OutputPerdiem_delete-error-btn"));
+    });
+    expect(mockFetchDelete).toHaveBeenCalled();
+  }
 });
