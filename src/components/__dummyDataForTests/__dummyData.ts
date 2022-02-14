@@ -1,4 +1,4 @@
-import { Logs, Project } from '../../models';
+import { Logs, Project } from "../../models";
 
 export const projectsListEmpty: Project[] = [];
 export const projectsListOneShift: Project[] = [

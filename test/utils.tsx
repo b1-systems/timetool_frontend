@@ -7,8 +7,6 @@ import { createTheme, ThemeProvider } from '@mui/material';
 import { act, render, RenderOptions } from '@testing-library/react';
 
 const AllTheProviders: FC = ({ children }) => {
-  // We're using a different theme for test snapshots since the custom font
-  // ("Titillium Web") is not applied so they are looking different anyway
   const theme = createTheme({
     //@ts-ignore
     shadows: Array.from({ length: 25 }, (_) => "none"),
