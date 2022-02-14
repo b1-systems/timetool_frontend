@@ -81,6 +81,7 @@
       "!src/api.ts",
       "!src/components/OuterMenu.tsx"
     ],
+    "clearMocks":true,
     "coverageReporters": [
       "text",
       "html",

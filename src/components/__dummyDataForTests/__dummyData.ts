@@ -1,16 +1,25 @@
-import { Logs, Project } from "../../models";
+import { Logs, Project } from '../../models';
 
 export const projectsListEmpty: Project[] = [];
-export const projectsListOne: Project[] = [
+export const projectsListOneShift: Project[] = [
   {
     uuid: "618e8691-b290-4214-a64d-86516d67120b",
-    name: "Shift Project",
+    name: "Shift Project _test",
     worktypes: {
       shift: {
         morning: "Fr\u00fchschicht",
         afternoon: "Nachmittag",
         night: "Nachtschicht",
       },
+    },
+  },
+];
+export const projectsListOneTimelog: Project[] = [
+  {
+    uuid: "618e8691-b290-4214-a64d-86516d67120b",
+    name: "timelog Project",
+    worktypes: {
+      timelog: { timelog: "timelog" },
     },
   },
 ];

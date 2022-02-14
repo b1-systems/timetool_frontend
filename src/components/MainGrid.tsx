@@ -1,33 +1,34 @@
-import DatePicker from "@mui/lab/DatePicker";
+import { DateTime } from 'luxon';
+import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+
+import DatePicker from '@mui/lab/DatePicker';
 import {
-  Autocomplete,
-  Card,
-  CardActions,
-  CardContent,
-  CardHeader,
-  FormControl,
-  Grid,
-  TextField,
-} from "@mui/material";
-import { DateTime } from "luxon";
-import React, { useState } from "react";
-import { useTranslation } from "react-i18next";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+	Autocomplete,
+	Card,
+	CardActions,
+	CardContent,
+	CardHeader,
+	FormControl,
+	Grid,
+	TextField,
+} from '@mui/material';
 
 import {
-  autoTypeNotDoneState,
-  editTimelogState,
-  isMonthClosedState,
-  monthState,
-  projectState,
-  projectsState,
-  startDtOfTimelogState,
-  useSetProjectIfOnlyOne,
-} from "../atom";
-import { Timelog } from "../models";
-import MonthEndDialog from "./MonthEndDialog";
-import InputCard from "./inputLogs/InputCard";
-import TimelogItemList from "./outputLogs/TimelogItemList";
+	autoTypeNotDoneState,
+	editTimelogState,
+	isMonthClosedState,
+	monthState,
+	projectsState,
+	projectState,
+	startDtOfTimelogState,
+	useSetProjectIfOnlyOne,
+} from '../atom';
+import { Timelog } from '../models';
+import InputCard from './inputLogs/InputCard';
+import MonthEndDialog from './MonthEndDialog';
+import TimelogItemList from './outputLogs/TimelogItemList';
 
 /**
  * Main Component to bundle all cards
@@ -87,6 +88,7 @@ export default function MainGrid() {
                 <FormControl fullWidth>
                   <Autocomplete
                     id="select-label-projectState-autocomplete"
+                    data-testid={`MainGrid_project-Autocomplete`}
                     options={availableProjects}
                     renderInput={(params) => (
                       <TextField {...params} label={t("project")} />

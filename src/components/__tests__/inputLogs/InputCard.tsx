@@ -1,14 +1,15 @@
-import React from "react";
-import { RecoilRoot } from "recoil";
+import React from 'react';
+import { RecoilRoot } from 'recoil';
 
-import { flushPromisesAndTimers, render } from "../../../../test/utils";
-import * as api from "../../../api";
+import { flushPromisesAndTimers, render } from '../../../../test/utils';
+import * as api from '../../../api';
 import {
-  projectsList,
-  projectsListEmpty,
-  timelogsEmpty,
-} from "../../__dummyDataForTests/__dummyData";
-import InputCard from "../../inputLogs/InputCard";
+	projectsList,
+	projectsListEmpty,
+	projectsListOneTimelog,
+	timelogsEmpty,
+} from '../../__dummyDataForTests/__dummyData';
+import InputCard from '../../inputLogs/InputCard';
 
 beforeEach(() => {
   jest.clearAllMocks();
@@ -25,7 +26,7 @@ it("InputCard with empty projects", async () => {
     .spyOn(api, "fetchCurrentMonthLogs")
     .mockImplementation((_) => Promise.resolve(timelogsEmpty));
   let element = render(
-    <RecoilRoot initializeState={(snap) => snap}>
+    <RecoilRoot>
       <React.Suspense fallback="test">
         <InputCard monthIsClosed={false} />
       </React.Suspense>
@@ -39,7 +40,7 @@ it("InputCard with empty projects", async () => {
 it("both commit btn are renderd", async () => {
   jest
     .spyOn(api, "fetchProjects")
-    .mockImplementation((_) => Promise.resolve(projectsList));
+    .mockImplementation((_) => Promise.resolve(projectsListOneTimelog));
   jest
     .spyOn(api, "fetchIsMonthClosed")
     .mockImplementation((_) => Promise.resolve(false));
@@ -47,7 +48,7 @@ it("both commit btn are renderd", async () => {
     .spyOn(api, "fetchCurrentMonthLogs")
     .mockImplementation((_) => Promise.resolve(timelogsEmpty));
   let element = render(
-    <RecoilRoot initializeState={(snap) => snap}>
+    <RecoilRoot>
       <React.Suspense fallback="test">
         <InputCard monthIsClosed={false} />
       </React.Suspense>
