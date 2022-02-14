@@ -15,7 +15,7 @@ import {
   TextField,
 } from "@mui/material";
 import { DateTime } from "luxon";
-import React, { useState } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 
@@ -28,19 +28,17 @@ import {
 import { Shift } from "../../models";
 
 export default function InputShift(props: {
-  shiftType: string;
+  types: string[];
   shiftTimelog: Shift;
   setShiftTimelog(timelog: Shift): void;
 }) {
   const { t } = useTranslation();
-
-  const [shiftSelected, setShiftSelected] = useState(props.shiftType);
   const shiftModels = useRecoilValue(shiftModelsState);
+  const project = useRecoilValue(projectState);
+  const projectShiftModels = project ? shiftModels.get(project.uuid) : {};
   const [dateFrom] = useRecoilState(dateFromState);
 
   const setAlertShownInInput = useSetRecoilState(alertShownInInputState);
-
-  const project = useRecoilValue(projectState);
 
   const addHandler = () => {
     props.setShiftTimelog({
@@ -56,8 +54,7 @@ export default function InputShift(props: {
     });
   };
 
-  const shiftModel = project ? shiftModels.get(project.uuid) : undefined;
-  if (!shiftModel) {
+  if (!props.types.includes("shift")) {
     setAlertShownInInput(true);
     return (
       <Container>
@@ -80,7 +77,7 @@ export default function InputShift(props: {
           <Select
             labelId="select-label-shiftModel"
             id="demo-simple-select-shiftModel"
-            value={shiftSelected}
+            value={props.shiftTimelog.shift_model}
             required={true}
             label={t("shift_model")}
             onChange={(e) => {
@@ -88,20 +85,20 @@ export default function InputShift(props: {
                 ...props.shiftTimelog,
                 shift_model: e.target.value,
               });
-              setShiftSelected(e.target.value);
             }}
           >
-            {Object.entries(shiftModel).map(([key, shift]) => (
-              <MenuItem key={key} value={key}>
-                {shift}
-              </MenuItem>
-            ))}
+            {projectShiftModels &&
+              Object.entries(projectShiftModels).map(([key, shift]) => (
+                <MenuItem key={key} value={key}>
+                  {shift}
+                </MenuItem>
+              ))}
           </Select>
         </FormControl>
       </Grid>
       <Grid item xs={12} sm={4} md={3} lg={2} sx={{ mt: 1 }}>
         <Button
-          disabled={!shiftSelected}
+          disabled={!props.shiftTimelog.shift_model}
           fullWidth
           size="large"
           onClick={addHandler}

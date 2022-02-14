@@ -1,8 +1,15 @@
 import { DateTime } from "luxon";
-import { DefaultValue, atom, selector, useRecoilState } from "recoil";
+import {
+  DefaultValue,
+  atom,
+  selector,
+  useRecoilState,
+  useRecoilValue,
+  useSetRecoilState,
+} from "recoil";
 
 import { fetchCurrentMonthLogs, fetchIsMonthClosed, fetchProjects } from "./api";
-import { Logs, Project, Timelog } from "./models";
+import { Logs, Project, Timelog, isPerdiem, isShift, isTimelog } from "./models";
 
 export const monthBackingState = atom({
   key: "monthBackingState",
@@ -54,6 +61,30 @@ export const dateFromState = atom({
   }),
 });
 
+export const startDtOfTimelogState = selector<DateTime>({
+  key: "startDtOfTimelogState",
+  get: ({ get }) => {
+    const timelog = get(editTimelogState);
+    const dateFrom = get(dateFromState);
+    if (timelog && timelog.uuid) {
+      return DateTime.fromSeconds(timelog.start_dt);
+    }
+    return dateFrom;
+  },
+  set: ({ set, get }, newDay) => {
+    const timelog = get(editTimelogState);
+    set(dateFromState, newDay);
+    if (timelog) {
+      set(
+        editTimelogState,
+        newDay instanceof DefaultValue
+          ? timelog
+          : { ...timelog, start_dt: newDay.valueOf() / 1000 },
+      );
+    }
+  },
+});
+
 export const dateToState = atom({
   key: "dateToState",
   default: DateTime.now().set({
@@ -63,6 +94,38 @@ export const dateToState = atom({
     second: 0,
     millisecond: 0,
   }),
+});
+
+export const endDtOfTimelogState = selector<DateTime>({
+  key: "endDtOfTimelogState",
+  get: ({ get }) => {
+    const timelog = get(editTimelogState);
+    const dateTo = get(dateToState);
+    if (timelog && timelog.uuid && (isTimelog(timelog) || isShift(timelog))) {
+      return DateTime.fromSeconds(timelog.end_dt);
+    }
+    return dateTo;
+  },
+  set: ({ set, get }, newDay) => {
+    const timelog = get(editTimelogState);
+    set(dateToState, newDay);
+    if (timelog) {
+      if (isPerdiem(timelog)) {
+        set(editTimelogState, {
+          ...timelog,
+        });
+      } else
+        set(
+          editTimelogState,
+          newDay instanceof DefaultValue
+            ? timelog
+            : {
+                ...timelog,
+                end_dt: newDay.valueOf() / 1000,
+              },
+        );
+    }
+  },
 });
 
 export const isMonthClosedRequestIdState = atom({
@@ -119,33 +182,6 @@ export const perdiemModelsState = selector({
   },
 });
 
-export const projectsRequestIdState = atom({
-  key: "projectsRequestIdState",
-  default: 0,
-});
-
-export const useUpdateProjects = () => {
-  const [projectsRequestId, setProjectsRequestId] =
-    useRecoilState(projectsRequestIdState);
-  return () => {
-    setProjectsRequestId(projectsRequestId + 1);
-  };
-};
-
-export const projectsState = selector<Project[]>({
-  key: "projectsState",
-  get: async ({ get }) => {
-    get(projectsRequestIdState);
-    const month = get(monthState);
-    return fetchProjects({
-      year: month.year.toString(),
-      month: month.month.toString(),
-      format: "traditional",
-      scope: "me",
-    });
-  },
-});
-
 export const logsRequestIdState = atom({
   key: "logsRequestIdState",
   default: 0,
@@ -198,12 +234,63 @@ export const alertShownInInputState = atom({
   default: false,
 });
 
+export const projectsRequestIdState = atom({
+  key: "projectsRequestIdState",
+  default: 0,
+});
+
+export const useUpdateProjects = () => {
+  const [projectsRequestId, setProjectsRequestId] =
+    useRecoilState(projectsRequestIdState);
+  return () => {
+    setProjectsRequestId(projectsRequestId + 1);
+  };
+};
+
+export const projectsState = selector<Project[]>({
+  key: "projectsState",
+  get: async ({ get }) => {
+    get(projectsRequestIdState);
+    const month = get(monthState);
+    return fetchProjects({
+      year: month.year.toString(),
+      month: month.month.toString(),
+      format: "traditional",
+      scope: "me",
+    });
+  },
+});
+
 export const projectState = atom<Project | null>({
   key: "projectState",
   default: null,
 });
 
-export const projectTypesState = selector({
+export const useSetProjectByUuid = () => {
+  const setProject = useSetRecoilState(projectState);
+  const projects = useRecoilValue(projectsState);
+  return (uuid: string) => {
+    const project = projects.find((project) => project.uuid === uuid);
+    if (project) setProject(project);
+    else console.error("no fitting Project with uuid found. UUID:", uuid);
+  };
+};
+
+export const useSetProjectIfOnlyOne = () => {
+  const setProject = useSetRecoilState(projectState);
+  const projects = useRecoilValue(projectsState);
+  return () => {
+    const project = projects[0];
+    if (projects.length === 1) setProject(project);
+  };
+};
+
+export const autoTypeNotDoneState = atom<boolean>({
+  key: "autoTypeDoneState",
+  default: true,
+});
+
+export const projectTypesState = selector<string[] | null>({
   key: "projectTypesState",
   get: async ({ get }) => {
     const project = get(projectState);

@@ -26,7 +26,7 @@ it("warning no_perdiems_in_this_project", async () => {
       <RecoilRoot initializeState={(snap) => snap}>
         <React.Suspense fallback="test">
           <InputPerdiem
-            model={""}
+            types={["perdiem"]}
             perdiemTimelog={timelogs.perdiems[0]}
             setPerdiemTimelog={() => {}}
           />

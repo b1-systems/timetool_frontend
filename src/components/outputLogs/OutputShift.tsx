@@ -16,7 +16,12 @@ import { useTranslation } from "react-i18next";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 
 import { fetchDelete } from "../../api";
-import { editTimelogState, shiftModelsState, useUpdateLogs } from "../../atom";
+import {
+  editTimelogState,
+  shiftModelsState,
+  useSetProjectByUuid,
+  useUpdateLogs,
+} from "../../atom";
 import { Shift, Timelog } from "../../models";
 import OutputChip from "./OutputChip";
 
@@ -33,6 +38,7 @@ export default function OutputShift(props: {
   const setEditTimelog = useSetRecoilState(editTimelogState);
 
   const updateLogs = useUpdateLogs();
+  const setProjectByUuid = useSetProjectByUuid();
 
   const shiftModelHandler = (uuid: string, type: string | undefined): string => {
     if (shiftModels.size !== 0 && type) {
@@ -62,6 +68,7 @@ export default function OutputShift(props: {
 
   const editHandler = (log: Timelog) => {
     setEditTimelog(log);
+    setProjectByUuid(log.project_uuid);
   };
 
   return (

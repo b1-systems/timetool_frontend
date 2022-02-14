@@ -65,7 +65,7 @@ export const handleSubmit = async (timelog: Timelog) => {
       submitData = {
         ...commonData,
         end_dt: timelog.end_dt,
-        type: "timelog",
+        type: "default",
         breakTime: timelog.breaklength,
         travelTime: timelog.travel,
         comment: timelog.comment,

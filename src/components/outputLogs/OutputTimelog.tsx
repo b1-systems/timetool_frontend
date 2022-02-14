@@ -16,7 +16,7 @@ import { useTranslation } from "react-i18next";
 import { useSetRecoilState } from "recoil";
 
 import { fetchDelete } from "../../api";
-import { editTimelogState, useUpdateLogs } from "../../atom";
+import { editTimelogState, useSetProjectByUuid, useUpdateLogs } from "../../atom";
 import { DefaultTimelog, Timelog } from "../../models";
 import OutputChip from "./OutputChip";
 
@@ -28,7 +28,7 @@ export default function OutputTimelogs(props: {
   const updateLogs = useUpdateLogs();
   const setEditTimelog = useSetRecoilState(editTimelogState);
   const { t } = useTranslation();
-
+  const setProjectByUuid = useSetProjectByUuid();
   const deleteHandler = (uuid: string) => {
     const requestPrototype = {
       request: { uuid: uuid },
@@ -59,6 +59,7 @@ export default function OutputTimelogs(props: {
 
   const editHandler = (log: Timelog) => {
     setEditTimelog(log);
+    setProjectByUuid(log.project_uuid);
   };
   return (
     <Card

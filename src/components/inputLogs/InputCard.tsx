@@ -12,7 +12,6 @@ import {
   InputLabel,
   MenuItem,
   Select,
-  SelectChangeEvent,
   TextField,
 } from "@mui/material";
 import { DateTime } from "luxon";
@@ -22,12 +21,15 @@ import { useRecoilState, useRecoilValue } from "recoil";
 
 import {
   alertShownInInputState,
-  dateFromState,
-  dateToState,
+  autoTypeNotDoneState,
   editTimelogState,
+  endDtOfTimelogState,
   isMonthClosedState,
+  perdiemModelsState,
   projectState,
   projectTypesState,
+  shiftModelsState,
+  startDtOfTimelogState,
   useUpdateLogs,
 } from "../../atom";
 import { handleSubmit } from "../../lib";
@@ -38,11 +40,8 @@ import Inputshift from "./InputShift";
 
 export default function InputCard(props: { monthIsClosed: boolean }) {
   const { t } = useTranslation();
-  const [model] = useState<string>("wasBinichMODELsetMODEL");
-  const [type, setType] = useState<string>("");
-  const [dateFrom, setDateFrom] = useRecoilState(dateFromState);
-  const [dateTo, setDateTo] = useRecoilState(dateToState);
-  const [shift] = useState<string>("wasBinichMODELset#Shift");
+  const [dateFrom, setDateFrom] = useRecoilState(startDtOfTimelogState);
+  const [dateTo, setDateTo] = useRecoilState(endDtOfTimelogState);
 
   const projectTypes = useRecoilValue(projectTypesState);
 
@@ -56,9 +55,24 @@ export default function InputCard(props: { monthIsClosed: boolean }) {
   const alertShownInInput = useRecoilValue(alertShownInInputState);
   const [timelog, setTimelog] = useRecoilState<Timelog | null>(editTimelogState);
 
-  const setTypeHandler = (event: SelectChangeEvent) => {
-    setType(event.target.value);
-    switch (event.target.value) {
+  const [autoType, setAutoType] = useRecoilState(autoTypeNotDoneState);
+
+  const perdiemModels = useRecoilValue(perdiemModelsState);
+  const perdiemModel = project
+    ? Object.keys(perdiemModels.get(project.uuid) || {}).length === 1
+      ? parseInt(Object.keys(perdiemModels.get(project.uuid) || {})[0])
+      : NaN
+    : NaN;
+
+  const shiftModels = useRecoilValue(shiftModelsState);
+  const shiftModel = project
+    ? Object.keys(shiftModels.get(project.uuid) || {}).length === 1
+      ? Object.keys(shiftModels.get(project.uuid) || {})[0]
+      : ""
+    : "";
+
+  const setTypeHandler = (value: string) => {
+    switch (value) {
       case "timelog":
         setTimelog({
           uuid: null,
@@ -81,7 +95,7 @@ export default function InputCard(props: { monthIsClosed: boolean }) {
           project_name: project?.name || "unknown",
           project_uuid: project?.uuid || "unknown",
           start_dt: dateFrom.valueOf() / 1000,
-          type: parseInt(model),
+          type: perdiemModel,
           comment: "",
         });
         break;
@@ -95,9 +109,17 @@ export default function InputCard(props: { monthIsClosed: boolean }) {
           end_dt: dateTo.valueOf() / 1000,
           type: "shift",
           incidents: [],
-          shift_model: shift,
+          shift_model: shiftModel,
         });
         break;
+    }
+  };
+
+  const autoTypeHandler = () => {
+    if (projectTypes) {
+      setAutoType(false);
+      setTypeHandler(projectTypes[0]);
+      return projectTypes[0];
     }
   };
 
@@ -154,6 +176,17 @@ export default function InputCard(props: { monthIsClosed: boolean }) {
       </Card>
     );
   }
+  if (!project) {
+    return (
+      <Card elevation={0} sx={{ border: 1, borderColor: "grey.300", ml: 1, mr: 1 }}>
+        <CardContent>
+          <Alert severity="info" sx={{ textAlign: "center" }}>
+            {t("select_a_project")}
+          </Alert>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card elevation={0} sx={{ border: 1, borderColor: "grey.300", ml: 1, mr: 1 }}>
@@ -166,7 +199,6 @@ export default function InputCard(props: { monthIsClosed: boolean }) {
                 <DatePicker
                   views={["day"]}
                   label={t("day")}
-                  // disabled={} projectstate is setted
                   minDate={dateFrom.set({ day: 1 })}
                   maxDate={dateFrom.endOf("month")}
                   value={dateFrom}
@@ -188,34 +220,43 @@ export default function InputCard(props: { monthIsClosed: boolean }) {
                 />
               </FormControl>
             </Grid>
-            {projectTypes && (
-              <Grid item xs={12} sm={7} md={6} lg={4}>
-                <FormControl fullWidth>
-                  <InputLabel id="select-label-typeState">{t("type")}</InputLabel>
-                  <Select
-                    labelId="select-label-type"
-                    id="demo-simple-select-type"
-                    value={type}
-                    required={true}
-                    label={t("type")}
-                    // disabled={!props.types.length}
-                    onChange={setTypeHandler}
-                  >
-                    {projectTypes.map((singleType, idx) => (
+            <Grid item xs={12} sm={7} md={6} lg={4}>
+              <FormControl fullWidth>
+                <InputLabel id="select-label-typeState">{t("type")}</InputLabel>
+                <Select
+                  labelId="select-label-type"
+                  id="demo-simple-select-type"
+                  value={
+                    timelog === null && projectTypes?.length === 1 && autoType
+                      ? autoTypeHandler()
+                      : timelog && isPerdiem(timelog)
+                      ? "perdiem"
+                      : timelog && isTimelog(timelog)
+                      ? "timelog"
+                      : timelog && isShift(timelog)
+                      ? "shift"
+                      : ""
+                  }
+                  required={true}
+                  label={t("type")}
+                  disabled={!!projectTypes && !projectTypes.length}
+                  onChange={(e) => setTypeHandler(e.target.value)}
+                >
+                  {projectTypes &&
+                    projectTypes.map((singleType, idx) => (
                       <MenuItem key={idx} value={singleType}>
                         {singleType}
                       </MenuItem>
                     ))}
-                  </Select>
-                </FormControl>
-              </Grid>
-            )}
+                </Select>
+              </FormControl>
+            </Grid>
           </Grid>
           {timelog && (
             <Grid container spacing={3} sx={{ mt: 1 }}>
-              {isShift(timelog) && (
+              {isShift(timelog) && projectTypes && (
                 <Inputshift
-                  shiftType={shift}
+                  types={projectTypes}
                   shiftTimelog={timelog}
                   setShiftTimelog={setTimelog}
                 />
@@ -227,11 +268,11 @@ export default function InputCard(props: { monthIsClosed: boolean }) {
                   setDefaultTimelog={setTimelog}
                 />
               )}
-              {isPerdiem(timelog) && (
+              {isPerdiem(timelog) && projectTypes && (
                 <InputPerdiem
+                  types={projectTypes}
                   perdiemTimelog={timelog}
                   setPerdiemTimelog={setTimelog}
-                  model={model}
                 />
               )}
             </Grid>

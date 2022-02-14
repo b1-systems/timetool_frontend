@@ -12,26 +12,22 @@ import {
 import { DateTime } from "luxon";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 
 import {
-  dateFromState,
+  autoTypeNotDoneState,
+  editTimelogState,
   isMonthClosedState,
   monthState,
   projectState,
   projectsState,
+  startDtOfTimelogState,
+  useSetProjectIfOnlyOne,
 } from "../atom";
+import { Timelog } from "../models";
 import MonthEndDialog from "./MonthEndDialog";
 import InputCard from "./inputLogs/InputCard";
 import TimelogItemList from "./outputLogs/TimelogItemList";
-
-/**
- *TODO edit auswahl
- *TODO autoselect
- *TODO disabled={} projectstate is setted
- *TODO edit does not work right
- *TODO set date when edit is called
- */
 
 /**
  * Main Component to bundle all cards
@@ -40,12 +36,15 @@ import TimelogItemList from "./outputLogs/TimelogItemList";
 export default function MainGrid() {
   const { t } = useTranslation();
   const [endMonthOpen, setEndMonthOpen] = useState(false);
-  const dateFrom = useRecoilValue(dateFromState);
+  const dateFrom = useRecoilValue(startDtOfTimelogState);
   const availableProjects = useRecoilValue(projectsState);
   const [project, setProject] = useRecoilState(projectState);
   const [month, setMonth] = useRecoilState(monthState);
   const isMonthClosed = useRecoilValue(isMonthClosedState);
-
+  const setAutoTypeNotDone = useSetRecoilState(autoTypeNotDoneState);
+  const setTimelog = useSetRecoilState<Timelog | null>(editTimelogState);
+  const setProjectIfOnlyOne = useSetProjectIfOnlyOne();
+  setProjectIfOnlyOne();
   const monthEndHandler = () => {
     setEndMonthOpen(false);
   };
@@ -93,7 +92,11 @@ export default function MainGrid() {
                       <TextField {...params} label={t("project")} />
                     )}
                     value={project}
-                    onChange={(event, value) => setProject(value)}
+                    onChange={(event, value) => {
+                      setAutoTypeNotDone(() => true);
+                      setProject(() => value);
+                      setTimelog(() => null);
+                    }}
                     disabled={!dateFrom}
                     getOptionLabel={(project) => project.name}
                   ></Autocomplete>

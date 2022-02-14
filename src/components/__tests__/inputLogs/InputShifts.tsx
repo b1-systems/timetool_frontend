@@ -26,7 +26,7 @@ it("warning no_shifts_in_this_project shows up", async () => {
       <RecoilRoot initializeState={(snap) => snap}>
         <React.Suspense fallback="test">
           <InputShift
-            shiftType={""}
+            types={["shift"]}
             shiftTimelog={timelogs.timelogs[2]}
             setShiftTimelog={() => {}}
           />

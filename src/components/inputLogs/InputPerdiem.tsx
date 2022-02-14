@@ -11,29 +11,27 @@ import {
   Select,
   TextField,
 } from "@mui/material";
-import React, { useState } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 
 import { alertShownInInputState, perdiemModelsState, projectState } from "../../atom";
-import { Perdiem } from "../../models";
+import { Perdiem, isPerdiem } from "../../models";
 
 export default function InputPerdiem(props: {
+  types: string[];
   perdiemTimelog: Perdiem;
   setPerdiemTimelog(timelog: Perdiem): void;
-  model: string;
 }) {
   const { t } = useTranslation();
-
-  const [modelSelected, setModelSelected] = useState(props.model);
 
   const setAlertShownInInput = useSetRecoilState(alertShownInInputState);
   const project = useRecoilValue(projectState);
 
   const perdiemModels = useRecoilValue(perdiemModelsState);
-  const projectPerdiem = project ? perdiemModels.get(project.uuid) : undefined;
+  const projectPerdiem = project ? perdiemModels.get(project.uuid) : {};
 
-  if (!projectPerdiem) {
+  if (!props.types.includes("perdiem")) {
     setAlertShownInInput(true);
     return (
       <Container>
@@ -57,21 +55,25 @@ export default function InputPerdiem(props: {
             labelId="select-label-model"
             required={true}
             id="demo-simple-select-model"
-            value={modelSelected}
+            value={
+              isPerdiem(props.perdiemTimelog)
+                ? props.perdiemTimelog.type.toString()
+                : "-1"
+            }
             label={t("model")}
             onChange={(e) => {
               props.setPerdiemTimelog({
                 ...props.perdiemTimelog,
                 type: parseInt(e.target.value),
               });
-              setModelSelected(e.target.value);
             }}
           >
-            {Object.entries(projectPerdiem).map(([key, perdiemModel]) => (
-              <MenuItem key={key} value={key}>
-                {perdiemModel}
-              </MenuItem>
-            ))}
+            {projectPerdiem &&
+              Object.entries(projectPerdiem).map(([key, perdiemModel]) => (
+                <MenuItem key={key} value={key}>
+                  {perdiemModel}
+                </MenuItem>
+              ))}
           </Select>
         </FormControl>
       </Grid>
