@@ -1,3 +1,4 @@
+import { timelogs } from "./components/__dummyDataForTests/__dummyData";
 import {
   Logs,
   Project,
@@ -60,27 +61,46 @@ const baseUrl = () =>
     .filter((subPath) => !!subPath)
     .join("/");
 
-export const fetchProjects = (requestPrototyp: RequestPrototyp): Promise<Project[]> =>
-  callBackend({
-    endpoint: `project`,
-    method: "GET",
-    queryParams: {
-      year: requestPrototyp.year,
-      month: requestPrototyp.month,
-      format: requestPrototyp.format,
-      scope: requestPrototyp.scope,
-    },
-  })
-    .then((response) => {
-      if (response.ok) {
-        return response.json();
-      } else {
-        throw new Error(
-          `Could not fetch project. Backend response code: ${response.status}`,
-        );
+export const fetchProjects = async (
+  requestPrototyp: RequestPrototyp,
+): Promise<Project[]> => [
+  {
+    name: "Awesome Project",
+    uuid: "f6e0f789-adf4-4b78-988e-c7baebd12b25",
+    worktypes: {
+      perdiem: {
+        1: "Awesome Perdiem",
+        2: "More Awesome Perdiem",
+      },
+      timelog: {
+        timelog: "Awesome Timelog"
+      },
+      shift: {
+        morning: "Awesome Morning",
+        afternoon: "Awesome Afternoon",
+        night: "Awesome Night"
       }
-    })
-    .then((projectObj) => projectObj.projects);
+    },
+  },
+  {
+    name: "Awful Project",
+    uuid: "8031c1eb-b0e8-41b8-a648-0738e9d320ed",
+    worktypes: {
+      perdiem: {
+        1: "Awful Perdiem",
+        2: "More Awful Perdiem",
+      },
+      timelog: {
+        timelog: "Awful Timelog"
+      },
+      shift: {
+        morning: "Awful Morning",
+        afternoon: "Awful Afternoon",
+        night: "Awful Night"
+      }
+    },
+  },
+];
 
 /**
  * Get logs to display for the current month selected
@@ -88,27 +108,12 @@ export const fetchProjects = (requestPrototyp: RequestPrototyp): Promise<Project
  *
  */
 
-export const fetchCurrentMonthLogs = (
+export const fetchCurrentMonthLogs = async (
   requestPrototyp: RequestPrototyp,
-): Promise<Logs> =>
-  callBackend({
-    endpoint: `employee/me/timelogs`,
-    method: "GET",
-    queryParams: {
-      year: requestPrototyp.year,
-      month: requestPrototyp.month,
-      format: requestPrototyp.format,
-      scope: requestPrototyp.scope,
-    },
-  }).then((response) => {
-    if (response.ok) {
-      return response.json();
-    } else {
-      throw new Error(
-        `Could not fetch current month logs. Backend response code: ${response.status}`,
-      );
-    }
-  });
+): Promise<Logs> => ({
+  timelogs: [],
+  perdiems: [],
+});
 
 export const fetchDelete = (requestPrototyp: {
   request: { uuid: string };
@@ -156,32 +161,7 @@ export const fetchCloseMonth = (requestPrototyp: {
     }
   });
 
-export const fetchIsMonthClosed = (
+export const fetchIsMonthClosed = async (
   requestPrototyp: RequestPrototyp,
 ): Promise<boolean> =>
-  callBackend({
-    endpoint: `lockedperiod`,
-    method: "GET",
-    queryParams: {
-      year: requestPrototyp.year,
-      month: requestPrototyp.month,
-      format: requestPrototyp.format,
-      scope: requestPrototyp.scope,
-    },
-  })
-    .then((response) => {
-      if (response.ok) {
-        return response.json();
-      } else {
-        throw new Error(
-          `Could not fetch auditlogs. Backend response code: ${response.status}`,
-        );
-      }
-    })
-    .then((response) => {
-      if (response.locks.length === 0) {
-        return false;
-      } else {
-        return true;
-      }
-    });
+  false;

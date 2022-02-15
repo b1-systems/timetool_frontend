@@ -4,7 +4,6 @@ import DateAdapter from "@mui/lab/AdapterLuxon";
 import { ThemeProvider, createTheme, responsiveFontSizes } from "@mui/material";
 import { deDE as coreDeDE, enUS as coreEnUs } from "@mui/material/locale";
 import { deDE, enUS } from "@mui/x-data-grid";
-import React from "react";
 import { useTranslation } from "react-i18next";
 import { BrowserRouter } from "react-router-dom";
 import { RecoilRoot } from "recoil";

@@ -194,38 +194,13 @@ export default function InputCard(props: { monthIsClosed: boolean }) {
         <CardHeader></CardHeader>
         <CardContent>
           <Grid container spacing={3}>
-            <Grid item xs={12} sm={4} md={3} lg={2}>
-              <FormControl fullWidth>
-                <DatePicker
-                  views={["day"]}
-                  label={t("day")}
-                  minDate={dateFrom.set({ day: 1 })}
-                  maxDate={dateFrom.endOf("month")}
-                  value={dateFrom}
-                  onChange={(newValue) => {
-                    if (newValue) {
-                      setDateFrom((currentDateTo) =>
-                        currentDateTo.set({
-                          day: newValue.day,
-                        }),
-                      );
-                      setDateTo((currentDateTo) =>
-                        currentDateTo.set({
-                          day: newValue.day,
-                        }),
-                      );
-                    }
-                  }}
-                  renderInput={(params) => <TextField {...params} helperText={null} />}
-                />
-              </FormControl>
-            </Grid>
             <Grid item xs={12} sm={7} md={6} lg={4}>
               <FormControl fullWidth>
                 <InputLabel id="select-label-typeState">{t("type")}</InputLabel>
                 <Select
                   labelId="select-label-type"
                   id="demo-simple-select-type"
+                  data-testid={`InputCard_type-Select`}
                   value={
                     timelog === null && projectTypes?.length === 1 && autoType
                       ? autoTypeHandler()

@@ -11,7 +11,8 @@ import {
   Select,
   TextField,
 } from "@mui/material";
-import React from "react";
+import { DateTime } from "luxon";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 
@@ -31,6 +32,14 @@ export default function InputPerdiem(props: {
   const perdiemModels = useRecoilValue(perdiemModelsState);
   const projectPerdiem = project ? perdiemModels.get(project.uuid) : {};
 
+  // default to current date
+  const selectedDate = useState(DateTime.now().set({
+    hour: 0,
+    minute: 0,
+    second: 0,
+    millisecond: 0,
+  }))
+
   if (!props.types.includes("perdiem")) {
     setAlertShownInInput(true);
     return (
@@ -43,11 +52,38 @@ export default function InputPerdiem(props: {
       </Container>
     );
   }
-
   setAlertShownInInput(false);
+
 
   return (
     <>
+
+<Grid item xs={12} sm={4} md={3} lg={2}>
+              <FormControl fullWidth>
+                <DatePicker
+                  views={["day"]}
+                  label={t("day")}
+                  minDate={dateFrom.set({ day: 1 })}
+                  maxDate={dateFrom.endOf("month")}
+                  value={dateFrom}
+                  onChange={(newValue) => {
+                    if (newValue) {
+                      setDateFrom((currentDateTo) =>
+                        currentDateTo.set({
+                          day: newValue.day,
+                        }),
+                      );
+                      setDateTo((currentDateTo) =>
+                        currentDateTo.set({
+                          day: newValue.day,
+                        }),
+                      );
+                    }
+                  }}
+                  renderInput={(params) => <TextField {...params} helperText={null} />}
+                />
+              </FormControl>
+            </Grid>
       <Grid item xs={12} sm={4} md={3} lg={2}>
         <FormControl fullWidth>
           <InputLabel id="select-label-modelState">{t("model")}</InputLabel>
