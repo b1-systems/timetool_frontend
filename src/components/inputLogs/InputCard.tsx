@@ -226,6 +226,7 @@ export default function InputCard(props: { monthIsClosed: boolean }) {
                 <Select
                   labelId="select-label-type"
                   id="demo-simple-select-type"
+                  data-testid={`InputCard_type-Select`}
                   value={
                     timelog === null && projectTypes?.length === 1 && autoType
                       ? autoTypeHandler()
