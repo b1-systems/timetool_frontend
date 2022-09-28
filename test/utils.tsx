@@ -1,19 +1,19 @@
-import { FC, ReactElement, Suspense } from 'react';
+import { FC, ReactElement, ReactNode, Suspense } from 'react';
 import { RecoilRoot } from 'recoil';
 
-import { LocalizationProvider } from '@mui/lab';
-import DateAdapter from '@mui/lab/AdapterLuxon';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterLuxon } from "@mui/x-date-pickers/AdapterLuxon";
 import { createTheme, ThemeProvider } from '@mui/material';
 import { act, render, RenderOptions } from '@testing-library/react';
 
-const AllTheProviders: FC = ({ children }) => {
+const AllTheProviders: FC<{ children: ReactNode }> = ({ children }) => {
   const theme = createTheme({
     //@ts-ignore
     shadows: Array.from({ length: 25 }, (_) => "none"),
   });
   return (
     <RecoilRoot>
-      <LocalizationProvider dateAdapter={DateAdapter} locale={"de"}>
+      <LocalizationProvider dateAdapter={AdapterLuxon} locale={"de"}>
         <ThemeProvider theme={theme}>
           <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>
         </ThemeProvider>

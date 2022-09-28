@@ -4,7 +4,7 @@ import HttpApi from "i18next-http-backend";
 import resourcesToBackend from "i18next-resources-to-backend";
 import { DateTime } from "luxon";
 import React, { Suspense } from "react";
-import ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 import { initReactI18next } from "react-i18next";
 
 import App from "./App";
@@ -68,12 +68,12 @@ window.onload = () => {
       },
     });
 
-  ReactDOM.render(
+  const root = createRoot(document.getElementById("root")!);
+  root.render(
     <React.StrictMode>
       <Suspense fallback="Loading...">
         <App />
       </Suspense>
     </React.StrictMode>,
-    document.getElementById("root"),
   );
 };

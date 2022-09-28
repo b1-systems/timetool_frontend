@@ -18,10 +18,12 @@ import List from "@mui/material/List";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import Toolbar from "@mui/material/Toolbar";
 import { Suspense, useState } from "react";
+import { ErrorBoundary } from "react-error-boundary";
 import { useTranslation } from "react-i18next";
 import { Link as RouterLink } from "react-router-dom";
 
 import MainGrid from "./MainGrid";
+import ErrorFallback from "./common/ErrorFallback";
 
 const drawerWidth = 240;
 interface Props {
@@ -152,7 +154,9 @@ const OuterMenu = (props: Props) => {
         >
           <Toolbar />
           <Suspense fallback={<LinearProgress />}>
-            <MainGrid />
+            <ErrorBoundary FallbackComponent={ErrorFallback}>
+              <MainGrid />
+            </ErrorBoundary>
           </Suspense>
         </Box>
       </Box>

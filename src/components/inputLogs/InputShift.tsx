@@ -1,7 +1,7 @@
 import DeleteIcon from "@mui/icons-material/Delete";
 import DoDisturbIcon from "@mui/icons-material/DoDisturb";
 import NoteAddIcon from "@mui/icons-material/NoteAdd";
-import { TimePicker } from "@mui/lab";
+import { TimePicker } from "@mui/x-date-pickers";
 import {
   Alert,
   Box,
@@ -157,7 +157,7 @@ export default function InputShift(props: {
                     });
                   }
                 }}
-                renderInput={(params) => <TextField {...params} />}
+                renderInput={(params: any) => <TextField {...params} />}
               />
             </FormControl>
           </Grid>
@@ -191,7 +191,7 @@ export default function InputShift(props: {
                     });
                   }
                 }}
-                renderInput={(params) => <TextField {...params} />}
+                renderInput={(params: any) => <TextField {...params} />}
               />
             </FormControl>
           </Grid>

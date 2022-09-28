@@ -1,5 +1,4 @@
 import NoteAddIcon from "@mui/icons-material/NoteAdd";
-import DatePicker from "@mui/lab/DatePicker";
 import {
   Alert,
   Button,
@@ -14,6 +13,7 @@ import {
   Select,
   TextField,
 } from "@mui/material";
+import { DatePicker } from "@mui/x-date-pickers";
 import { DateTime } from "luxon";
 import React, { FormEvent, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -216,7 +216,9 @@ export default function InputCard(props: { monthIsClosed: boolean }) {
                       );
                     }
                   }}
-                  renderInput={(params) => <TextField {...params} helperText={null} />}
+                  renderInput={(params: any) => (
+                    <TextField {...params} helperText={null} />
+                  )}
                 />
               </FormControl>
             </Grid>

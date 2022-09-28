@@ -1,10 +1,9 @@
 import { ConfirmationDialog, Toastyfier } from "@b1-systems/react-components";
-import { LocalizationProvider } from "@mui/lab";
-import DateAdapter from "@mui/lab/AdapterLuxon";
 import { ThemeProvider, createTheme, responsiveFontSizes } from "@mui/material";
 import { deDE as coreDeDE, enUS as coreEnUs } from "@mui/material/locale";
 import { deDE, enUS } from "@mui/x-data-grid";
-import React from "react";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterLuxon } from "@mui/x-date-pickers/AdapterLuxon";
 import { useTranslation } from "react-i18next";
 import { BrowserRouter } from "react-router-dom";
 import { RecoilRoot } from "recoil";
@@ -52,7 +51,7 @@ function App() {
   const theme = responsiveFontSizes(preTheme);
   return (
     <RecoilRoot>
-      <LocalizationProvider dateAdapter={DateAdapter} locale={"de"}>
+      <LocalizationProvider dateAdapter={AdapterLuxon} locale={"de"}>
         <BrowserRouter basename={appWebroot}>
           <ThemeProvider theme={theme}>
             <Toastyfier position="bottom-center" gutter={12}>
