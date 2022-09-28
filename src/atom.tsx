@@ -52,13 +52,7 @@ export const monthState = selector<DateTime>({
 
 export const dateFromState = atom({
   key: "dateFromState",
-  default: DateTime.now().set({
-    day: 1,
-    hour: 0,
-    minute: 0,
-    second: 0,
-    millisecond: 0,
-  }),
+  default: DateTime.now(),
 });
 
 export const startDtOfTimelogState = selector<DateTime>({

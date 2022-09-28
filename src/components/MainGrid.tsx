@@ -1,4 +1,3 @@
-import DatePicker from "@mui/lab/DatePicker";
 import {
   Autocomplete,
   Card,
@@ -9,8 +8,9 @@ import {
   Grid,
   TextField,
 } from "@mui/material";
+import { DatePicker } from "@mui/x-date-pickers";
 import { DateTime } from "luxon";
-import React, { useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 
@@ -77,7 +77,7 @@ export default function MainGrid() {
                         setMonth(newValue);
                       }
                     }}
-                    renderInput={(params) => (
+                    renderInput={(params: any) => (
                       <TextField {...params} helperText={null} />
                     )}
                   />

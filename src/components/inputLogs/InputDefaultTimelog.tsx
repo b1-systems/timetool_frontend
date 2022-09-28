@@ -1,5 +1,5 @@
 import DoDisturbIcon from "@mui/icons-material/DoDisturb";
-import { TimePicker } from "@mui/lab";
+import { TimePicker } from "@mui/x-date-pickers";
 import {
   Alert,
   Box,
@@ -88,7 +88,7 @@ export default function InputDefaultTimelog(props: {
                 }
               }
             }}
-            renderInput={(params) => <TextField {...params} />}
+            renderInput={(params: any) => <TextField {...params} />}
           />
         </FormControl>
       </Grid>
@@ -129,7 +129,7 @@ export default function InputDefaultTimelog(props: {
                 }
               }
             }}
-            renderInput={(params) => <TextField {...params} />}
+            renderInput={(params: any) => <TextField {...params} />}
           />
         </FormControl>
       </Grid>
