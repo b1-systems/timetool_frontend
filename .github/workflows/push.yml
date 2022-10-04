@@ -1,0 +1,78 @@
+name: Node.js CI
+
+on: push
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          registry-url: https://npm.pkg.github.com
+          scope: "@b1-systems"
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Install Node Packages
+        run: npm ci
+        env:
+          CI: true
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: make build
+      - name: Archive Build Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: build
+          path: |
+            build
+  build-horde:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          registry-url: https://npm.pkg.github.com
+          scope: "@b1-systems"
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Install Node Packages
+        run: npm ci
+        env:
+          CI: true
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: make horde
+      - name: Archive Horde Build Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: horde-build
+          path: |
+            horde
+  release-horde:
+    runs-on: ubuntu-latest
+    needs: [build, build-horde]
+    if: startsWith(github.ref, 'refs/tags/')
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v3
+      - name: Archive Artifact build
+        uses: thedoctor0/zip-release@main
+        with:
+          type: 'zip'
+          filename: 'build.zip'
+          path: build
+      - name: Archive Artifact horde-build
+        uses: thedoctor0/zip-release@main
+        with:
+          type: 'zip'
+          filename: 'horde-build.zip'
+          path: horde-build
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            build.zip
+            horde-build.zip
