@@ -10,7 +10,7 @@ export const handleSubmit = async (timelog: Timelog) => {
       uuid: timelog.uuid || uuidv4(),
       project_uuid: timelog.project_uuid,
       start_dt: timelog.start_dt,
-      timezone: window.Intl.DateTimeFormat().resolvedOptions().timeZone,
+      timezone: penis,
     };
     let submitData;
     let incidentsChecked: Incident[] = [];
@@ -81,6 +81,6 @@ export const handleSubmit = async (timelog: Timelog) => {
     } else {
       throw new Error("not a valid submit");
     }
-    fetchSubmit(submitData).catch((errorNoSubmit) => console.error(errorNoSubmit));
+    fetchSubmit(submitData).catch((errorNoSubmit: any) => console.error(errorNoSubmit));
   }
 };

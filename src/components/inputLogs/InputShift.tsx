@@ -1,7 +1,6 @@
 import DeleteIcon from "@mui/icons-material/Delete";
 import DoDisturbIcon from "@mui/icons-material/DoDisturb";
 import NoteAddIcon from "@mui/icons-material/NoteAdd";
-import { TimePicker } from "@mui/x-date-pickers";
 import {
   Alert,
   Box,
@@ -14,15 +13,15 @@ import {
   Select,
   TextField,
 } from "@mui/material";
+import { TimePicker } from "@mui/x-date-pickers";
 import { DateTime } from "luxon";
-import React from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 
 import {
   alertShownInInputState,
   dateFromState,
-  projectState,
+  selectedProjectState,
   shiftModelsState,
 } from "../../atom";
 import { Shift } from "../../models";
@@ -34,9 +33,24 @@ export default function InputShift(props: {
 }) {
   const { t } = useTranslation();
   const shiftModels = useRecoilValue(shiftModelsState);
-  const project = useRecoilValue(projectState);
+  const project = useRecoilValue(selectedProjectState);
   const projectShiftModels = project ? shiftModels.get(project.uuid) : {};
   const [dateFrom] = useRecoilState(dateFromState);
+
+  // default to current date
+  const [selectedDate, setSelectedDate] = useState(currentDay);
+  const [selectedModel, setSelectedModel] = useState(-1);
+  const [comment, setComment] = useState("");
+  useEffect(
+    () => {
+      // if the uuid is changed
+      // or editing is cancelled
+      // change the input values accordingly
+    },
+    [
+      /* editUUID */
+    ],
+  );
 
   const setAlertShownInInput = useSetRecoilState(alertShownInInputState);
 
