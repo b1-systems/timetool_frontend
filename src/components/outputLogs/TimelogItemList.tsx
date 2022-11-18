@@ -19,7 +19,7 @@ import { useRecoilValue } from "recoil";
 import {
   currentMonthLogsPerdiemsState,
   currentMonthLogsTimelogsState,
-} from "../../atom";
+} from "../../atoms/logs";
 import { isPerdiem, isShift, isTimelog } from "../../models";
 import OutputPerdiem from "./OutputPerdiem";
 import OutputShift from "./OutputShift";

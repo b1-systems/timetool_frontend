@@ -91,7 +91,7 @@ export interface Incident {
   comment: string;
 }
 
-export interface requestTimelog {
+export interface DefaultTimelogRequest {
   uuid: string;
   project_uuid: string;
   start_dt: number;
@@ -104,7 +104,7 @@ export interface requestTimelog {
   timezone: string;
 }
 
-export interface requestShift {
+export interface ShiftRequest {
   uuid: string;
   project_uuid: string;
   start_dt: number;
@@ -115,7 +115,7 @@ export interface requestShift {
   timezone: string;
 }
 
-export interface requestPerdiem {
+export interface PerdiemRequest {
   uuid: string;
   project_uuid: string;
   start_dt: number;

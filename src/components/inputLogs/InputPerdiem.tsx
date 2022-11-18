@@ -1,10 +1,4 @@
-import { NoteAdd } from "@mui/icons-material";
-import DoDisturbIcon from "@mui/icons-material/DoDisturb";
 import {
-  Alert,
-  Box,
-  Button,
-  Container,
   FormControl,
   Grid,
   InputLabel,
@@ -12,31 +6,19 @@ import {
   Select,
   TextField,
 } from "@mui/material";
-import { DatePicker } from "@mui/x-date-pickers";
-import { DateTime } from "luxon";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useRecoilValue, useSetRecoilState } from "recoil";
-import { submitPerdiem } from "../../api";
 
-import {
-  alertShownInInputState,
-  perdiemModelsState,
-  selectedProjectState,
-} from "../../atom";
+import { useProjectPerdiemModels, useSelectedProject } from "../../atoms/projects";
 import { useSelectedDate } from "../../atoms/selectedDate";
-import { Perdiem, isPerdiem } from "../../models";
+import { submitPerdiem } from "../../lib";
+import SubmitButtons from "./SubmitButtons";
 
-export default function InputPerdiem(props: {
-  types: string[];
-  perdiemTimelog: Perdiem;
-  setPerdiemTimelog(timelog: Perdiem): void;
-}) {
+export default function InputPerdiem(props: { types: string[] }) {
   const { t } = useTranslation();
 
-  const project = useRecoilValue(selectedProjectState);
-  const perdiemModels = useRecoilValue(perdiemModelsState);
-  const projectPerdiemModels = project ? perdiemModels.get(project.uuid) : {};
+  const [selectedProject] = useSelectedProject();
+  const projectPerdiemModels = useProjectPerdiemModels();
 
   // default to current date
   const [selectedDate, setSelectedDate] = useSelectedDate();
@@ -56,32 +38,15 @@ export default function InputPerdiem(props: {
   const submit = ({ advanceDate }: { advanceDate: boolean }) => {
     // Do API call
     submitPerdiem({
-      start_dt: parseInt(selectedDate.toSeconds()/1000),
+      start_dt: selectedDate.toSeconds() | 0,
       comment: comment,
-      is_perdiem: true,
-      project_uuid: project!.uuid,
-      timezone: selectedDate.zone.,
+      project_uuid: selectedProject!.uuid,
       type: selectedModel,
-      uuid: ""
-    })
+      uuid: "",
+    });
 
     if (advanceDate) setSelectedDate((value) => value.plus({ days: 1 }));
   };
-
-  const setAlertShownInInput = useSetRecoilState(alertShownInInputState);
-  if (!props.types.includes("perdiem")) {
-    setAlertShownInInput(true);
-    return (
-      <Container>
-        <Box sx={{ mx: "auto", textAlign: "center", p: 5 }}>
-          <Alert severity="info" sx={{ textAlign: "center" }}>
-            {t("no_perdiems_in_this_project")}
-          </Alert>
-        </Box>
-      </Container>
-    );
-  }
-  setAlertShownInInput(false);
 
   return (
     <>
@@ -93,7 +58,7 @@ export default function InputPerdiem(props: {
             labelId="select-label-model"
             required={true}
             id="demo-simple-select-model"
-            value={selectedModel.toString()}
+            value={selectedModel === -1 ? "" : selectedModel.toString()}
             label={t("model")}
             onChange={(e) => setSelectedModel(parseInt(e.target.value))}
           >
@@ -119,7 +84,7 @@ export default function InputPerdiem(props: {
       </Grid>
 
       {/* Cancel Editing Button */}
-      {props.perdiemTimelog.uuid && (
+      {/* props.perdiemTimelog.uuid && (
         <Grid item xs={12} sm={6} md={3} lg={2} sx={{ mt: 1 }}>
           <Button
             color="warning"
@@ -135,38 +100,10 @@ export default function InputPerdiem(props: {
             {t("cancel_edit")}
           </Button>
         </Grid>
-      )}
+          ) */}
 
-      <Grid item xs={12} sm={6} md={3} lg={2}>
-        <Button
-          fullWidth
-          sx={{ mt: 3, mb: 2, ml: 1, mr: 1 }}
-          size="large"
-          variant="contained"
-          startIcon={<NoteAdd />}
-          type="submit"
-          onClick={() => submit({ advanceDate: true })}
-          disabled={props.monthIsClosed || submitBtnDisabled || alertShownInInput}
-          data-testid={"InputCard_commit-info-btn_index"}
-        >
-          {t("commit_&_next_day")}
-        </Button>
-      </Grid>
-      <Grid item xs={12} sm={6} md={3} lg={2}>
-        <Button
-          fullWidth
-          sx={{ mt: 3, mb: 2, ml: 1, mr: 1 }}
-          size="large"
-          variant="contained"
-          startIcon={<NoteAdd />}
-          type="submit"
-          onClick={() => submit({ advanceDate: false })}
-          disabled={props.monthIsClosed || submitBtnDisabled || alertShownInInput}
-          data-testid={"InputCard_commit-stay_date-btn_index"}
-        >
-          {t("commit_&_same_day")}
-        </Button>
-      </Grid>
+      {/* Submit Buttons */}
+      <SubmitButtons submit={submit} />
     </>
   );
 }

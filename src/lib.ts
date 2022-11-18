@@ -2,7 +2,7 @@ import { DateTime } from "luxon";
 import { v4 as uuidv4 } from "uuid";
 
 import { fetchSubmit } from "./api";
-import { Incident, Timelog, isPerdiem, isShift, isTimelog } from "./models";
+import { Incident, Timelog, isShift, isTimelog } from "./models";
 
 export const handleSubmit = async (timelog: Timelog) => {
   if (timelog) {
@@ -10,7 +10,7 @@ export const handleSubmit = async (timelog: Timelog) => {
       uuid: timelog.uuid || uuidv4(),
       project_uuid: timelog.project_uuid,
       start_dt: timelog.start_dt,
-      timezone: penis,
+      timezone: window.Intl.DateTimeFormat().resolvedOptions().timeZone,
     };
     let submitData;
     let incidentsChecked: Incident[] = [];
@@ -71,16 +71,52 @@ export const handleSubmit = async (timelog: Timelog) => {
         comment: timelog.comment,
         onsite: timelog.onsite,
       };
-    } else if (isPerdiem(timelog)) {
-      submitData = {
-        ...commonData,
-        type: timelog.type,
-        comment: timelog.comment,
-        is_perdiem: true,
-      };
     } else {
       throw new Error("not a valid submit");
     }
     fetchSubmit(submitData).catch((errorNoSubmit: any) => console.error(errorNoSubmit));
   }
 };
+
+interface Perdiem {
+  uuid?: string | null;
+  project_uuid: string;
+  start_dt: number;
+  type: number;
+  comment: string;
+}
+export interface Shift {
+  uuid?: string | null;
+  project_uuid: string;
+  start_dt: number;
+  end_dt: number;
+  type: "shift";
+  incidents: Incident[];
+  shift_model: string;
+}
+
+export const submitPerdiem = (timelog: Perdiem) =>
+  fetchSubmit({
+    ...timelog,
+    uuid: timelog.uuid || uuidv4(),
+    is_perdiem: true,
+    timezone: window.Intl.DateTimeFormat().resolvedOptions().timeZone,
+  });
+
+export interface DefaultTimelog {
+  uuid?: string | null;
+  project_uuid: string;
+  start_dt: number;
+  end_dt: number;
+  breakTime: number;
+  travelTime: number;
+  comment: string;
+  onsite: string;
+}
+export const submitDefaultTimelog = (timelog: DefaultTimelog) =>
+  fetchSubmit({
+    ...timelog,
+    type: "default",
+    uuid: timelog.uuid || uuidv4(),
+    timezone: window.Intl.DateTimeFormat().resolvedOptions().timeZone,
+  });

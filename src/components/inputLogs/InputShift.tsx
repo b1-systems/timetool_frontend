@@ -15,15 +15,13 @@ import {
 } from "@mui/material";
 import { TimePicker } from "@mui/x-date-pickers";
 import { DateTime } from "luxon";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 
-import {
-  alertShownInInputState,
-  dateFromState,
-  selectedProjectState,
-  shiftModelsState,
-} from "../../atom";
+import { alertShownInInputState } from "../../atom";
+import { useSelectedProject, useShiftModels } from "../../atoms/projects";
+import { currentDay } from "../../atoms/selectedDate";
 import { Shift } from "../../models";
 
 export default function InputShift(props: {
@@ -32,10 +30,11 @@ export default function InputShift(props: {
   setShiftTimelog(timelog: Shift): void;
 }) {
   const { t } = useTranslation();
-  const shiftModels = useRecoilValue(shiftModelsState);
-  const project = useRecoilValue(selectedProjectState);
-  const projectShiftModels = project ? shiftModels.get(project.uuid) : {};
-  const [dateFrom] = useRecoilState(dateFromState);
+  const [selectedProject] = useSelectedProject();
+  const shiftModels = useShiftModels();
+  const projectShiftModels = selectedProject
+    ? shiftModels.get(selectedProject!.uuid)
+    : {};
 
   // default to current date
   const [selectedDate, setSelectedDate] = useState(currentDay);
@@ -60,8 +59,8 @@ export default function InputShift(props: {
       incidents: [
         ...props.shiftTimelog.incidents,
         {
-          start_dt: dateFrom.valueOf() / 1000,
-          end_dt: dateFrom.valueOf() / 1000,
+          start_dt: selectedDate.valueOf() / 1000,
+          end_dt: selectedDate.valueOf() / 1000,
           comment: "",
         },
       ],
@@ -157,7 +156,7 @@ export default function InputShift(props: {
                         {
                           ...incident,
                           start_dt:
-                            dateFrom
+                            selectedDate
                               .set({
                                 hour: newValue.hour || 0,
                                 minute: newValue.minute || 0,
@@ -191,7 +190,7 @@ export default function InputShift(props: {
                         {
                           ...incident,
                           end_dt:
-                            dateFrom
+                            selectedDate
                               .set({
                                 hour: newValue.hour || 0,
                                 minute: newValue.minute || 0,

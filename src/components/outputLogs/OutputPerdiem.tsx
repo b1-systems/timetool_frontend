@@ -7,15 +7,12 @@ import PaidIcon from "@mui/icons-material/Paid";
 import { Box, Button, Card, CardActions, Grid } from "@mui/material";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 
 import { fetchDelete } from "../../api";
-import {
-  editTimelogState,
-  perdiemModelsState,
-  useSetProjectByUuid,
-  useUpdateLogs,
-} from "../../atom";
+import { editTimelogState } from "../../atom";
+import { useUpdateLogs } from "../../atoms/logs";
+import { usePerdiemModels, useSetProjectByUuid } from "../../atoms/projects";
 import { Perdiem, Timelog } from "../../models";
 import OutputChip from "./OutputChip";
 
@@ -28,7 +25,7 @@ export default function OutputPerdiem(props: {
   const setEditTimelog = useSetRecoilState(editTimelogState);
   const updateLogs = useUpdateLogs();
   const setProjectByUuid = useSetProjectByUuid();
-  const perdiemModels = useRecoilValue(perdiemModelsState);
+  const perdiemModels = usePerdiemModels();
 
   const perdiemModelHandler = (uuid: string, type: number): string => {
     if (perdiemModels.size !== 0 && type) {

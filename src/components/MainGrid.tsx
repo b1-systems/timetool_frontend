@@ -12,19 +12,15 @@ import { DatePicker } from "@mui/x-date-pickers";
 import { DateTime } from "luxon";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 
+import { autoTypeNotDoneState } from "../atom";
 import {
-  autoTypeNotDoneState,
-  editTimelogState,
-  isMonthClosedState,
-  monthState,
-  projectState,
-  projectsState,
-  startDtOfTimelogState,
+  useAvailableProjects,
+  useSelectedProject,
   useSetProjectIfOnlyOne,
-} from "../atom";
-import { Timelog } from "../models";
+} from "../atoms/projects";
+import { useIsMonthClosed, useSelectedMonth } from "../atoms/selectedDate";
 import MonthEndDialog from "./MonthEndDialog";
 import InputCard from "./inputLogs/InputCard";
 import TimelogItemList from "./outputLogs/TimelogItemList";
@@ -36,18 +32,18 @@ import TimelogItemList from "./outputLogs/TimelogItemList";
 export default function MainGrid() {
   const { t } = useTranslation();
   const [endMonthOpen, setEndMonthOpen] = useState(false);
-  const dateFrom = useRecoilValue(startDtOfTimelogState);
-  const availableProjects = useRecoilValue(projectsState);
-  const [project, setProject] = useRecoilState(projectState);
-  const [month, setMonth] = useRecoilState(monthState);
-  const isMonthClosed = useRecoilValue(isMonthClosedState);
+  const [selectedMonth, setSelectedMonth] = useSelectedMonth();
+  const isMonthClosed = useIsMonthClosed();
+  const availableProjects = useAvailableProjects();
+  const [selectedProject, setSelectedProject] = useSelectedProject();
+  useSetProjectIfOnlyOne();
   const setAutoTypeNotDone = useSetRecoilState(autoTypeNotDoneState);
-  const setTimelog = useSetRecoilState<Timelog | null>(editTimelogState);
-  const setProjectIfOnlyOne = useSetProjectIfOnlyOne();
-  setProjectIfOnlyOne();
+
   const monthEndHandler = () => {
     setEndMonthOpen(false);
   };
+
+  // TODO: reset edit state when selected project changes
 
   return (
     <Grid container spacing={3}>
@@ -56,8 +52,8 @@ export default function MainGrid() {
           {endMonthOpen && (
             <MonthEndDialog
               close={monthEndHandler}
-              year={month.year}
-              monthLong={month.monthLong}
+              year={selectedMonth.year}
+              monthLong={selectedMonth.monthLong}
             />
           )}
           <CardHeader></CardHeader>
@@ -71,10 +67,10 @@ export default function MainGrid() {
                     label={t("year_and_month")}
                     minDate={DateTime.fromISO("2000-01-01T00:00")}
                     maxDate={DateTime.fromISO("2100-01-01T00:00")}
-                    value={month}
+                    value={selectedMonth}
                     onChange={(newValue) => {
                       if (newValue) {
-                        setMonth(newValue);
+                        setSelectedMonth(newValue);
                       }
                     }}
                     renderInput={(params: any) => (
@@ -92,13 +88,11 @@ export default function MainGrid() {
                     renderInput={(params) => (
                       <TextField {...params} label={t("project")} />
                     )}
-                    value={project}
+                    value={selectedProject}
                     onChange={(event, value) => {
-                      setAutoTypeNotDone(() => true);
-                      setProject(() => value);
-                      setTimelog(() => null);
+                      setAutoTypeNotDone(true);
+                      setSelectedProject(value);
                     }}
-                    disabled={!dateFrom}
                     getOptionLabel={(project) => project.name}
                   ></Autocomplete>
                 </FormControl>
@@ -113,7 +107,7 @@ export default function MainGrid() {
         </Card>
       </Grid>
       <Grid item xs={12}>
-        <InputCard monthIsClosed={isMonthClosed} />
+        <InputCard />
       </Grid>
       <Grid item xs={12}>
         <TimelogItemList

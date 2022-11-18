@@ -9,10 +9,10 @@ import {
   Typography,
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
-import { useRecoilValue } from "recoil";
 
 import { fetchCloseMonth } from "../api";
-import { monthState, useUpdateIsMonthClosed } from "../atom";
+import { useUpdateIsMonthClosed } from "../atom";
+import { useSelectedMonth } from "../atoms/selectedDate";
 
 const MonthEndDialog = (props: {
   close: () => void;
@@ -24,14 +24,14 @@ const MonthEndDialog = (props: {
     props.close();
   };
 
-  const monthYear = useRecoilValue(monthState);
+  const [selectedMonth] = useSelectedMonth();
   const updateIsMonthClosed = useUpdateIsMonthClosed();
 
   const handleEndMonth = () => {
     fetchCloseMonth({
       request: {
-        year: monthYear.year.toString(),
-        month: monthYear.month.toString(),
+        year: selectedMonth.year.toString(),
+        month: selectedMonth.month.toString(),
         format: "traditional",
         scope: "me",
       },

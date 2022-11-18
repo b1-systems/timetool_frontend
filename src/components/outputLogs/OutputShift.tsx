@@ -13,15 +13,12 @@ import { Box, Button, Card, CardActions, Collapse, Grid } from "@mui/material";
 import { DateTime } from "luxon";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 
 import { fetchDelete } from "../../api";
-import {
-  editTimelogState,
-  shiftModelsState,
-  useSetProjectByUuid,
-  useUpdateLogs,
-} from "../../atom";
+import { editTimelogState } from "../../atom";
+import { useUpdateLogs } from "../../atoms/logs";
+import { useSetProjectByUuid, useShiftModels } from "../../atoms/projects";
 import { Shift, Timelog } from "../../models";
 import OutputChip from "./OutputChip";
 
@@ -34,7 +31,7 @@ export default function OutputShift(props: {
 
   const [entriesVisible, setEntriesVisible] = useState<boolean>(false);
 
-  const shiftModels = useRecoilValue(shiftModelsState);
+  const shiftModels = useShiftModels();
   const setEditTimelog = useSetRecoilState(editTimelogState);
 
   const updateLogs = useUpdateLogs();
