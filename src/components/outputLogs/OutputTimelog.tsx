@@ -11,12 +11,13 @@ import MyLocationIcon from "@mui/icons-material/MyLocation";
 import WorkIcon from "@mui/icons-material/Work";
 import { Box, Button, Card, CardActions, Grid } from "@mui/material";
 import { DateTime, Duration } from "luxon";
-import React from "react";
 import { useTranslation } from "react-i18next";
 import { useSetRecoilState } from "recoil";
 
 import { fetchDelete } from "../../api";
-import { editTimelogState, useSetProjectByUuid, useUpdateLogs } from "../../atom";
+import { editTimelogState } from "../../atom";
+import { useUpdateLogs } from "../../atoms/logs";
+import { useSetProjectByUuid } from "../../atoms/projects";
 import { DefaultTimelog, Timelog } from "../../models";
 import OutputChip from "./OutputChip";
 

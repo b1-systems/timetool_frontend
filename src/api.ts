@@ -1,11 +1,11 @@
 import {
+  DefaultTimelogRequest,
   Logs,
+  PerdiemRequest,
   Project,
   RequestPrototyp,
+  ShiftRequest,
   requestCloseMonth,
-  requestPerdiem,
-  requestShift,
-  requestTimelog,
 } from "./models";
 
 type BackendRoute =
@@ -125,7 +125,7 @@ export const fetchDelete = (requestPrototyp: {
   });
 
 export const fetchSubmit = (
-  request: requestTimelog | requestPerdiem | requestShift,
+  request: DefaultTimelogRequest | PerdiemRequest | ShiftRequest,
 ): Promise<void> =>
   callBackend({
     endpoint: `timelog/${request.uuid}`,
