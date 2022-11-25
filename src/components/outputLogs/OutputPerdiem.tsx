@@ -5,14 +5,12 @@ import EditIcon from "@mui/icons-material/Edit";
 import EventIcon from "@mui/icons-material/Event";
 import PaidIcon from "@mui/icons-material/Paid";
 import { Box, Button, Card, CardActions, Grid } from "@mui/material";
-import React from "react";
 import { useTranslation } from "react-i18next";
-import { useSetRecoilState } from "recoil";
 
 import { fetchDelete } from "../../api";
-import { editTimelogState } from "../../atom";
+import { useEditUUID } from "../../atoms/edit";
 import { useUpdateLogs } from "../../atoms/logs";
-import { usePerdiemModels, useSetProjectByUuid } from "../../atoms/projects";
+import { usePerdiemModels } from "../../atoms/projects";
 import { Perdiem, Timelog } from "../../models";
 import OutputChip from "./OutputChip";
 
@@ -22,9 +20,8 @@ export default function OutputPerdiem(props: {
   index: number;
 }) {
   const { t } = useTranslation();
-  const setEditTimelog = useSetRecoilState(editTimelogState);
+  const [, setEditUUID] = useEditUUID();
   const updateLogs = useUpdateLogs();
-  const setProjectByUuid = useSetProjectByUuid();
   const perdiemModels = usePerdiemModels();
 
   const perdiemModelHandler = (uuid: string, type: number): string => {
@@ -54,8 +51,7 @@ export default function OutputPerdiem(props: {
   };
 
   const editHandler = (log: Timelog) => {
-    setEditTimelog(log);
-    setProjectByUuid(log.project_uuid);
+    setEditUUID(log.uuid);
   };
 
   return (

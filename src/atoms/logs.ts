@@ -1,5 +1,11 @@
 import { DateTime } from "luxon";
-import { atom, selector, useSetRecoilState } from "recoil";
+import {
+  atom,
+  selector,
+  selectorFamily,
+  useRecoilValue,
+  useSetRecoilState,
+} from "recoil";
 
 import { fetchCurrentMonthLogs } from "../api";
 import { Logs, Timelog } from "../models";
@@ -17,8 +23,8 @@ export const useUpdateLogs = () => {
   };
 };
 
-export const currentMonthLogsState = selector<Logs>({
-  key: "currentMonthLogsState",
+export const currentMonthLogs = selector<Logs>({
+  key: "currentMonthLogs",
   get: async ({ get }) => {
     get(logsRequestTime);
     const month = get(selectedMonth);
@@ -31,18 +37,36 @@ export const currentMonthLogsState = selector<Logs>({
   },
 });
 
-export const currentMonthLogsPerdiemsState = selector<Timelog[]>({
-  key: "currentMonthLogsPerdiemsState",
+const timelogForUUID = selectorFamily<Timelog | null, string | null>({
+  key: "currentMonthLogs",
+  get:
+    (uuid) =>
+    ({ get }) => {
+      const logs = get(currentMonthLogs);
+      if (!uuid) return null;
+      return (
+        logs.perdiems.find((log) => log.uuid === uuid) ||
+        logs.timelogs.find((log) => log.uuid === uuid) ||
+        null
+      );
+    },
+});
+export const useTimelogForUUID = (uuid: string | null) => {
+  return useRecoilValue(timelogForUUID(uuid));
+};
+
+export const currentMonthLogsPerdiems = selector<Timelog[]>({
+  key: "currentMonthLogsPerdiems",
   get: async ({ get }) => {
-    const monthLogs = get(currentMonthLogsState);
+    const monthLogs = get(currentMonthLogs);
     return monthLogs.perdiems;
   },
 });
 
-export const currentMonthLogsTimelogsState = selector<Timelog[]>({
+export const currentMonthLogsTimelogs = selector<Timelog[]>({
   key: "currentMonthLogsTimelogsState",
   get: async ({ get }) => {
-    const monthLogs = get(currentMonthLogsState);
+    const monthLogs = get(currentMonthLogs);
     return monthLogs.timelogs;
   },
 });

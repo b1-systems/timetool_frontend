@@ -11,14 +11,13 @@ import MoreTimeIcon from "@mui/icons-material/MoreTime";
 import NightsStayIcon from "@mui/icons-material/NightsStay";
 import { Box, Button, Card, CardActions, Collapse, Grid } from "@mui/material";
 import { DateTime } from "luxon";
-import React, { useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useSetRecoilState } from "recoil";
 
 import { fetchDelete } from "../../api";
-import { editTimelogState } from "../../atom";
+import { useEditUUID } from "../../atoms/edit";
 import { useUpdateLogs } from "../../atoms/logs";
-import { useSetProjectByUuid, useShiftModels } from "../../atoms/projects";
+import { useShiftModels } from "../../atoms/projects";
 import { Shift, Timelog } from "../../models";
 import OutputChip from "./OutputChip";
 
@@ -32,10 +31,9 @@ export default function OutputShift(props: {
   const [entriesVisible, setEntriesVisible] = useState<boolean>(false);
 
   const shiftModels = useShiftModels();
-  const setEditTimelog = useSetRecoilState(editTimelogState);
+  const [, setEditUUID] = useEditUUID();
 
   const updateLogs = useUpdateLogs();
-  const setProjectByUuid = useSetProjectByUuid();
 
   const shiftModelHandler = (uuid: string, type: string | undefined): string => {
     if (shiftModels.size !== 0 && type) {
@@ -64,8 +62,7 @@ export default function OutputShift(props: {
   };
 
   const editHandler = (log: Timelog) => {
-    setEditTimelog(log);
-    setProjectByUuid(log.project_uuid);
+    setEditUUID(log.uuid);
   };
 
   return (

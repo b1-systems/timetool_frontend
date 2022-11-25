@@ -1,8 +1,9 @@
 import { useEffect } from "react";
 import {
+  SetterOrUpdater,
   atom,
   selector,
-  useRecoilState,
+  selectorFamily,
   useRecoilValue,
   useSetRecoilState,
 } from "recoil";
@@ -11,7 +12,7 @@ import { fetchProjects } from "../api";
 import { Project } from "../models";
 import { selectedMonth } from "./selectedDate";
 
-export const availableProjects = selector<Project[]>({
+const availableProjects = selector<Project[]>({
   key: "availableProjects",
   get: async ({ get }) => {
     const month = get(selectedMonth);
@@ -27,30 +28,41 @@ export const useAvailableProjects = () => {
   return useRecoilValue(availableProjects);
 };
 
-export const selectedProject = atom<Project | null>({
-  key: "selectedProject",
+export const projectByUUID = selectorFamily<Project | null, string | null>({
+  key: "projectByUUID",
+  get:
+    (uuid) =>
+    ({ get }) => {
+      const projects = get(availableProjects);
+      return projects.find((project) => project.uuid === uuid) ?? null;
+    },
+});
+
+export const selectedProjectUUID = atom<string | null>({
+  key: "selectedProjectUUID",
   default: null,
 });
-export const useSelectedProject = () => {
-  return useRecoilState(selectedProject);
-};
-
-export const useSetProjectByUuid = () => {
-  const projects = useRecoilValue(availableProjects);
-  const setSelectedProject = useSetRecoilState(selectedProject);
-
-  return (uuid: string) => {
-    const project = projects.find((project) => project.uuid === uuid);
-    if (project) setSelectedProject(project);
-    else console.error("no fitting Project with uuid found. UUID:", uuid);
-  };
+export const selectedProject = selector<Project | null>({
+  key: "selectedProject",
+  get: async ({ get }) => {
+    const uuid = get(selectedProjectUUID);
+    return get(projectByUUID(uuid));
+  },
+});
+export const useSelectedProject = (): [
+  Project | null,
+  SetterOrUpdater<string | null>,
+] => {
+  const project = useRecoilValue(selectedProject);
+  const setProject = useSetRecoilState(selectedProjectUUID);
+  return [project, setProject];
 };
 
 export const useSetProjectIfOnlyOne = () => {
-  const setProject = useSetRecoilState(selectedProject);
+  const [, setProject] = useSelectedProject();
   const projects = useRecoilValue(availableProjects);
   return useEffect(() => {
-    if (projects.length === 1) setProject(projects[0]);
+    if (projects.length === 1) setProject(projects[0].uuid);
   }, [projects, setProject]);
 };
 

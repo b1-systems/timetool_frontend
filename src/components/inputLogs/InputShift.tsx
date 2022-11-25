@@ -21,7 +21,7 @@ import { useSetRecoilState } from "recoil";
 
 import { alertShownInInputState } from "../../atom";
 import { useSelectedProject, useShiftModels } from "../../atoms/projects";
-import { currentDay } from "../../atoms/selectedDate";
+import { useSelectedDate } from "../../atoms/selectedDate";
 import { Shift } from "../../models";
 
 export default function InputShift(props: {
@@ -37,7 +37,7 @@ export default function InputShift(props: {
     : {};
 
   // default to current date
-  const [selectedDate, setSelectedDate] = useState(currentDay);
+  const [selectedDate, setSelectedDate] = useSelectedDate();
   const [selectedModel, setSelectedModel] = useState(-1);
   const [comment, setComment] = useState("");
   useEffect(

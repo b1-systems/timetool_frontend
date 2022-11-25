@@ -16,10 +16,7 @@ import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilValue } from "recoil";
 
-import {
-  currentMonthLogsPerdiemsState,
-  currentMonthLogsTimelogsState,
-} from "../../atoms/logs";
+import { currentMonthLogsPerdiems, currentMonthLogsTimelogs } from "../../atoms/logs";
 import { isPerdiem, isShift, isTimelog } from "../../models";
 import OutputPerdiem from "./OutputPerdiem";
 import OutputShift from "./OutputShift";
@@ -34,8 +31,8 @@ export default function InputCard(props: {
   const [perdiemsVisible, setPerdiemsVisible] = useState<boolean>(true);
   const [shiftsVisible, setShiftsVisible] = useState<boolean>(true);
 
-  const oldTimelogs = useRecoilValue(currentMonthLogsTimelogsState);
-  const oldPerdiems = useRecoilValue(currentMonthLogsPerdiemsState);
+  const oldTimelogs = useRecoilValue(currentMonthLogsTimelogs);
+  const oldPerdiems = useRecoilValue(currentMonthLogsPerdiems);
 
   let defaultTimelogs = oldTimelogs
     .filter((log) => (log ? log.type === "default" : []))

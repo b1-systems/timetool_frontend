@@ -1,20 +1,33 @@
 import { DateTime } from "luxon";
-import { atom, selector, useRecoilState, useRecoilValue } from "recoil";
+import {
+  SetterOrUpdater,
+  atom,
+  selector,
+  useRecoilState,
+  useRecoilValue,
+} from "recoil";
 
 import { fetchIsMonthClosed } from "../api";
 
-export const currentDay = DateTime.now().set({
-  hour: 0,
-  minute: 0,
-  second: 0,
-  millisecond: 0,
+const _selectedDate = atom<DateTime>({
+  key: "_selectedDate",
+  default: DateTime.now(),
+  effects: [() => console.log("_selectedDate effect")],
 });
-
-const selectedDate = atom({
+// using selector in order to have a custom getter for the atom
+// this way we can ensure the date always has no time of day
+const selectedDate = selector<DateTime>({
   key: "selectedDate",
-  default: currentDay,
+  get: ({ get }) =>
+    get(_selectedDate).set({
+      hour: 0,
+      minute: 0,
+      second: 0,
+      millisecond: 0,
+    }),
+  set: ({ set }, newValue) => set(_selectedDate, newValue),
 });
-export const useSelectedDate = () => {
+export const useSelectedDate = (): [DateTime, SetterOrUpdater<DateTime>] => {
   return useRecoilState(selectedDate);
 };
 
@@ -39,7 +52,7 @@ export const useSelectedMonth = () => {
 };
 
 const monthClosed = selector({
-  key: "isMonthClosedState",
+  key: "monthClosed",
   get: ({ get }) => {
     const selectedMonthValue = get(selectedMonth);
     return fetchIsMonthClosed({
