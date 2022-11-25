@@ -10,11 +10,12 @@ import {
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
 import { DateTime } from "luxon";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useSetRecoilState } from "recoil";
 
 import { autoTypeNotDoneState } from "../atom";
+import { useEditTimelog, useEditUUID } from "../atoms/edit";
 import {
   useAvailableProjects,
   useSelectedProject,
@@ -39,11 +40,17 @@ export default function MainGrid() {
   useSetProjectIfOnlyOne();
   const setAutoTypeNotDone = useSetRecoilState(autoTypeNotDoneState);
 
+  const [, setEditUUID] = useEditUUID();
+  const editTimelog = useEditTimelog();
+  useEffect(() => {
+    if (editTimelog) {
+      setSelectedProject(editTimelog.project_uuid);
+    }
+  }, [editTimelog, setSelectedProject]);
+
   const monthEndHandler = () => {
     setEndMonthOpen(false);
   };
-
-  // TODO: reset edit state when selected project changes
 
   return (
     <Grid container spacing={3}>
@@ -91,7 +98,8 @@ export default function MainGrid() {
                     value={selectedProject}
                     onChange={(event, value) => {
                       setAutoTypeNotDone(true);
-                      setSelectedProject(value);
+                      setEditUUID(null);
+                      setSelectedProject(value?.uuid ?? null);
                     }}
                     getOptionLabel={(project) => project.name}
                   ></Autocomplete>

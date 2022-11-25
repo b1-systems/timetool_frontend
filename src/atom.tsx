@@ -1,7 +1,5 @@
 import { atom, useRecoilState } from "recoil";
 
-import { Timelog } from "./models";
-
 export const isMonthClosedRequestIdState = atom({
   key: "isMonthClosedRequestIdState",
   default: 0,
@@ -15,11 +13,6 @@ export const useUpdateIsMonthClosed = () => {
     setIsMonthClosedRequestId(isMonthClosedRequestId + 1);
   };
 };
-
-export const editTimelogState = atom<Timelog | null>({
-  key: "editTimelogState",
-  default: null,
-});
 
 export const alertShownInInputState = atom({
   key: "alertShownInInputState",

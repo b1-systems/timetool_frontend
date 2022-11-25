@@ -11,9 +11,11 @@ import {
   TextField,
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
+import { DateTime } from "luxon";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
+import { useEditTimelog } from "../../atoms/edit";
 import { useSelectedProject } from "../../atoms/projects";
 import { useIsMonthClosed, useSelectedDate } from "../../atoms/selectedDate";
 import { useProjectWorktypes } from "../../atoms/worktype";
@@ -31,11 +33,24 @@ const InputCard = () => {
   const projectWorktypes = useProjectWorktypes();
   const [selectedWorktype, setSelectedWorktype] = useState<string>("");
   useEffect(() => {
+    console.log("effect projectWorktypes");
     if (projectWorktypes?.length) {
       if (!projectWorktypes.includes(selectedWorktype!))
         setSelectedWorktype(projectWorktypes[0]);
     }
   }, [projectWorktypes, selectedWorktype, setSelectedWorktype]);
+
+  const editTimelog = useEditTimelog();
+  useEffect(() => {
+    if (editTimelog) {
+      setSelectedDate(DateTime.fromSeconds(editTimelog.start_dt));
+    } else {
+      setSelectedDate(DateTime.now());
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editTimelog?.uuid, setSelectedDate]);
+
+  console.log("render InputCard");
 
   if (isMonthClosed) {
     return (
@@ -71,20 +86,12 @@ const InputCard = () => {
                 <DatePicker
                   views={["day"]}
                   label={t("day")}
-                  minDate={selectedDate.set({ day: 1 })}
+                  minDate={selectedDate.startOf("month")}
                   maxDate={selectedDate.endOf("month")}
                   value={selectedDate}
                   onChange={(newValue) => {
                     if (newValue) {
-                      setSelectedDate(
-                        newValue.set({
-                          year: newValue.year,
-                          month: newValue.month,
-                          day: newValue.day,
-                          second: 0,
-                          millisecond: 0,
-                        }),
-                      );
+                      setSelectedDate(newValue);
                     }
                   }}
                   renderInput={(params: any) => (

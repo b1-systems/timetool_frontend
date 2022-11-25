@@ -9,9 +9,12 @@ import {
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
+import { useEditTimelog } from "../../atoms/edit";
 import { useProjectPerdiemModels, useSelectedProject } from "../../atoms/projects";
 import { useSelectedDate } from "../../atoms/selectedDate";
 import { submitPerdiem } from "../../lib";
+import { Perdiem } from "../../models";
+import CancelEditButton from "./CancelEditButton";
 import SubmitButtons from "./SubmitButtons";
 
 export default function InputPerdiem(props: { types: string[] }) {
@@ -20,33 +23,34 @@ export default function InputPerdiem(props: { types: string[] }) {
   const [selectedProject] = useSelectedProject();
   const projectPerdiemModels = useProjectPerdiemModels();
 
-  // default to current date
-  const [selectedDate, setSelectedDate] = useSelectedDate();
+  const [selectedDate] = useSelectedDate();
   const [selectedModel, setSelectedModel] = useState(-1);
   const [comment, setComment] = useState("");
-  useEffect(
-    () => {
-      // if the uuid is changed
-      // or editing is cancelled
-      // change the input values accordingly
-    },
-    [
-      /* editUUID */
-    ],
-  );
 
-  const submit = ({ advanceDate }: { advanceDate: boolean }) => {
-    // Do API call
+  const editTimelog = useEditTimelog() as Perdiem | null;
+  useEffect(() => {
+    // if the uuid is changed
+    // or editing is cancelled
+    // change the input values accordingly
+    if (editTimelog) {
+      setSelectedModel(editTimelog.type);
+      setComment(editTimelog.comment);
+    } else {
+      // Editing was cancelled, clear inputs
+      setSelectedModel(-1);
+      setComment("");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editTimelog?.uuid]);
+
+  const submit = () =>
     submitPerdiem({
       start_dt: selectedDate.toSeconds() | 0,
       comment: comment,
       project_uuid: selectedProject!.uuid,
       type: selectedModel,
-      uuid: "",
+      uuid: editTimelog?.uuid,
     });
-
-    if (advanceDate) setSelectedDate((value) => value.plus({ days: 1 }));
-  };
 
   return (
     <>
@@ -84,24 +88,7 @@ export default function InputPerdiem(props: { types: string[] }) {
       </Grid>
 
       {/* Cancel Editing Button */}
-      {/* props.perdiemTimelog.uuid && (
-        <Grid item xs={12} sm={6} md={3} lg={2} sx={{ mt: 1 }}>
-          <Button
-            color="warning"
-            fullWidth
-            size="large"
-            onClick={() => {
-              props.setPerdiemTimelog({ ...props.perdiemTimelog, uuid: null });
-            }}
-            variant="contained"
-            data-testid={`InputPerdiem_cancel_edit-warning-btn`}
-            startIcon={<DoDisturbIcon />}
-          >
-            {t("cancel_edit")}
-          </Button>
-        </Grid>
-          ) */}
-
+      {editTimelog && <CancelEditButton />}
       {/* Submit Buttons */}
       <SubmitButtons submit={submit} />
     </>

@@ -5,16 +5,17 @@ import { useTranslation } from "react-i18next";
 import { useRecoilValue } from "recoil";
 
 import { alertShownInInputState } from "../../atom";
-import { useIsMonthClosed } from "../../atoms/selectedDate";
+import { useIsMonthClosed, useSelectedDate } from "../../atoms/selectedDate";
 
 interface SubmitButtonsProps {
-  submit: (params: { advanceDate: boolean }) => void;
+  submit: () => void;
 }
 const SubmitButtons: FC<SubmitButtonsProps> = ({ submit }) => {
   const { t } = useTranslation();
 
   const isMonthClosed = useIsMonthClosed();
   const alertShownInInput = useRecoilValue(alertShownInInputState);
+  const [, setSelectedDate] = useSelectedDate();
 
   // TODO: debounce buttons
 
@@ -27,7 +28,11 @@ const SubmitButtons: FC<SubmitButtonsProps> = ({ submit }) => {
           variant="contained"
           startIcon={<NoteAdd />}
           type="submit"
-          onClick={() => submit({ advanceDate: true })}
+          onClick={(ev) => {
+            ev.preventDefault();
+            submit();
+            setSelectedDate((date) => date.plus({ days: 1 }));
+          }}
           disabled={isMonthClosed || alertShownInInput}
           data-testid={"InputCard_commit-info-btn_index"}
         >
@@ -39,7 +44,10 @@ const SubmitButtons: FC<SubmitButtonsProps> = ({ submit }) => {
           variant="contained"
           startIcon={<NoteAdd />}
           type="submit"
-          onClick={() => submit({ advanceDate: false })}
+          onClick={(ev) => {
+            ev.preventDefault();
+            submit();
+          }}
           disabled={isMonthClosed || alertShownInInput}
           data-testid={"InputCard_commit-stay_date-btn_index"}
         >
