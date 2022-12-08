@@ -10,13 +10,13 @@ import MoreTimeIcon from "@mui/icons-material/MoreTime";
 import MyLocationIcon from "@mui/icons-material/MyLocation";
 import WorkIcon from "@mui/icons-material/Work";
 import { Box, Button, Card, CardActions, Grid } from "@mui/material";
-import { Duration } from "luxon";
 import { useTranslation } from "react-i18next";
 
 import { fetchDelete } from "../../api";
 import { useEditUUID } from "../../atoms/edit";
 import { useUpdateLogs } from "../../atoms/logs";
 import { DefaultTimelog } from "../../models/internal";
+import { cloneDuration } from "../../utils/DateUtils";
 import OutputChip from "./OutputChip";
 
 interface OutputTimelogsProps {
@@ -43,11 +43,10 @@ export default function OutputTimelogs({
       .catch((errorUpdateLogs) => console.error(errorUpdateLogs));
   };
 
-  // This is a workaround for the fact that luxon does not support deep frozen objects
-  const breaktime = Duration.fromMillis(log.breakTime.toMillis()).toISOTime({
+  const breaktime = cloneDuration(log.breakTime).toISOTime({
     suppressSeconds: true,
   });
-  const traveltime = Duration.fromMillis(log.travelTime.toMillis()).toISOTime({
+  const traveltime = cloneDuration(log.travelTime).toISOTime({
     suppressSeconds: true,
   });
 

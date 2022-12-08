@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import { TimePicker } from "@mui/x-date-pickers";
 import { DateTime } from "luxon";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { useEditTimelog } from "../../atoms/edit";
@@ -19,6 +19,7 @@ import { useProjectShiftModels, useSelectedProject } from "../../atoms/projects"
 import { useSelectedDate } from "../../atoms/selectedDate";
 import { submitShift } from "../../lib";
 import { Incident, Shift } from "../../models/internal";
+import { combineDateTime } from "../../utils/DateUtils";
 import CancelEditButton from "./CancelEditButton";
 import SubmitButtons from "./SubmitButtons";
 
@@ -46,10 +47,10 @@ export default function InputShift() {
   const [selectedModel, setSelectedModel] = useState("");
   const [incidents, setIncidents] = useState<Incident[]>([]);
 
-  const resetInputs = () => {
+  const resetInputs = useCallback(() => {
     setSelectedModel("");
     setIncidents([]);
-  };
+  }, []);
 
   const editTimelog = useEditTimelog() as Shift | null;
   useEffect(() => {
@@ -63,6 +64,8 @@ export default function InputShift() {
       // Editing was cancelled, reset inputs
       resetInputs();
     }
+
+    // disabling exhaustive-deps since working around it is more trouble than it's worth
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editTimelog?.uuid]);
 
@@ -74,7 +77,13 @@ export default function InputShift() {
       endTime: selectedDate,
       project_uuid: selectedProject!.uuid,
       shiftModel: selectedModel,
-      incidents: incidents,
+      incidents: incidents.map((incident) => ({
+        ...incident,
+        // set the year, month and day to the selected date
+        // this is so we don't have to recalculate the times every time the date changes
+        startTime: combineDateTime(selectedDate, incident.startTime),
+        endTime: combineDateTime(selectedDate, incident.endTime),
+      })),
       uuid: editTimelog?.uuid,
     }).then(resetInputs);
 
