@@ -7,8 +7,8 @@ import {
   TextField,
 } from "@mui/material";
 import { TimePicker } from "@mui/x-date-pickers";
-import { DateTime, Duration } from "luxon";
-import { useEffect, useState } from "react";
+import { Duration } from "luxon";
+import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { useEditTimelog } from "../../atoms/edit";
@@ -16,6 +16,7 @@ import { useSelectedProject } from "../../atoms/projects";
 import { useSelectedDate } from "../../atoms/selectedDate";
 import { submitDefaultTimelog } from "../../lib";
 import { DefaultTimelog } from "../../models/internal";
+import { combineDateTime } from "../../utils/DateUtils";
 import CancelEditButton from "./CancelEditButton";
 import SubmitButtons from "./SubmitButtons";
 
@@ -32,14 +33,14 @@ export default function InputDefaultTimelog() {
   const [site, setSite] = useState("remote");
   const [comment, setComment] = useState("");
 
-  const resetInputs = () => {
+  const resetInputs = useCallback(() => {
     setSelectedStartTime(selectedDate);
     setSelectedEndTime(selectedDate);
     setBreakTime(Duration.fromMillis(0));
     setTravelTime(Duration.fromMillis(0));
     setSite("remote");
     setComment("");
-  };
+  }, [selectedDate]);
 
   const editTimelog = useEditTimelog() as DefaultTimelog | null;
   useEffect(() => {
@@ -57,15 +58,17 @@ export default function InputDefaultTimelog() {
       // Editing was cancelled, reset inputs
       resetInputs();
     }
+
+    // disabling exhaustive-deps since working around it is more trouble than it's worth
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editTimelog?.uuid]);
 
-  // TODO: adjust selected start and end time when selected date changes
-
   const submit = () =>
     submitDefaultTimelog({
-      startTime: selectedStartTime,
-      endTime: selectedEndTime,
+      // set the year, month and day to the selected date
+      // this is so we don't have to recalculate the times every time the date changes
+      startTime: combineDateTime(selectedDate, selectedStartTime),
+      endTime: combineDateTime(selectedDate, selectedEndTime),
       breakTime,
       travelTime,
       site,
@@ -87,15 +90,7 @@ export default function InputDefaultTimelog() {
             minutesStep={5}
             onChange={(newValue) => {
               if (newValue) {
-                setSelectedStartTime(
-                  newValue.set({
-                    year: selectedDate.year,
-                    month: selectedDate.month,
-                    day: selectedDate.day,
-                    second: 0,
-                    millisecond: 0,
-                  }),
-                );
+                setSelectedStartTime(newValue);
               }
             }}
             renderInput={(params: any) => <TextField {...params} />}
@@ -114,15 +109,7 @@ export default function InputDefaultTimelog() {
             value={selectedEndTime}
             onChange={(newValue) => {
               if (newValue) {
-                setSelectedEndTime(
-                  newValue.set({
-                    year: selectedDate.year,
-                    month: selectedDate.month,
-                    day: selectedDate.day,
-                    second: 0,
-                    millisecond: 0,
-                  }),
-                );
+                setSelectedEndTime(newValue);
               }
             }}
             renderInput={(params: any) => <TextField {...params} />}

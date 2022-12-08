@@ -61,7 +61,8 @@
       }
     ],
     "react-hooks/rules-of-hooks": "error",
-    "react/react-in-jsx-scope": "off"
+    "react/react-in-jsx-scope": "off",
+    "promise/catch-or-return": ["warn", { "allowFinally": true }]
   },
   "settings": {
     "react": {

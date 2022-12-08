@@ -1,6 +1,6 @@
 import { NoteAdd } from "@mui/icons-material";
 import { Button, Grid } from "@mui/material";
-import { FC } from "react";
+import { FC, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilValue } from "recoil";
 
@@ -8,7 +8,7 @@ import { alertShownInInputState } from "../../atom";
 import { useIsMonthClosed, useSelectedDate } from "../../atoms/selectedDate";
 
 interface SubmitButtonsProps {
-  submit: () => void;
+  submit: () => Promise<void>;
 }
 const SubmitButtons: FC<SubmitButtonsProps> = ({ submit }) => {
   const { t } = useTranslation();
@@ -16,8 +16,7 @@ const SubmitButtons: FC<SubmitButtonsProps> = ({ submit }) => {
   const isMonthClosed = useIsMonthClosed();
   const alertShownInInput = useRecoilValue(alertShownInInputState);
   const [, setSelectedDate] = useSelectedDate();
-
-  // TODO: debounce buttons
+  const [busy, setBusy] = useState(false);
 
   return (
     <>
@@ -30,10 +29,14 @@ const SubmitButtons: FC<SubmitButtonsProps> = ({ submit }) => {
           type="submit"
           onClick={(ev) => {
             ev.preventDefault();
-            submit();
-            setSelectedDate((date) => date.plus({ days: 1 }));
+            submit()
+              .then(() => setSelectedDate((date) => date.plus({ days: 1 })))
+              .catch(() => {
+                // TODO: show error message
+              })
+              .finally(() => setBusy(false));
           }}
-          disabled={isMonthClosed || alertShownInInput}
+          disabled={isMonthClosed || alertShownInInput || busy}
           data-testid={"InputCard_commit-info-btn_index"}
         >
           {t("commit_&_next_day")}
@@ -46,9 +49,14 @@ const SubmitButtons: FC<SubmitButtonsProps> = ({ submit }) => {
           type="submit"
           onClick={(ev) => {
             ev.preventDefault();
-            submit();
+            setBusy(true);
+            submit()
+              .catch(() => {
+                // TODO: show error message
+              })
+              .finally(() => setBusy(false));
           }}
-          disabled={isMonthClosed || alertShownInInput}
+          disabled={isMonthClosed || alertShownInInput || !busy}
           data-testid={"InputCard_commit-stay_date-btn_index"}
         >
           {t("commit_&_same_day")}

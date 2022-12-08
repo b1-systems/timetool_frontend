@@ -12,7 +12,6 @@ import { fetchIsMonthClosed } from "../api";
 const _selectedDate = atom<DateTime>({
   key: "_selectedDate",
   default: DateTime.now(),
-  effects: [() => console.log("_selectedDate effect")],
 });
 // using selector in order to have a custom getter for the atom
 // this way we can ensure the date always has no time of day

@@ -38,7 +38,6 @@ const InputCard = () => {
   useEffect(() => {
     if (editTimelog) {
       setSelectedDate(editTimelog.startTime);
-      console.log(editTimelog.type);
       setSelectedWorktype(editTimelog.type);
     } else {
       setSelectedDate(DateTime.now());

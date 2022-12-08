@@ -6,7 +6,7 @@ import {
   Select,
   TextField,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { useEditTimelog } from "../../atoms/edit";
@@ -27,10 +27,10 @@ export default function InputPerdiem() {
   const [selectedModel, setSelectedModel] = useState(-1);
   const [comment, setComment] = useState("");
 
-  const resetInputs = () => {
+  const resetInputs = useCallback(() => {
     setSelectedModel(-1);
     setComment("");
-  };
+  }, []);
 
   const editTimelog = useEditTimelog() as Perdiem | null;
   useEffect(() => {
@@ -44,6 +44,8 @@ export default function InputPerdiem() {
       // Editing was cancelled, reset inputs
       resetInputs();
     }
+
+    // disabling exhaustive-deps since working around it is more trouble than it's worth
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editTimelog?.uuid]);
 
