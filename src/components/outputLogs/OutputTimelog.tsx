@@ -10,13 +10,13 @@ import MoreTimeIcon from "@mui/icons-material/MoreTime";
 import MyLocationIcon from "@mui/icons-material/MyLocation";
 import WorkIcon from "@mui/icons-material/Work";
 import { Box, Button, Card, CardActions, Grid } from "@mui/material";
-import { DateTime, Duration } from "luxon";
+import { Duration } from "luxon";
 import { useTranslation } from "react-i18next";
 
 import { fetchDelete } from "../../api";
 import { useEditUUID } from "../../atoms/edit";
 import { useUpdateLogs } from "../../atoms/logs";
-import { DefaultTimelog, Timelog } from "../../models";
+import { DefaultTimelog } from "../../models/internal";
 import OutputChip from "./OutputChip";
 
 export default function OutputTimelogs(props: {
@@ -38,28 +38,13 @@ export default function OutputTimelogs(props: {
       .catch((errorUpdateLogs) => console.error(errorUpdateLogs));
   };
 
-  const breaktime =
-    typeof props.log.breaklength === "number" && props.log.breaklength > 0
-      ? new Date(props.log.breaklength * 1000).toISOString().substring(11, 16)
-      : "00:00";
-  const traveltime =
-    typeof props.log.travel === "number" && props.log.travel > 0
-      ? new Date(props.log.travel * 1000).toISOString().substring(11, 16)
-      : "00:00";
-  const worktime =
-    (typeof props.log.end_dt === "number" ? props.log.end_dt : 0) - props.log.start_dt >
-    0
-      ? Duration.fromMillis(
-          ((typeof props.log.end_dt === "number" ? props.log.end_dt : 0) -
-            props.log.start_dt -
-            (props.log.breaklength ? props.log.breaklength : 0)) *
-            1000,
-        ).toISOTime({ suppressSeconds: true })
-      : "00:00";
+  const breaktime = "props.log.breakTime.toISOTime({ suppressSeconds: true });";
+  const traveltime = "props.log.travelTime.toISOTime({ suppressSeconds: true });";
+  const worktime = props.log.startTime
+    .diff(props.log.endTime)
+    .minus(props.log.breakTime)
+    .toFormat("hh:mm");
 
-  const editHandler = (log: Timelog) => {
-    setEditUUID(log.uuid);
-  };
   return (
     <Card
       elevation={0}
@@ -88,7 +73,7 @@ export default function OutputTimelogs(props: {
                 index={props.index}
                 heading={t("keypoint.date")}
                 Icon={<EventIcon sx={{ width: 18, height: 18, color: "white" }} />}
-                text={new Date(props.log.start_dt * 1000).toLocaleDateString("de-DE")}
+                text={props.log.startTime.toJSDate().toLocaleDateString("de-DE")}
               />
               <OutputChip
                 lg={2}
@@ -99,23 +84,21 @@ export default function OutputTimelogs(props: {
                     sx={{ width: 18, height: 18, color: "white" }}
                   />
                 }
-                text={props.log.project_name}
+                text={props.log.project_name || props.log.project_uuid}
               />
               <OutputChip
                 lg={1}
                 index={props.index}
                 heading={t("keypoint.from")}
                 Icon={<AccessTimeIcon sx={{ width: 18, height: 18, color: "white" }} />}
-                text={DateTime.fromSeconds(props.log.start_dt).toFormat("T")}
+                text={props.log.startTime.toFormat("T")}
               />
               <OutputChip
                 lg={1}
                 index={props.index}
                 heading={t("keypoint.to")}
                 Icon={<MoreTimeIcon sx={{ width: 18, height: 18, color: "white" }} />}
-                text={DateTime.fromSeconds(
-                  typeof props.log.end_dt === "number" ? props.log.end_dt : 0,
-                ).toFormat("T")}
+                text={props.log.endTime.toFormat("T")}
               />
               <OutputChip
                 lg={3}
@@ -129,14 +112,14 @@ export default function OutputTimelogs(props: {
                 index={props.index}
                 heading={t("keypoint.onsite")}
                 Icon={<MyLocationIcon sx={{ width: 18, height: 18, color: "white" }} />}
-                text={props.log.onsite || "unkown"}
+                text={props.log.site || "unkown"}
               />
               <OutputChip
                 lg={1}
                 index={props.index}
                 heading={t("keypoint.times_work")}
                 Icon={<WorkIcon sx={{ width: 18, height: 18, color: "white" }} />}
-                text={`${worktime}`}
+                text={worktime}
               />
               <OutputChip
                 lg={1}
@@ -145,14 +128,14 @@ export default function OutputTimelogs(props: {
                 Icon={
                   <FreeBreakfastIcon sx={{ width: 18, height: 18, color: "white" }} />
                 }
-                text={`${breaktime}`}
+                text={breaktime}
               />
               <OutputChip
                 lg={1}
                 index={props.index}
                 heading={t("keypoint.times_travel")}
                 Icon={<FlightIcon sx={{ width: 18, height: 18, color: "white" }} />}
-                text={`${traveltime}`}
+                text={traveltime}
               />
             </Grid>
           </Box>
@@ -165,7 +148,7 @@ export default function OutputTimelogs(props: {
               color="warning"
               size="small"
               variant="contained"
-              onClick={() => editHandler(props.log)}
+              onClick={() => setEditUUID(props.log.uuid)}
               data-testid={`OutputTimelog_edit-warning-btn_index-${props.index}`}
             >
               <EditIcon />

@@ -11,7 +11,7 @@ import { fetchDelete } from "../../api";
 import { useEditUUID } from "../../atoms/edit";
 import { useUpdateLogs } from "../../atoms/logs";
 import { usePerdiemModels } from "../../atoms/projects";
-import { Perdiem, Timelog } from "../../models";
+import { Perdiem } from "../../models/internal";
 import OutputChip from "./OutputChip";
 
 export default function OutputPerdiem(props: {
@@ -50,10 +50,6 @@ export default function OutputPerdiem(props: {
       .catch((errorUpdateLogs) => console.error(errorUpdateLogs));
   };
 
-  const editHandler = (log: Timelog) => {
-    setEditUUID(log.uuid);
-  };
-
   return (
     <Card
       elevation={0}
@@ -82,7 +78,7 @@ export default function OutputPerdiem(props: {
                 index={props.index}
                 heading={t("keypoint.date")}
                 Icon={<EventIcon sx={{ width: 18, height: 18, color: "white" }} />}
-                text={new Date(props.log.start_dt * 1000).toLocaleDateString("de-DE")}
+                text={props.log.startTime.toJSDate().toLocaleDateString("de-DE")}
               />
               <OutputChip
                 lg={3}
@@ -93,7 +89,7 @@ export default function OutputPerdiem(props: {
                     sx={{ width: 18, height: 18, color: "white" }}
                   />
                 }
-                text={props.log.project_name}
+                text={props.log.project_name || props.log.project_uuid}
               />
               <OutputChip
                 lg={3}
@@ -123,7 +119,7 @@ export default function OutputPerdiem(props: {
               color="warning"
               size="small"
               variant="contained"
-              onClick={() => editHandler(props.log)}
+              onClick={() => setEditUUID(props.log.uuid)}
               data-testid={`OutputPerdiem_edit-warning-btn_index-${props.index}`}
             >
               <EditIcon />

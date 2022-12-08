@@ -9,7 +9,7 @@ import {
 } from "recoil";
 
 import { fetchProjects } from "../api";
-import { Project } from "../models";
+import { Project } from "../models/common";
 import { selectedMonth } from "./selectedDate";
 
 const availableProjects = selector<Project[]>({
@@ -93,6 +93,18 @@ export const useShiftModels = () => {
   return useRecoilValue(shiftModels);
 };
 
+const projectShiftModels = selector({
+  key: "projectShiftModels",
+  get: ({ get }) => {
+    const models = get(shiftModels);
+    const project = get(selectedProject);
+    return project ? models.get(project?.uuid) : null;
+  },
+});
+export const useProjectShiftModels = () => {
+  return useRecoilValue(projectShiftModels);
+};
+
 export const perdiemModels = selector({
   key: "perdiemModels",
   get: ({ get }) => {
@@ -114,7 +126,7 @@ export const projectPerdiemModels = selector({
   get: ({ get }) => {
     const models = get(perdiemModels);
     const project = get(selectedProject);
-    return project ? models.get(project?.uuid) : undefined;
+    return project ? models.get(project?.uuid) : null;
   },
 });
 export const useProjectPerdiemModels = () => {

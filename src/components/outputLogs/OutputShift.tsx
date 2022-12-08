@@ -18,7 +18,7 @@ import { fetchDelete } from "../../api";
 import { useEditUUID } from "../../atoms/edit";
 import { useUpdateLogs } from "../../atoms/logs";
 import { useShiftModels } from "../../atoms/projects";
-import { Shift, Timelog } from "../../models";
+import { Shift } from "../../models/internal";
 import OutputChip from "./OutputChip";
 
 export default function OutputShift(props: {
@@ -61,10 +61,6 @@ export default function OutputShift(props: {
       .catch((errorUpdateLogs) => console.error(errorUpdateLogs));
   };
 
-  const editHandler = (log: Timelog) => {
-    setEditUUID(log.uuid);
-  };
-
   return (
     <Card
       elevation={0}
@@ -92,7 +88,7 @@ export default function OutputShift(props: {
                 index={props.index}
                 heading={t("keypoint.date")}
                 Icon={<EventIcon sx={{ width: 18, height: 18, color: "white" }} />}
-                text={new Date(props.log.start_dt * 1000).toLocaleDateString("de-DE")}
+                text={props.log.startTime.toJSDate().toLocaleDateString("de-DE")}
               />
               <OutputChip
                 lg={4}
@@ -110,7 +106,7 @@ export default function OutputShift(props: {
                 index={props.index}
                 heading={t("keypoint.type")}
                 Icon={<NightsStayIcon sx={{ width: 18, height: 18, color: "white" }} />}
-                text={shiftModelHandler(props.log.project_uuid, props.log.shift_model)}
+                text={shiftModelHandler(props.log.project_uuid, props.log.shiftModel)}
               />
               <OutputChip
                 index={props.index}
@@ -152,11 +148,9 @@ export default function OutputShift(props: {
                                   sx={{ width: 18, height: 18, color: "white" }}
                                 />
                               }
-                              text={`${DateTime.fromSeconds(
-                                incident.start_dt,
-                              ).toISODate()} ${DateTime.fromSeconds(
-                                incident.start_dt,
-                              ).toFormat("HH':'mm':'ss")}`}
+                              text={`${incident.startTime.toISODate()} ${incident.startTime.toFormat(
+                                "HH':'mm':'ss",
+                              )}`}
                             />
                             <OutputChip
                               md={4}
@@ -168,11 +162,9 @@ export default function OutputShift(props: {
                                   sx={{ width: 18, height: 18, color: "white" }}
                                 />
                               }
-                              text={`${DateTime.fromSeconds(
-                                incident.end_dt,
-                              ).toISODate()} ${DateTime.fromSeconds(
-                                incident.end_dt,
-                              ).toFormat("HH':'mm':'ss")}`}
+                              text={`${incident.endTime.toISODate()} ${incident.endTime.toFormat(
+                                "HH':'mm':'ss",
+                              )}`}
                             />
 
                             <OutputChip
@@ -221,7 +213,7 @@ export default function OutputShift(props: {
               color="warning"
               size="small"
               variant="contained"
-              onClick={() => editHandler(props.log)}
+              onClick={() => setEditUUID(props.log.uuid)}
               data-testid={`OutputShift_edit-warning-btn_index-${props.index}`}
             >
               <EditIcon />

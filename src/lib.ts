@@ -2,121 +2,108 @@ import { DateTime } from "luxon";
 import { v4 as uuidv4 } from "uuid";
 
 import { fetchSubmit } from "./api";
-import { Incident, Timelog, isShift, isTimelog } from "./models";
+import { DefaultTimelog, Incident, Perdiem, Shift } from "./models/internal";
 
-export const handleSubmit = async (timelog: Timelog) => {
-  if (timelog) {
-    const commonData = {
-      uuid: timelog.uuid || uuidv4(),
-      project_uuid: timelog.project_uuid,
-      start_dt: timelog.start_dt,
-      timezone: window.Intl.DateTimeFormat().resolvedOptions().timeZone,
-    };
-    let submitData;
-    let incidentsChecked: Incident[] = [];
-    if (isShift(timelog)) {
-      let overZero = false;
-      let lastTimeChecked = -1;
-      timelog.incidents.forEach((incident) => {
-        if (lastTimeChecked !== -1) {
-          if (lastTimeChecked > incident.start_dt) {
-            overZero = true;
-          }
-        }
-        if (!overZero) {
-          if (incident.end_dt < incident.start_dt) {
-            incidentsChecked.push({
-              start_dt: incident.start_dt,
-              end_dt:
-                DateTime.fromSeconds(incident.end_dt).plus({ days: 1 }).valueOf() /
-                1000,
-              comment: incident.comment,
-            });
-            lastTimeChecked = incident.end_dt;
-            overZero = true;
-          } else {
-            incidentsChecked.push(incident);
-            lastTimeChecked = incident.end_dt;
-          }
-        } else {
-          incidentsChecked.push({
-            start_dt:
-              DateTime.fromSeconds(incident.start_dt).plus({ days: 1 }).valueOf() /
-              1000,
-            end_dt:
-              DateTime.fromSeconds(incident.end_dt).plus({ days: 1 }).valueOf() / 1000,
-            comment: incident.comment,
-          });
-        }
-      });
-      submitData = {
-        ...commonData,
-        end_dt: Math.round(
-          DateTime.fromSeconds(timelog.start_dt)
-            .set({ hour: 23, minute: 59 })
-            .valueOf() / 1000,
-        ),
-        type: "shift",
-        incidents: incidentsChecked,
-        shift_model: timelog.shift_model,
-      };
-      overZero = false;
-    } else if (isTimelog(timelog)) {
-      submitData = {
-        ...commonData,
-        end_dt: timelog.end_dt,
-        type: "default",
-        breakTime: timelog.breaklength,
-        travelTime: timelog.travel,
-        comment: timelog.comment,
-        onsite: timelog.onsite,
-      };
-    } else {
-      throw new Error("not a valid submit");
-    }
-    fetchSubmit(submitData).catch((errorNoSubmit: any) => console.error(errorNoSubmit));
-  }
-};
+type PartialPick<T, F extends keyof T> = Omit<T, F> & Partial<Pick<T, F>>;
 
-interface Perdiem {
-  uuid?: string | null;
-  project_uuid: string;
-  start_dt: number;
-  type: number;
-  comment: string;
-}
-export interface Shift {
-  uuid?: string | null;
-  project_uuid: string;
-  start_dt: number;
-  end_dt: number;
-  type: "shift";
-  incidents: Incident[];
-  shift_model: string;
-}
-
-export const submitPerdiem = (timelog: Perdiem) =>
+type PartialPerdiem = PartialPick<Perdiem, "uuid" | "employee_uuid" | "project_name">;
+export const submitPerdiem = (timelog: PartialPerdiem) =>
   fetchSubmit({
-    ...timelog,
-    uuid: timelog.uuid || uuidv4(),
     is_perdiem: true,
+    uuid: timelog.uuid || uuidv4(),
     timezone: window.Intl.DateTimeFormat().resolvedOptions().timeZone,
+    project_uuid: timelog.project_uuid,
+    start_dt: timelog.startTime.toSeconds(),
+    type: timelog.type,
+    comment: timelog.comment,
   });
 
-export interface DefaultTimelog {
-  uuid?: string | null;
-  project_uuid: string;
-  start_dt: number;
-  end_dt: number;
-  breakTime: number;
-  travelTime: number;
-  comment: string;
-  onsite: string;
-}
-export const submitDefaultTimelog = (timelog: DefaultTimelog) =>
+type PartialDefaultTimelog = PartialPick<
+  DefaultTimelog,
+  "type" | "uuid" | "employee_uuid" | "project_name"
+>;
+export const submitDefaultTimelog = (timelog: PartialDefaultTimelog) =>
   fetchSubmit({
-    ...timelog,
     type: "default",
     uuid: timelog.uuid || uuidv4(),
     timezone: window.Intl.DateTimeFormat().resolvedOptions().timeZone,
+    project_uuid: timelog.project_uuid,
+    start_dt: timelog.startTime.toSeconds(),
+    end_dt: timelog.endTime.toSeconds(),
+    breakTime: timelog.breakTime.as("minutes"),
+    travelTime: timelog.travelTime.as("minutes"),
+    comment: timelog.comment,
+    onsite: timelog.site,
   });
+
+type PartialShift = PartialPick<
+  Shift,
+  "type" | "uuid" | "employee_uuid" | "project_name" | "endTime"
+>;
+export const submitShift = (timelog: PartialShift) => {
+  let incidentsChecked: Incident[] = [];
+  let lastTimeChecked = DateTime.fromMillis(-1);
+
+  // Add the year, month, and day to the incidents
+  const incidentsWithDate = timelog.incidents.map((incident) => ({
+    ...incident,
+    startTime: incident.startTime.set({
+      year: timelog.startTime.year,
+      month: timelog.startTime.month,
+      day: timelog.startTime.day,
+    }),
+    endTime: incident.endTime.set({
+      year: timelog.startTime.year,
+      month: timelog.startTime.month,
+      day: timelog.startTime.day,
+    }),
+  }));
+
+  for (let incident of incidentsWithDate) {
+    let overZero = false;
+    if (lastTimeChecked.toMillis() !== -1) {
+      if (lastTimeChecked > incident.startTime) {
+        overZero = true;
+      }
+    }
+
+    if (!overZero) {
+      if (incident.endTime < incident.startTime) {
+        // Roll over to next if end time is before start time
+        incidentsChecked.push({
+          startTime: incident.startTime,
+          endTime: incident.endTime.plus({ days: 1 }),
+          comment: incident.comment,
+        });
+        lastTimeChecked = incident.endTime;
+        overZero = true;
+      } else {
+        // Otherwise, just add the incident
+        incidentsChecked.push(incident);
+        lastTimeChecked = incident.endTime;
+      }
+    } else {
+      // If we've already rolled over, add the incident to the next day
+      incidentsChecked.push({
+        startTime: incident.startTime.plus({ days: 1 }),
+        endTime: incident.endTime.plus({ days: 1 }),
+        comment: incident.comment,
+      });
+    }
+  }
+
+  return fetchSubmit({
+    type: "shift",
+    uuid: timelog.uuid || uuidv4(),
+    timezone: window.Intl.DateTimeFormat().resolvedOptions().timeZone,
+    project_uuid: timelog.project_uuid,
+    start_dt: timelog.startTime.toSeconds(),
+    end_dt: timelog.startTime.endOf("day").toSeconds(),
+    shift_model: timelog.shiftModel,
+    incidents: incidentsChecked.map((incident) => ({
+      start_dt: incident.startTime.toSeconds(),
+      end_dt: incident.endTime.toSeconds(),
+      comment: incident.comment,
+    })),
+  });
+};

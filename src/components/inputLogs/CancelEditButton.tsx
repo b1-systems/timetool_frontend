@@ -8,8 +8,6 @@ const CancelEditButton = () => {
   const { t } = useTranslation();
   const [editUUID, setEditUUID] = useEditUUID();
 
-  // TODO: debounce buttons
-
   return (
     <>
       <Grid item xs={12} sm={6} md={3} lg={2} sx={{ mt: 1 }}>
