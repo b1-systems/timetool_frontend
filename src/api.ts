@@ -112,12 +112,13 @@ export const fetchProjects = async (
 const toInternalLog = (log: ResponseTimelog): Timelog => {
   if (isPerdiem(log)) {
     return {
+      type: "perdiem",
       uuid: log.uuid,
       employee_uuid: log.employee_uuid,
       project_uuid: log.project_uuid,
       project_name: log.project_name,
       startTime: DateTime.fromSeconds(log.start_dt),
-      type: log.type,
+      perdiemModel: log.type,
       comment: log.comment,
     };
   }

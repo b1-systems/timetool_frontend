@@ -19,7 +19,7 @@ import { DefaultTimelog } from "../../models/internal";
 import CancelEditButton from "./CancelEditButton";
 import SubmitButtons from "./SubmitButtons";
 
-export default function InputDefaultTimelog(props: { types: string[] }) {
+export default function InputDefaultTimelog() {
   const { t } = useTranslation();
 
   const [selectedProject] = useSelectedProject();
@@ -31,6 +31,15 @@ export default function InputDefaultTimelog(props: { types: string[] }) {
   const [travelTime, setTravelTime] = useState(Duration.fromMillis(0));
   const [site, setSite] = useState("remote");
   const [comment, setComment] = useState("");
+
+  const resetInputs = () => {
+    setSelectedStartTime(selectedDate);
+    setSelectedEndTime(selectedDate);
+    setBreakTime(Duration.fromMillis(0));
+    setTravelTime(Duration.fromMillis(0));
+    setSite("remote");
+    setComment("");
+  };
 
   const editTimelog = useEditTimelog() as DefaultTimelog | null;
   useEffect(() => {
@@ -45,13 +54,8 @@ export default function InputDefaultTimelog(props: { types: string[] }) {
       setSite(editTimelog.site);
       setComment(editTimelog.comment);
     } else {
-      // Editing was cancelled, clear inputs
-      setSelectedStartTime(selectedDate);
-      setSelectedEndTime(selectedDate);
-      setBreakTime(Duration.fromMillis(0));
-      setTravelTime(Duration.fromMillis(0));
-      setSite("remote");
-      setComment("");
+      // Editing was cancelled, reset inputs
+      resetInputs();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editTimelog?.uuid]);
@@ -68,7 +72,7 @@ export default function InputDefaultTimelog(props: { types: string[] }) {
       comment: comment,
       project_uuid: selectedProject!.uuid,
       uuid: editTimelog?.uuid,
-    });
+    }).then(resetInputs);
 
   return (
     <>

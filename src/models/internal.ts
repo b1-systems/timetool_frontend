@@ -1,6 +1,7 @@
 import { DateTime, Duration } from "luxon";
 
 interface TimelogBase {
+  type: string;
   uuid: string | null;
   employee_uuid: string | null;
   project_uuid: string;
@@ -12,7 +13,8 @@ interface TimelogWithEndTime extends TimelogBase {
 }
 
 export interface Perdiem extends TimelogBase {
-  type: number;
+  type: "perdiem";
+  perdiemModel: number;
   comment: string;
 }
 
@@ -23,8 +25,8 @@ export interface Incident {
 }
 export interface Shift extends TimelogWithEndTime {
   type: "shift";
-  incidents: Incident[];
   shiftModel: string;
+  incidents: Incident[];
 }
 
 export interface DefaultTimelog extends TimelogWithEndTime {
@@ -42,7 +44,7 @@ export interface Logs {
 }
 
 export const isPerdiem = (timelog: Timelog): timelog is Perdiem =>
-  typeof timelog?.type === "number";
+  timelog?.type === "perdiem";
 export const isDefaultTimelog = (timelog: Timelog): timelog is DefaultTimelog =>
   timelog?.type === "timelog";
 export const isShift = (timelog: Timelog): timelog is Shift =>

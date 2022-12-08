@@ -37,7 +37,7 @@ const spliceOOP = <T extends unknown>(
   ...insertElements: T[]
 ) => array.slice(0, index).concat(insertElements, array.slice(index + deleteCount));
 
-export default function InputShift(props: { types: string[] }) {
+export default function InputShift() {
   const { t } = useTranslation();
   const [selectedProject] = useSelectedProject();
   const projectShiftModels = useProjectShiftModels();
@@ -45,6 +45,11 @@ export default function InputShift(props: { types: string[] }) {
   const [selectedDate] = useSelectedDate();
   const [selectedModel, setSelectedModel] = useState("");
   const [incidents, setIncidents] = useState<Incident[]>([]);
+
+  const resetInputs = () => {
+    setSelectedModel("");
+    setIncidents([]);
+  };
 
   const editTimelog = useEditTimelog() as Shift | null;
   useEffect(() => {
@@ -55,9 +60,8 @@ export default function InputShift(props: { types: string[] }) {
       setSelectedModel(editTimelog.shiftModel);
       setIncidents(editTimelog.incidents);
     } else {
-      // Editing was cancelled, clear inputs
-      setSelectedModel("");
-      setIncidents([]);
+      // Editing was cancelled, reset inputs
+      resetInputs();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editTimelog?.uuid]);
@@ -72,7 +76,7 @@ export default function InputShift(props: { types: string[] }) {
       shiftModel: selectedModel,
       incidents: incidents,
       uuid: editTimelog?.uuid,
-    });
+    }).then(resetInputs);
 
   const addHandler = () => {
     setIncidents((currentIncidents) => [
