@@ -8,7 +8,7 @@ import {
 } from "recoil";
 
 import { fetchCurrentMonthLogs } from "../api";
-import { Logs, Timelog } from "../models";
+import { Logs, Timelog } from "../models/internal";
 import { selectedMonth } from "./selectedDate";
 
 export const logsRequestTime = atom({

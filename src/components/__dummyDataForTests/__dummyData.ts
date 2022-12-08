@@ -1,4 +1,5 @@
-import { Logs, Project } from "../../models";
+import { Project } from "../../models/common";
+import { LogsResponse } from "../../models/external";
 
 export const projectsListEmpty: Project[] = [];
 export const projectsListOneShift: Project[] = [
@@ -65,11 +66,11 @@ export const projectsList: Project[] = [
     },
   },
 ];
-export const timelogsEmpty: Logs = {
+export const timelogsEmpty: LogsResponse = {
   timelogs: [],
   perdiems: [],
 };
-export const timelogs: Logs = {
+export const timelogs: LogsResponse = {
   timelogs: [
     {
       uuid: "ba7ac69f-3a1f-483d-8a0a-ef240a192e51",
@@ -79,8 +80,8 @@ export const timelogs: Logs = {
       start_dt: 1640995800,
       end_dt: 1641000000,
       type: "default",
-      breaklength: 60,
-      travel: 120,
+      breakTime: 60,
+      travelTime: 120,
       comment: "1",
       onsite: "remote",
     },
@@ -92,8 +93,8 @@ export const timelogs: Logs = {
       start_dt: 1641600600,
       end_dt: 1641604800,
       type: "default",
-      breaklength: 0,
-      travel: 0,
+      breakTime: 0,
+      travelTime: 0,
       comment: "1",
       onsite: "remote",
     },
@@ -112,15 +113,5 @@ export const timelogs: Logs = {
       ],
     },
   ],
-  perdiems: [
-    {
-      uuid: "fea39fbb-2798-429f-b0f8-22c83a6ec219",
-      employee_uuid: "61efa3d2-9bb4-4380-883e-0121ac150003",
-      project_uuid: "61e6bc30-a448-4366-9f96-0106ac120003",
-      project_name: "Demo Project 2",
-      start_dt: 1641078000,
-      type: 1,
-      comment: "testMePerdiem",
-    },
-  ],
+  perdiems: [],
 };

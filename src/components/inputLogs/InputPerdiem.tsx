@@ -13,7 +13,7 @@ import { useEditTimelog } from "../../atoms/edit";
 import { useProjectPerdiemModels, useSelectedProject } from "../../atoms/projects";
 import { useSelectedDate } from "../../atoms/selectedDate";
 import { submitPerdiem } from "../../lib";
-import { Perdiem } from "../../models";
+import { Perdiem } from "../../models/internal";
 import CancelEditButton from "./CancelEditButton";
 import SubmitButtons from "./SubmitButtons";
 
@@ -43,9 +43,11 @@ export default function InputPerdiem(props: { types: string[] }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editTimelog?.uuid]);
 
+  // TODO: default to first perdiem model if only one is available
+
   const submit = () =>
     submitPerdiem({
-      start_dt: selectedDate.toSeconds() | 0,
+      startTime: selectedDate,
       comment: comment,
       project_uuid: selectedProject!.uuid,
       type: selectedModel,

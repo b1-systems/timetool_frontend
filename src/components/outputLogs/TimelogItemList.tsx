@@ -17,7 +17,7 @@ import { useTranslation } from "react-i18next";
 import { useRecoilValue } from "recoil";
 
 import { currentMonthLogsPerdiems, currentMonthLogsTimelogs } from "../../atoms/logs";
-import { isPerdiem, isShift, isTimelog } from "../../models";
+import { isDefaultTimelog, isPerdiem, isShift } from "../../models/internal";
 import OutputPerdiem from "./OutputPerdiem";
 import OutputShift from "./OutputShift";
 import OutputTimelogs from "./OutputTimelog";
@@ -31,23 +31,23 @@ export default function InputCard(props: {
   const [perdiemsVisible, setPerdiemsVisible] = useState<boolean>(true);
   const [shiftsVisible, setShiftsVisible] = useState<boolean>(true);
 
-  const oldTimelogs = useRecoilValue(currentMonthLogsTimelogs);
-  const oldPerdiems = useRecoilValue(currentMonthLogsPerdiems);
+  const unsortedDefaultTimelogs = useRecoilValue(currentMonthLogsTimelogs);
+  const unsortedPerdiems = useRecoilValue(currentMonthLogsPerdiems);
 
-  let defaultTimelogs = oldTimelogs
-    .filter((log) => (log ? log.type === "default" : []))
+  let defaultTimelogs = unsortedDefaultTimelogs
+    .filter((log) => (log ? log.type === "timelog" : []))
     .sort(function (x, y) {
-      return x.start_dt - y.start_dt;
+      return x.startTime.toMillis() - y.startTime.toMillis();
     });
 
-  let shiftTimelogs = oldTimelogs
+  let shiftTimelogs = unsortedDefaultTimelogs
     .filter((log) => (log ? log.type === "shift" : []))
     .sort(function (x, y) {
-      return x.start_dt - y.start_dt;
+      return x.startTime.toMillis() - y.startTime.toMillis();
     });
 
-  let perdiems = oldPerdiems.sort(function (x, y) {
-    return x.start_dt - y.start_dt;
+  let perdiems = unsortedPerdiems.sort(function (x, y) {
+    return x.startTime.toMillis() - y.startTime.toMillis();
   });
   return (
     <Card elevation={0} sx={{ border: 1, borderColor: "grey.300", ml: 1, mr: 1 }}>
@@ -72,7 +72,7 @@ export default function InputCard(props: {
             <Collapse orientation="vertical" in={timelogsVisible}>
               {defaultTimelogs.map((log, index) => (
                 <Box sx={{ p: 0, mt: 1, mb: 1 }} key={log.uuid}>
-                  {isTimelog(log) && (
+                  {isDefaultTimelog(log) && (
                     <OutputTimelogs
                       monthIsClosed={props.monthIsClosed}
                       log={log}

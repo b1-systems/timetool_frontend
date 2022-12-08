@@ -7,7 +7,7 @@ import {
   TextField,
 } from "@mui/material";
 import { TimePicker } from "@mui/x-date-pickers";
-import { DateTime } from "luxon";
+import { DateTime, Duration } from "luxon";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -15,7 +15,7 @@ import { useEditTimelog } from "../../atoms/edit";
 import { useSelectedProject } from "../../atoms/projects";
 import { useSelectedDate } from "../../atoms/selectedDate";
 import { submitDefaultTimelog } from "../../lib";
-import { DefaultTimelog } from "../../models";
+import { DefaultTimelog } from "../../models/internal";
 import CancelEditButton from "./CancelEditButton";
 import SubmitButtons from "./SubmitButtons";
 
@@ -27,8 +27,8 @@ export default function InputDefaultTimelog(props: { types: string[] }) {
   const [selectedDate] = useSelectedDate();
   const [selectedStartTime, setSelectedStartTime] = useState(selectedDate);
   const [selectedEndTime, setSelectedEndTime] = useState(selectedDate);
-  const [breakTime, setBreakTime] = useState(0);
-  const [travelTime, setTravelTime] = useState(0);
+  const [breakTime, setBreakTime] = useState(Duration.fromMillis(0));
+  const [travelTime, setTravelTime] = useState(Duration.fromMillis(0));
   const [site, setSite] = useState("remote");
   const [comment, setComment] = useState("");
 
@@ -38,18 +38,18 @@ export default function InputDefaultTimelog(props: { types: string[] }) {
     // or editing is cancelled
     // change the input values accordingly
     if (editTimelog) {
-      setSelectedStartTime(DateTime.fromSeconds(editTimelog.start_dt));
-      setSelectedEndTime(DateTime.fromSeconds(editTimelog.end_dt));
-      setBreakTime(editTimelog.breaklength);
-      setTravelTime(editTimelog.travel);
-      setSite(editTimelog.onsite);
+      setSelectedStartTime(editTimelog.startTime);
+      setSelectedEndTime(editTimelog.endTime);
+      setBreakTime(editTimelog.breakTime);
+      setTravelTime(editTimelog.travelTime);
+      setSite(editTimelog.site);
       setComment(editTimelog.comment);
     } else {
       // Editing was cancelled, clear inputs
       setSelectedStartTime(selectedDate);
       setSelectedEndTime(selectedDate);
-      setBreakTime(0);
-      setTravelTime(0);
+      setBreakTime(Duration.fromMillis(0));
+      setTravelTime(Duration.fromMillis(0));
       setSite("remote");
       setComment("");
     }
@@ -60,11 +60,11 @@ export default function InputDefaultTimelog(props: { types: string[] }) {
 
   const submit = () =>
     submitDefaultTimelog({
-      start_dt: selectedStartTime.toSeconds() | 0,
-      end_dt: selectedEndTime.toSeconds() | 0,
+      startTime: selectedStartTime,
+      endTime: selectedEndTime,
       breakTime,
       travelTime,
-      onsite: site,
+      site,
       comment: comment,
       project_uuid: selectedProject!.uuid,
       uuid: editTimelog?.uuid,
@@ -80,6 +80,7 @@ export default function InputDefaultTimelog(props: { types: string[] }) {
             value={selectedStartTime}
             ampm={false}
             ampmInClock={false}
+            minutesStep={5}
             onChange={(newValue) => {
               if (newValue) {
                 setSelectedStartTime(
@@ -105,6 +106,7 @@ export default function InputDefaultTimelog(props: { types: string[] }) {
             label={t("to")}
             ampm={false}
             ampmInClock={false}
+            minutesStep={5}
             value={selectedEndTime}
             onChange={(newValue) => {
               if (newValue) {
@@ -129,8 +131,10 @@ export default function InputDefaultTimelog(props: { types: string[] }) {
         <TextField
           fullWidth
           label={t("break_time_(minutes)")}
-          value={breakTime}
-          onChange={(e) => setBreakTime(parseInt(e.target.value))}
+          value={breakTime.as("minutes")}
+          onChange={(e) =>
+            setBreakTime(Duration.fromObject({ minutes: parseInt(e.target.value) }))
+          }
           type="number"
           inputProps={{ min: "0", max: "1000" }}
         />
@@ -141,8 +145,10 @@ export default function InputDefaultTimelog(props: { types: string[] }) {
         <TextField
           fullWidth
           label={t("travel_time_(minutes)")}
-          value={travelTime}
-          onChange={(e) => setTravelTime(parseInt(e.target.value))}
+          value={travelTime.as("minutes")}
+          onChange={(e) =>
+            setTravelTime(Duration.fromObject({ minutes: parseInt(e.target.value) }))
+          }
           type="number"
           inputProps={{ min: "0" }}
         />

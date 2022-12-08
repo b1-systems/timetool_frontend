@@ -21,6 +21,7 @@ import { useIsMonthClosed, useSelectedDate } from "../../atoms/selectedDate";
 import { useProjectWorktypes } from "../../atoms/worktype";
 import InputDefaultTimelog from "./InputDefaultTimelog";
 import InputPerdiem from "./InputPerdiem";
+import InputShift from "./InputShift";
 
 const InputCard = () => {
   const { t } = useTranslation();
@@ -33,7 +34,6 @@ const InputCard = () => {
   const projectWorktypes = useProjectWorktypes();
   const [selectedWorktype, setSelectedWorktype] = useState<string>("");
   useEffect(() => {
-    console.log("effect projectWorktypes");
     if (projectWorktypes?.length) {
       if (!projectWorktypes.includes(selectedWorktype!))
         setSelectedWorktype(projectWorktypes[0]);
@@ -43,7 +43,7 @@ const InputCard = () => {
   const editTimelog = useEditTimelog();
   useEffect(() => {
     if (editTimelog) {
-      setSelectedDate(DateTime.fromSeconds(editTimelog.start_dt));
+      setSelectedDate(editTimelog.startTime);
     } else {
       setSelectedDate(DateTime.now());
     }
@@ -131,6 +131,7 @@ const InputCard = () => {
               {selectedWorktype === "perdiem" && (
                 <InputPerdiem types={projectWorktypes!} />
               )}
+              {selectedWorktype === "shift" && <InputShift types={projectWorktypes!} />}
             </Grid>
           )}
         </CardContent>
