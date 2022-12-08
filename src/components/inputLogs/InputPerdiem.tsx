@@ -17,7 +17,7 @@ import { Perdiem } from "../../models/internal";
 import CancelEditButton from "./CancelEditButton";
 import SubmitButtons from "./SubmitButtons";
 
-export default function InputPerdiem(props: { types: string[] }) {
+export default function InputPerdiem() {
   const { t } = useTranslation();
 
   const [selectedProject] = useSelectedProject();
@@ -27,18 +27,22 @@ export default function InputPerdiem(props: { types: string[] }) {
   const [selectedModel, setSelectedModel] = useState(-1);
   const [comment, setComment] = useState("");
 
+  const resetInputs = () => {
+    setSelectedModel(-1);
+    setComment("");
+  };
+
   const editTimelog = useEditTimelog() as Perdiem | null;
   useEffect(() => {
     // if the uuid is changed
     // or editing is cancelled
     // change the input values accordingly
     if (editTimelog) {
-      setSelectedModel(editTimelog.type);
+      setSelectedModel(editTimelog.perdiemModel);
       setComment(editTimelog.comment);
     } else {
-      // Editing was cancelled, clear inputs
-      setSelectedModel(-1);
-      setComment("");
+      // Editing was cancelled, reset inputs
+      resetInputs();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editTimelog?.uuid]);
@@ -50,9 +54,9 @@ export default function InputPerdiem(props: { types: string[] }) {
       startTime: selectedDate,
       comment: comment,
       project_uuid: selectedProject!.uuid,
-      type: selectedModel,
+      perdiemModel: selectedModel,
       uuid: editTimelog?.uuid,
-    });
+    }).then(resetInputs);
 
   return (
     <>

@@ -35,13 +35,13 @@ export default function InputCard(props: {
   const unsortedPerdiems = useRecoilValue(currentMonthLogsPerdiems);
 
   let defaultTimelogs = unsortedDefaultTimelogs
-    .filter((log) => (log ? log.type === "timelog" : []))
+    .filter((log) => (log ? isDefaultTimelog(log) : []))
     .sort(function (x, y) {
       return x.startTime.toMillis() - y.startTime.toMillis();
     });
 
   let shiftTimelogs = unsortedDefaultTimelogs
-    .filter((log) => (log ? log.type === "shift" : []))
+    .filter((log) => (log ? isShift(log) : []))
     .sort(function (x, y) {
       return x.startTime.toMillis() - y.startTime.toMillis();
     });
@@ -49,6 +49,7 @@ export default function InputCard(props: {
   let perdiems = unsortedPerdiems.sort(function (x, y) {
     return x.startTime.toMillis() - y.startTime.toMillis();
   });
+
   return (
     <Card elevation={0} sx={{ border: 1, borderColor: "grey.300", ml: 1, mr: 1 }}>
       <CardContent>

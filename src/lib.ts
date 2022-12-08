@@ -6,7 +6,10 @@ import { DefaultTimelog, Incident, Perdiem, Shift } from "./models/internal";
 
 type PartialPick<T, F extends keyof T> = Omit<T, F> & Partial<Pick<T, F>>;
 
-type PartialPerdiem = PartialPick<Perdiem, "uuid" | "employee_uuid" | "project_name">;
+type PartialPerdiem = PartialPick<
+  Perdiem,
+  "type" | "uuid" | "employee_uuid" | "project_name"
+>;
 export const submitPerdiem = (timelog: PartialPerdiem) =>
   fetchSubmit({
     is_perdiem: true,
@@ -14,7 +17,7 @@ export const submitPerdiem = (timelog: PartialPerdiem) =>
     timezone: window.Intl.DateTimeFormat().resolvedOptions().timeZone,
     project_uuid: timelog.project_uuid,
     start_dt: timelog.startTime.toSeconds(),
-    type: timelog.type,
+    type: timelog.perdiemModel,
     comment: timelog.comment,
   });
 

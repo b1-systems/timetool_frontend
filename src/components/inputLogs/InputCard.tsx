@@ -33,24 +33,21 @@ const InputCard = () => {
 
   const projectWorktypes = useProjectWorktypes();
   const [selectedWorktype, setSelectedWorktype] = useState<string>("");
-  useEffect(() => {
-    if (projectWorktypes?.length) {
-      if (!projectWorktypes.includes(selectedWorktype!))
-        setSelectedWorktype(projectWorktypes[0]);
-    }
-  }, [projectWorktypes, selectedWorktype, setSelectedWorktype]);
 
   const editTimelog = useEditTimelog();
   useEffect(() => {
     if (editTimelog) {
       setSelectedDate(editTimelog.startTime);
+      console.log(editTimelog.type);
+      setSelectedWorktype(editTimelog.type);
     } else {
       setSelectedDate(DateTime.now());
+      setSelectedWorktype("");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editTimelog?.uuid, setSelectedDate]);
 
-  console.log("render InputCard");
+  // TODO: select worktype if only one is available
 
   if (isMonthClosed) {
     return (
@@ -125,13 +122,9 @@ const InputCard = () => {
           </Grid>
           {selectedWorktype && (
             <Grid container spacing={3} sx={{ mt: 1 }}>
-              {selectedWorktype === "timelog" && (
-                <InputDefaultTimelog types={projectWorktypes!} />
-              )}
-              {selectedWorktype === "perdiem" && (
-                <InputPerdiem types={projectWorktypes!} />
-              )}
-              {selectedWorktype === "shift" && <InputShift types={projectWorktypes!} />}
+              {selectedWorktype === "timelog" && <InputDefaultTimelog />}
+              {selectedWorktype === "perdiem" && <InputPerdiem />}
+              {selectedWorktype === "shift" && <InputShift />}
             </Grid>
           )}
         </CardContent>

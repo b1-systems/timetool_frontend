@@ -98,7 +98,9 @@ export default function OutputPerdiem(props: {
                 Icon={<PaidIcon sx={{ width: 18, height: 18, color: "white" }} />}
                 text={perdiemModelHandler(
                   props.log.project_uuid,
-                  typeof props.log.type === "number" ? props.log.type : -1,
+                  typeof props.log.perdiemModel === "number"
+                    ? props.log.perdiemModel
+                    : -1,
                 )}
               />
               <OutputChip
