@@ -68,46 +68,27 @@ const baseUrl = () =>
     .filter((subPath) => !!subPath)
     .join("/");
 
-export const fetchProjects = async (
-  requestPrototyp: RequestPrototype,
-): Promise<Project[]> => [
-  {
-    name: "Awesome Project",
-    uuid: "f6e0f789-adf4-4b78-988e-c7baebd12b25",
-    worktypes: {
-      perdiem: {
-        1: "Awesome Perdiem",
-        2: "More Awesome Perdiem",
-      },
-      timelog: {
-        timelog: "Awesome Timelog",
-      },
-      shift: {
-        morning: "Awesome Morning",
-        afternoon: "Awesome Afternoon",
-        night: "Awesome Night",
-      },
+export const fetchProjects = (requestPrototyp: RequestPrototype): Promise<Project[]> =>
+  callBackend({
+    endpoint: `project`,
+    method: "GET",
+    queryParams: {
+      year: requestPrototyp.year,
+      month: requestPrototyp.month,
+      format: requestPrototyp.format,
+      scope: requestPrototyp.scope,
     },
-  },
-  {
-    name: "Awful Project",
-    uuid: "8031c1eb-b0e8-41b8-a648-0738e9d320ed",
-    worktypes: {
-      perdiem: {
-        1: "Awful Perdiem",
-        2: "More Awful Perdiem",
-      },
-      timelog: {
-        timelog: "Awful Timelog",
-      },
-      shift: {
-        morning: "Awful Morning",
-        afternoon: "Awful Afternoon",
-        night: "Awful Night",
-      },
-    },
-  },
-];
+  })
+    .then((response) => {
+      if (response.ok) {
+        return response.json();
+      } else {
+        throw new Error(
+          `Could not fetch project. Backend response code: ${response.status}`,
+        );
+      }
+    })
+    .then((projectObj) => projectObj.projects as Project[]);
 
 const toInternalLog = (log: ResponseTimelog): Timelog => {
   if (isPerdiem(log)) {
@@ -161,53 +142,32 @@ const toInternalLog = (log: ResponseTimelog): Timelog => {
  * @param newDate
  *
  */
-export const fetchCurrentMonthLogs = async (
+export const fetchCurrentMonthLogs = (
   requestPrototyp: RequestPrototype,
-): Promise<Logs> => {
-  const externalLogs: LogsResponse = {
-    timelogs: [
-      {
-        type: "timelog",
-        uuid: "d4e46f6d-ecda-4cac-8ac2-391639f6f3d3",
-        start_dt: 0,
-        end_dt: 3600,
-        employee_uuid: "09f3b693-dbe3-48de-b672-11b882ca1d48",
-        project_name: "Awful Project",
-        project_uuid: "8031c1eb-b0e8-41b8-a648-0738e9d320ed",
-        breakTime: 0,
-        travelTime: 0,
-        onsite: "remote",
-        comment: "This is a comment",
-      },
-      {
-        type: "shift",
-        uuid: "e0282096-70ab-4ef9-aca8-7eb05c78cfb2",
-        start_dt: 0,
-        end_dt: 0,
-        employee_uuid: "09f3b693-dbe3-48de-b672-11b882ca1d48",
-        project_name: "Awful Project",
-        project_uuid: "8031c1eb-b0e8-41b8-a648-0738e9d320ed",
-        shift_model: "morning",
-        incidents: [],
-      },
-    ],
-    perdiems: [
-      {
-        type: 1,
-        comment: "Awful Comment",
-        start_dt: 0,
-        uuid: "edf59dcc-5ee1-4f1d-aef2-2fbe26cd3f8e",
-        employee_uuid: "09f3b693-dbe3-48de-b672-11b882ca1d48",
-        project_name: "Awful Project",
-        project_uuid: "8031c1eb-b0e8-41b8-a648-0738e9d320ed",
-      } as ResponsePerdiem,
-    ],
-  };
-  return {
-    timelogs: externalLogs.timelogs.map(toInternalLog),
-    perdiems: externalLogs.perdiems.map(toInternalLog),
-  };
-};
+): Promise<Logs> =>
+  callBackend({
+    endpoint: `employee/me/timelogs`,
+    method: "GET",
+    queryParams: {
+      year: requestPrototyp.year,
+      month: requestPrototyp.month,
+      format: requestPrototyp.format,
+      scope: requestPrototyp.scope,
+    },
+  })
+    .then((response) => {
+      if (response.ok) {
+        return response.json();
+      } else {
+        throw new Error(
+          `Could not fetch current month logs. Backend response code: ${response.status}`,
+        );
+      }
+    })
+    .then((externalLogs: LogsResponse) => ({
+      timelogs: externalLogs.timelogs.map(toInternalLog),
+      perdiems: externalLogs.perdiems.map(toInternalLog),
+    }));
 
 export const fetchDelete = (requestPrototyp: {
   request: { uuid: string };
