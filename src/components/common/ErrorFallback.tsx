@@ -21,14 +21,14 @@ const ErrorFallback = (props: Props) => {
           }}
           startIcon={<ReplayIcon />}
         >
-          {t("try_again")}
+          {t("error.try_again")}
         </Button>
       }
     >
-      <AlertTitle>{t("error")}</AlertTitle>
-      {t("error_fallback.explanation")}
+      <AlertTitle>{t("error.title")}</AlertTitle>
+      {t("error.fallback.explanation")}
       <br />
-      {t("error_fallback.options")}
+      {t("error.fallback.options")}
       <pre>{error.toString()}</pre>
     </Alert>
   );
