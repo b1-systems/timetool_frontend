@@ -51,7 +51,7 @@ function App() {
   const theme = responsiveFontSizes(preTheme);
   return (
     <RecoilRoot>
-      <LocalizationProvider dateAdapter={AdapterLuxon} adapterLocale={"en"}>
+      <LocalizationProvider dateAdapter={AdapterLuxon} adapterLocale={i18n.language}>
         <BrowserRouter basename={appWebroot}>
           <ThemeProvider theme={theme}>
             <Toastyfier position="bottom-center" gutter={12}>
