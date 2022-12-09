@@ -216,7 +216,8 @@ export const fetchCloseMonth = (requestPrototyp: {
 
 export const fetchIsMonthClosed = async (
   requestPrototyp: RequestPrototype,
-): Promise<boolean> => callBackend({
+): Promise<boolean> =>
+  callBackend({
     endpoint: `lockedperiod`,
     method: "GET",
     queryParams: {
@@ -241,4 +242,4 @@ export const fetchIsMonthClosed = async (
       } else {
         return true;
       }
-    });;
+    });
