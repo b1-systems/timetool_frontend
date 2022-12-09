@@ -43,15 +43,11 @@ export default function OutputTimelogs({
       .catch((errorUpdateLogs) => console.error(errorUpdateLogs));
   };
 
-  const breaktime = cloneDuration(log.breakTime).toISOTime({
-    suppressSeconds: true,
-  });
-  const traveltime = cloneDuration(log.travelTime).toISOTime({
-    suppressSeconds: true,
-  });
+  const breaktime = cloneDuration(log.breakTime).toFormat("hh:mm");
+  const traveltime = cloneDuration(log.travelTime).toFormat("hh:mm");
 
-  const worktime = log.startTime
-    .diff(log.endTime)
+  const worktime = log.endTime
+    .diff(log.startTime)
     .minus(log.breakTime)
     .toFormat("hh:mm");
 
