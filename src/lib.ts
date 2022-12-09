@@ -16,7 +16,7 @@ export const submitPerdiem = (timelog: PartialPerdiem) =>
     uuid: timelog.uuid || uuidv4(),
     timezone: window.Intl.DateTimeFormat().resolvedOptions().timeZone,
     project_uuid: timelog.project_uuid,
-    start_dt: timelog.startTime.toSeconds(),
+    start_dt: timelog.startTime.toSeconds() | 0,
     type: timelog.perdiemModel,
     comment: timelog.comment,
   });
@@ -31,10 +31,10 @@ export const submitDefaultTimelog = (timelog: PartialDefaultTimelog) =>
     uuid: timelog.uuid || uuidv4(),
     timezone: window.Intl.DateTimeFormat().resolvedOptions().timeZone,
     project_uuid: timelog.project_uuid,
-    start_dt: timelog.startTime.toSeconds(),
-    end_dt: timelog.endTime.toSeconds(),
-    breakTime: timelog.breakTime.as("minutes"),
-    travelTime: timelog.travelTime.as("minutes"),
+    start_dt: timelog.startTime.toSeconds() | 0,
+    end_dt: timelog.endTime.toSeconds() | 0,
+    breakTime: timelog.breakTime.as("minutes") | 0,
+    travelTime: timelog.travelTime.as("minutes") | 0,
     comment: timelog.comment,
     onsite: timelog.site,
   });
@@ -47,22 +47,7 @@ export const submitShift = (timelog: PartialShift) => {
   let incidentsChecked: Incident[] = [];
   let lastTimeChecked = DateTime.fromMillis(-1);
 
-  // Add the year, month, and day to the incidents
-  const incidentsWithDate = timelog.incidents.map((incident) => ({
-    ...incident,
-    startTime: incident.startTime.set({
-      year: timelog.startTime.year,
-      month: timelog.startTime.month,
-      day: timelog.startTime.day,
-    }),
-    endTime: incident.endTime.set({
-      year: timelog.startTime.year,
-      month: timelog.startTime.month,
-      day: timelog.startTime.day,
-    }),
-  }));
-
-  for (let incident of incidentsWithDate) {
+  for (let incident of timelog.incidents) {
     let overZero = false;
     if (lastTimeChecked.toMillis() !== -1) {
       if (lastTimeChecked > incident.startTime) {
@@ -100,12 +85,12 @@ export const submitShift = (timelog: PartialShift) => {
     uuid: timelog.uuid || uuidv4(),
     timezone: window.Intl.DateTimeFormat().resolvedOptions().timeZone,
     project_uuid: timelog.project_uuid,
-    start_dt: timelog.startTime.toSeconds(),
-    end_dt: timelog.startTime.endOf("day").toSeconds(),
+    start_dt: timelog.startTime.toSeconds() | 0,
+    end_dt: timelog.startTime.endOf("day").toSeconds() | 0,
     shift_model: timelog.shiftModel,
     incidents: incidentsChecked.map((incident) => ({
-      start_dt: incident.startTime.toSeconds(),
-      end_dt: incident.endTime.toSeconds(),
+      start_dt: incident.startTime.toSeconds() | 0,
+      end_dt: incident.endTime.toSeconds() | 0,
       comment: incident.comment,
     })),
   });
