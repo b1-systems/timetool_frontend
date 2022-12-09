@@ -216,4 +216,29 @@ export const fetchCloseMonth = (requestPrototyp: {
 
 export const fetchIsMonthClosed = async (
   requestPrototyp: RequestPrototype,
-): Promise<boolean> => false;
+): Promise<boolean> => callBackend({
+    endpoint: `lockedperiod`,
+    method: "GET",
+    queryParams: {
+      year: requestPrototyp.year,
+      month: requestPrototyp.month,
+      format: requestPrototyp.format,
+      scope: requestPrototyp.scope,
+    },
+  })
+    .then((response) => {
+      if (response.ok) {
+        return response.json();
+      } else {
+        throw new Error(
+          `Could not fetch auditlogs. Backend response code: ${response.status}`,
+        );
+      }
+    })
+    .then((response) => {
+      if (response.locks.length === 0) {
+        return false;
+      } else {
+        return true;
+      }
+    });;
