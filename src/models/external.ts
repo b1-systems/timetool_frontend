@@ -44,8 +44,11 @@ interface BaseResponseTimelog {
   project_name: string;
 }
 export type ResponsePerdiem = Omit<PerdiemRequest, "timezone"> & BaseResponseTimelog;
-export type ResponseDefaultTimelog = Omit<DefaultTimelogRequest, "timezone"> &
-  BaseResponseTimelog;
+export type ResponseDefaultTimelog = Omit<
+  DefaultTimelogRequest,
+  "timezone" | "breakTime" | "travelTime"
+> &
+  BaseResponseTimelog & { breaklength: number; travel: number };
 export type ResponseShift = Omit<ShiftRequest, "timezone"> & BaseResponseTimelog;
 export type ResponseTimelog = ResponsePerdiem | ResponseDefaultTimelog | ResponseShift;
 export interface LogsResponse {

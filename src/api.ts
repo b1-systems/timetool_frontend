@@ -128,8 +128,8 @@ const toInternalLog = (log: ResponseTimelog): Timelog => {
       project_name: log.project_name,
       startTime: DateTime.fromSeconds(log.start_dt),
       endTime: DateTime.fromSeconds(log.end_dt),
-      breakTime: Duration.fromObject({ minute: log.breakTime }),
-      travelTime: Duration.fromObject({ minute: log.travelTime }),
+      breakTime: Duration.fromObject({ minute: log.breaklength }),
+      travelTime: Duration.fromObject({ minute: log.travel }),
       site: log.onsite,
       comment: log.comment,
     };
