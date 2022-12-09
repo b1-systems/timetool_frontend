@@ -33,8 +33,8 @@ export const submitDefaultTimelog = (timelog: PartialDefaultTimelog) =>
     project_uuid: timelog.project_uuid,
     start_dt: timelog.startTime.toSeconds() | 0,
     end_dt: timelog.endTime.toSeconds() | 0,
-    breakTime: timelog.breakTime.as("minutes") | 0,
-    travelTime: timelog.travelTime.as("minutes") | 0,
+    breakTime: timelog.breakTime.as("seconds") | 0,
+    travelTime: timelog.travelTime.as("seconds") | 0,
     comment: timelog.comment,
     onsite: timelog.site,
   });
