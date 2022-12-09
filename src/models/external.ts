@@ -59,7 +59,7 @@ export interface LogsResponse {
 export const isPerdiem = (log: ResponseTimelog): log is ResponsePerdiem =>
   typeof log?.type === "number";
 export const isDefaultTimelog = (log: ResponseTimelog): log is ResponseDefaultTimelog =>
-  log?.type === "timelog";
+  log?.type === "timelog" || log?.type === "default";
 export const isShift = (log: ResponseTimelog): log is ResponseShift =>
   log?.type === "shift";
 
