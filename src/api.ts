@@ -7,7 +7,6 @@ import {
   LogsResponse,
   PerdiemRequest,
   RequestPrototype,
-  ResponsePerdiem,
   ResponseTimelog,
   ShiftRequest,
   isDefaultTimelog,
