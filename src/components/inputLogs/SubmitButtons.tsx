@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { useRecoilValue } from "recoil";
 
 import { alertShownInInputState } from "../../atom";
+import { useEditUUID } from "../../atoms/edit";
 import { useIsMonthClosed, useSelectedDate } from "../../atoms/selectedDate";
 
 interface SubmitButtonsProps {
@@ -17,6 +18,7 @@ const SubmitButtons: FC<SubmitButtonsProps> = ({ submit }) => {
   const alertShownInInput = useRecoilValue(alertShownInInputState);
   const [, setSelectedDate] = useSelectedDate();
   const [busy, setBusy] = useState(false);
+  const [editUUID, setEditUUID] = useEditUUID();
 
   return (
     <>
@@ -31,6 +33,7 @@ const SubmitButtons: FC<SubmitButtonsProps> = ({ submit }) => {
             ev.preventDefault();
             submit()
               .then(() => setSelectedDate((date) => date.plus({ days: 1 })))
+              .then(() => editUUID && setEditUUID(null))
               .catch(() => {
                 // TODO: show error message
               })
@@ -51,12 +54,13 @@ const SubmitButtons: FC<SubmitButtonsProps> = ({ submit }) => {
             ev.preventDefault();
             setBusy(true);
             submit()
+              .then(() => editUUID && setEditUUID(null))
               .catch(() => {
                 // TODO: show error message
               })
               .finally(() => setBusy(false));
           }}
-          disabled={isMonthClosed || alertShownInInput || !busy}
+          disabled={isMonthClosed || alertShownInInput || busy}
           data-testid={"InputCard_commit-stay_date-btn_index"}
         >
           {t("commit_&_same_day")}
