@@ -40,6 +40,9 @@
   "my_projects": "My Projects",
   "no": "no",
   "no_timelogs_have_been_made_yet": "No timelogs have been made yet.",
+  "notification": {
+    "error_while_submitting": "An error occurred while submitting the timelog. Check the console for details."
+  },
   "perdiems": "Perdiems",
   "project": "Project",
   "question_the_closing_of_this_month_is_irreversible_do_you_still_want_to_continue": "The closing of this month is irreversible. Do you still want to continue?",
