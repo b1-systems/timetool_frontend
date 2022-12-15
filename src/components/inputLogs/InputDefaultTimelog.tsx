@@ -7,7 +7,7 @@ import {
   TextField,
 } from "@mui/material";
 import { TimePicker } from "@mui/x-date-pickers";
-import { Duration } from "luxon";
+import { DateTime, Duration } from "luxon";
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -16,7 +16,7 @@ import { useSelectedProject } from "../../atoms/projects";
 import { useSelectedDate } from "../../atoms/selectedDate";
 import { submitDefaultTimelog } from "../../lib";
 import { DefaultTimelog } from "../../models/internal";
-import { combineDateTime } from "../../utils/DateUtils";
+import { combineDateTime, maxTime, roundMinutes } from "../../utils/DateUtils";
 import CancelEditButton from "./CancelEditButton";
 import SubmitButtons from "./SubmitButtons";
 
@@ -26,16 +26,21 @@ export default function InputDefaultTimelog() {
   const [selectedProject] = useSelectedProject();
 
   const [selectedDate] = useSelectedDate();
-  const [selectedStartTime, setSelectedStartTime] = useState(selectedDate);
-  const [selectedEndTime, setSelectedEndTime] = useState(selectedDate);
+
+  const eightAM = selectedDate.set({ hour: 8, minute: 0 });
+  const [selectedStartTime, setSelectedStartTime] = useState(eightAM);
+  const [selectedEndTime, setSelectedEndTime] = useState(
+    maxTime(roundMinutes(DateTime.now(), 30), eightAM),
+  );
   const [breakTime, setBreakTime] = useState(Duration.fromMillis(0));
   const [travelTime, setTravelTime] = useState(Duration.fromMillis(0));
   const [site, setSite] = useState("remote");
   const [comment, setComment] = useState("");
 
   const resetInputs = useCallback(() => {
-    setSelectedStartTime(selectedDate);
-    setSelectedEndTime(selectedDate);
+    const eightAM = selectedDate.set({ hour: 8, minute: 0 });
+    setSelectedStartTime(eightAM);
+    setSelectedEndTime(maxTime(roundMinutes(DateTime.now(), 30), eightAM));
     setBreakTime(Duration.fromMillis(0));
     setTravelTime(Duration.fromMillis(0));
     setSite("remote");
