@@ -1,3 +1,4 @@
+import { useToasty } from "@b1-systems/react-components";
 import { NoteAdd } from "@mui/icons-material";
 import { Button, Grid } from "@mui/material";
 import { FC, useState } from "react";
@@ -13,6 +14,7 @@ interface SubmitButtonsProps {
 }
 const SubmitButtons: FC<SubmitButtonsProps> = ({ submit }) => {
   const { t } = useTranslation();
+  const { toasty } = useToasty();
 
   const isMonthClosed = useIsMonthClosed();
   const alertShownInInput = useRecoilValue(alertShownInInputState);
@@ -34,8 +36,9 @@ const SubmitButtons: FC<SubmitButtonsProps> = ({ submit }) => {
             submit()
               .then(() => setSelectedDate((date) => date.plus({ days: 1 })))
               .then(() => editUUID && setEditUUID(null))
-              .catch(() => {
-                // TODO: show error message
+              .catch((err) => {
+                toasty.error(t("notification.error_while_submitting"));
+                console.error(err);
               })
               .finally(() => setBusy(false));
           }}
@@ -55,8 +58,9 @@ const SubmitButtons: FC<SubmitButtonsProps> = ({ submit }) => {
             setBusy(true);
             submit()
               .then(() => editUUID && setEditUUID(null))
-              .catch(() => {
-                // TODO: show error message
+              .catch((err) => {
+                toasty.error(t("notification.error_while_submitting"));
+                console.error(err);
               })
               .finally(() => setBusy(false));
           }}
