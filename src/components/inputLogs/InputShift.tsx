@@ -19,7 +19,7 @@ import { useProjectShiftModels, useSelectedProject } from "../../atoms/projects"
 import { useSelectedDate } from "../../atoms/selectedDate";
 import { submitShift } from "../../lib";
 import { Incident, Shift } from "../../models/internal";
-import { combineDateTime } from "../../utils/DateUtils";
+import { combineDateTime, maxTime, roundMinutes } from "../../utils/DateUtils";
 import CancelEditButton from "./CancelEditButton";
 import SubmitButtons from "./SubmitButtons";
 
@@ -88,11 +88,12 @@ export default function InputShift() {
     }).then(resetInputs);
 
   const addHandler = () => {
+    const eightAM = selectedDate.set({ hour: 8, minute: 0 });
     setIncidents((currentIncidents) => [
       ...currentIncidents,
       {
-        startTime: selectedDate,
-        endTime: selectedDate,
+        startTime: eightAM,
+        endTime: maxTime(roundMinutes(DateTime.now(), 30), eightAM),
         comment: "",
       },
     ]);

@@ -30,3 +30,23 @@ export const cloneDateTime = (time: DateTime) => {
 export const cloneDuration = (duration: Duration) => {
   return Duration.fromMillis(duration.toMillis());
 };
+
+/**
+ * Round a DateTime object to the nearest minute that is a multiple of the given step size.
+ * @param stepSize the step size in minutes
+ * @returns a new DateTime object with the rounded time
+ */
+export const roundMinutes = (time: DateTime, stepSize: number) => {
+  return time.set({
+    minute: Math.floor(time.minute / stepSize) * stepSize,
+    second: 0,
+    millisecond: 0,
+  });
+};
+
+export const maxTime = (time1: DateTime, time2: DateTime) => {
+  return time1 > time2 ? time1 : time2;
+};
+export const minTime = (time1: DateTime, time2: DateTime) => {
+  return time1 < time2 ? time1 : time2;
+};
