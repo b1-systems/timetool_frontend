@@ -1,7 +1,6 @@
 import {
   Autocomplete,
   Card,
-  CardActions,
   CardContent,
   CardHeader,
   FormControl,
@@ -107,11 +106,6 @@ export default function MainGrid() {
               </Grid>
             </Grid>
           </CardContent>
-          <CardActions>
-            <Grid container>
-              <Grid item xs={12} sm={6} md={3} lg={2}></Grid>
-            </Grid>
-          </CardActions>
         </Card>
       </Grid>
       <Grid item xs={12}>
