@@ -8,6 +8,7 @@ import { useRecoilValue } from "recoil";
 import { alertShownInInputState } from "../../atom";
 import { useEditUUID } from "../../atoms/edit";
 import { useIsMonthClosed, useSelectedDate } from "../../atoms/selectedDate";
+import { useUpdateLogs } from "../../atoms/logs";
 
 interface SubmitButtonsProps {
   submit: () => Promise<void>;
@@ -21,6 +22,7 @@ const SubmitButtons: FC<SubmitButtonsProps> = ({ submit }) => {
   const [, setSelectedDate] = useSelectedDate();
   const [busy, setBusy] = useState(false);
   const [editUUID, setEditUUID] = useEditUUID();
+  const updateLogs = useUpdateLogs();
 
   return (
     <>
@@ -33,6 +35,7 @@ const SubmitButtons: FC<SubmitButtonsProps> = ({ submit }) => {
           type="submit"
           onClick={(ev) => {
             ev.preventDefault();
+            setBusy(true);
             submit()
               .then(() => setSelectedDate((date) => date.plus({ days: 1 })))
               .then(() => editUUID && setEditUUID(null))
@@ -40,10 +43,11 @@ const SubmitButtons: FC<SubmitButtonsProps> = ({ submit }) => {
                 toasty.error(t("notification.error_while_submitting"));
                 console.error(err);
               })
+              .finally(() => updateLogs())
               .finally(() => setBusy(false));
           }}
           disabled={isMonthClosed || alertShownInInput || busy}
-          data-testid={"InputCard_commit-info-btn_index"}
+          data-testid="SubmitButtons--CommitAndNextDay"
         >
           {t("commit_&_next_day")}
         </Button>
@@ -62,10 +66,11 @@ const SubmitButtons: FC<SubmitButtonsProps> = ({ submit }) => {
                 toasty.error(t("notification.error_while_submitting"));
                 console.error(err);
               })
+              .finally(() => updateLogs())
               .finally(() => setBusy(false));
           }}
           disabled={isMonthClosed || alertShownInInput || busy}
-          data-testid={"InputCard_commit-stay_date-btn_index"}
+          data-testid="SubmitButtons--CommitAndSameDay"
         >
           {t("commit_&_same_day")}
         </Button>

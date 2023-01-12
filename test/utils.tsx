@@ -5,6 +5,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterLuxon } from "@mui/x-date-pickers/AdapterLuxon";
 import { createTheme, ThemeProvider } from '@mui/material';
 import { act, render, RenderOptions } from '@testing-library/react';
+import { Toastyfier } from '@b1-systems/react-components';
 
 const AllTheProviders: FC<{ children: ReactNode }> = ({ children }) => {
   const theme = createTheme({
@@ -13,9 +14,11 @@ const AllTheProviders: FC<{ children: ReactNode }> = ({ children }) => {
   });
   return (
     <RecoilRoot>
-      <LocalizationProvider dateAdapter={AdapterLuxon} locale={"de"}>
+      <LocalizationProvider dateAdapter={AdapterLuxon} adapterLocale="en">
         <ThemeProvider theme={theme}>
-          <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>
+          <Toastyfier position="bottom-center" gutter={12}>
+            <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>
+          </Toastyfier>
         </ThemeProvider>
       </LocalizationProvider>
     </RecoilRoot>
