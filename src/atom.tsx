@@ -1,25 +1,20 @@
 import { atom, useRecoilState } from "recoil";
 
 export const isMonthClosedRequestIdState = atom({
-  key: "isMonthClosedRequestIdState",
-  default: 0,
+    key: "isMonthClosedRequestIdState",
+    default: 0,
 });
 
 export const useUpdateIsMonthClosed = () => {
-  const [isMonthClosedRequestId, setIsMonthClosedRequestId] = useRecoilState(
-    isMonthClosedRequestIdState,
-  );
-  return () => {
-    setIsMonthClosedRequestId(isMonthClosedRequestId + 1);
-  };
+    const [isMonthClosedRequestId, setIsMonthClosedRequestId] = useRecoilState(
+        isMonthClosedRequestIdState,
+    );
+    return () => {
+        setIsMonthClosedRequestId(isMonthClosedRequestId + 1);
+    };
 };
 
-export const alertShownInInputState = atom({
-  key: "alertShownInInputState",
-  default: false,
-});
-
 export const autoTypeNotDoneState = atom<boolean>({
-  key: "autoTypeDoneState",
-  default: true,
+    key: "autoTypeDoneState",
+    default: true,
 });
