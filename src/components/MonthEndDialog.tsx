@@ -11,7 +11,7 @@ import {
 import { useTranslation } from "react-i18next";
 
 import { fetchCloseMonth } from "../api";
-import { useUpdateIsMonthClosed } from "../atom";
+import { useUpdateIsMonthClosed } from "../atoms/monthClosed";
 import { useSelectedMonth } from "../atoms/selectedDate";
 
 const MonthEndDialog = (props: {

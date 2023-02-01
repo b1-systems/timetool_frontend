@@ -1,22 +1,19 @@
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import ChatIcon from "@mui/icons-material/Chat";
-import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import DriveFileRenameOutlineIcon from "@mui/icons-material/DriveFileRenameOutline";
-import EditIcon from "@mui/icons-material/Edit";
 import EventIcon from "@mui/icons-material/Event";
 import FlightIcon from "@mui/icons-material/Flight";
 import FreeBreakfastIcon from "@mui/icons-material/FreeBreakfast";
 import MoreTimeIcon from "@mui/icons-material/MoreTime";
 import MyLocationIcon from "@mui/icons-material/MyLocation";
 import WorkIcon from "@mui/icons-material/Work";
-import { Box, Button, Card, CardActions, Grid } from "@mui/material";
+import { Box, Card, CardActions, Grid } from "@mui/material";
 import { useTranslation } from "react-i18next";
 
-import { fetchDelete } from "../../api";
-import { useEditUUID } from "../../atoms/edit";
-import { useUpdateLogs } from "../../atoms/logs";
 import { DefaultTimelog } from "../../models/internal";
 import { cloneDuration } from "../../utils/DateUtils";
+import DeleteButton from "./DeleteButton";
+import EditButton from "./EditButton";
 import OutputChip from "./OutputChip";
 
 interface OutputTimelogsProps {
@@ -29,19 +26,7 @@ export default function OutputTimelogs({
     log,
     index,
 }: OutputTimelogsProps) {
-    const updateLogs = useUpdateLogs();
-
     const { t } = useTranslation();
-    const [, setEditUUID] = useEditUUID();
-
-    const deleteHandler = (uuid: string) => {
-        const requestPrototype = {
-            request: { uuid: uuid },
-        };
-        fetchDelete(requestPrototype)
-            .then(() => updateLogs())
-            .catch((errorUpdateLogs) => console.error(errorUpdateLogs));
-    };
 
     const breaktime = cloneDuration(log.breakTime).toFormat("hh:mm");
     const traveltime = cloneDuration(log.travelTime).toFormat("hh:mm");
@@ -182,25 +167,8 @@ export default function OutputTimelogs({
             <CardActions>
                 {!monthIsClosed && log.uuid && (
                     <>
-                        <Button
-                            color="warning"
-                            size="small"
-                            variant="contained"
-                            onClick={() => setEditUUID(log.uuid)}
-                            data-testid={`OutputTimelog_edit-warning-btn_index-${index}`}
-                        >
-                            <EditIcon />
-                        </Button>
-                        <Button
-                            color="error"
-                            size="small"
-                            variant="contained"
-                            onClick={() => deleteHandler(log.uuid ? log.uuid : "")}
-                            disabled={monthIsClosed}
-                            data-testid={`OutputTimelog_delete-error-btn_index-${index}`}
-                        >
-                            <DeleteForeverIcon />
-                        </Button>
+                        <EditButton uuid={log.uuid} />
+                        <DeleteButton uuid={log.uuid} />
                     </>
                 )}
             </CardActions>

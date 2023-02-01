@@ -3,12 +3,7 @@ import { DateTime, Duration } from "luxon";
 import * as api from "../../api";
 import { editUUID } from "../../atoms/edit";
 import { selectedProjectUUID } from "../../atoms/projects";
-import {
-    RecoilObserver,
-    RecoilStateSetter,
-    flushPromisesAndTimers,
-    render,
-} from "../../test/utils";
+import { RecoilStateSetter, flushPromisesAndTimers, render } from "../../test/utils";
 import InputCard from "./InputCard";
 
 function mockEssentialApi() {
@@ -57,6 +52,8 @@ function mockEssentialApi() {
 describe("InputCard", () => {
     it("contains select project notice", async () => {
         jest.useFakeTimers();
+        mockEssentialApi();
+
         const { queryByTestId } = render(
             <>
                 <RecoilStateSetter node={selectedProjectUUID} value={null} />
@@ -65,14 +62,16 @@ describe("InputCard", () => {
         );
 
         await flushPromisesAndTimers();
-        const notice = await queryByTestId("InputCard--Notice--Select-Project");
-        const worktypeSelect = await queryByTestId("InputCard--Worktype--Select");
+        const notice = queryByTestId("InputCard--Notice--Select-Project");
+        const worktypeSelect = queryByTestId("InputCard--Worktype--Select");
         expect(notice).toBeInTheDocument();
         expect(worktypeSelect).not.toBeInTheDocument();
     });
 
     it("contains select project notice", async () => {
         jest.useFakeTimers();
+        mockEssentialApi();
+
         const { queryByTestId } = render(
             <>
                 <RecoilStateSetter
@@ -92,6 +91,8 @@ describe("InputCard", () => {
 
     it("contains cancel edit button", async () => {
         jest.useFakeTimers();
+        mockEssentialApi();
+
         const { queryByTestId } = render(
             <>
                 <RecoilStateSetter
@@ -113,6 +114,8 @@ describe("InputCard", () => {
 
     it("doesn't contain cancel edit button", async () => {
         jest.useFakeTimers();
+        mockEssentialApi();
+
         const { queryByTestId } = render(
             <>
                 <RecoilStateSetter

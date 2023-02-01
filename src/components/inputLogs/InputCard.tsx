@@ -16,8 +16,9 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { useEditTimelog } from "../../atoms/edit";
+import { useIsMonthClosed } from "../../atoms/monthClosed";
 import { useSelectedProject } from "../../atoms/projects";
-import { useIsMonthClosed, useSelectedDate } from "../../atoms/selectedDate";
+import { useSelectedDate } from "../../atoms/selectedDate";
 import { useProjectWorktypes } from "../../atoms/worktype";
 import InputDefaultTimelog from "./InputDefaultTimelog";
 import InputPerdiem from "./InputPerdiem";

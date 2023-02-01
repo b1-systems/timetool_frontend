@@ -1,8 +1,6 @@
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import ChatIcon from "@mui/icons-material/Chat";
-import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import DriveFileRenameOutlineIcon from "@mui/icons-material/DriveFileRenameOutline";
-import EditIcon from "@mui/icons-material/Edit";
 import EventIcon from "@mui/icons-material/Event";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -13,11 +11,10 @@ import { Box, Button, Card, CardActions, Collapse, Grid } from "@mui/material";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import { fetchDelete } from "../../api";
-import { useEditUUID } from "../../atoms/edit";
-import { useUpdateLogs } from "../../atoms/logs";
 import { useShiftModels } from "../../atoms/projects";
 import { Shift } from "../../models/internal";
+import DeleteButton from "./DeleteButton";
+import EditButton from "./EditButton";
 import OutputChip from "./OutputChip";
 
 export default function OutputShift(props: {
@@ -30,9 +27,6 @@ export default function OutputShift(props: {
     const [entriesVisible, setEntriesVisible] = useState<boolean>(false);
 
     const shiftModels = useShiftModels();
-    const [, setEditUUID] = useEditUUID();
-
-    const updateLogs = useUpdateLogs();
 
     const shiftModelHandler = (uuid: string, type: string | undefined): string => {
         if (shiftModels.size !== 0 && type) {
@@ -49,15 +43,6 @@ export default function OutputShift(props: {
             }
         }
         return "unknown type";
-    };
-
-    const deleteHandler = (uuid: string) => {
-        const requestPrototype = {
-            request: { uuid: uuid },
-        };
-        fetchDelete(requestPrototype)
-            .then(() => updateLogs())
-            .catch((errorUpdateLogs) => console.error(errorUpdateLogs));
     };
 
     return (
@@ -257,26 +242,8 @@ export default function OutputShift(props: {
                                 {!entriesVisible && <ExpandMoreIcon />}
                             </Button>
                         )}
-                        <Button
-                            color="warning"
-                            size="small"
-                            variant="contained"
-                            onClick={() => setEditUUID(props.log.uuid)}
-                            data-testid={`OutputShift_edit-warning-btn_index-${props.index}`}
-                        >
-                            <EditIcon />
-                        </Button>
-                        <Button
-                            color="error"
-                            size="small"
-                            variant="contained"
-                            onClick={() =>
-                                deleteHandler(props.log.uuid ? props.log.uuid : "")
-                            }
-                            disabled={props.monthIsClosed}
-                        >
-                            <DeleteForeverIcon />
-                        </Button>
+                        <EditButton uuid={props.log.uuid} />
+                        <DeleteButton uuid={props.log.uuid} />
                     </>
                 )}
                 {props.monthIsClosed && !!props.log.incidents?.length && (

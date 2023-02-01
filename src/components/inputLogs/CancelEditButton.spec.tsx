@@ -9,7 +9,7 @@ import {
 import CancelEditButton from "./CancelEditButton";
 
 describe("Cancel Edit Button", () => {
-    it("editUUID", async () => {
+    it("sets the editUUID to null", async () => {
         jest.useFakeTimers();
         const changeFn = jest.fn(() => Promise.resolve());
         const { findByTestId } = render(
