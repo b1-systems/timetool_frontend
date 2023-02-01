@@ -3,11 +3,11 @@ import { NoteAdd } from "@mui/icons-material";
 import { Button, Grid } from "@mui/material";
 import { FC, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useRecoilValue } from "recoil";
 
 import { useEditUUID } from "../../atoms/edit";
 import { useUpdateLogs } from "../../atoms/logs";
-import { useIsMonthClosed, useSelectedDate } from "../../atoms/selectedDate";
+import { useIsMonthClosed } from "../../atoms/monthClosed";
+import { useSelectedDate } from "../../atoms/selectedDate";
 
 interface SubmitButtonsProps {
     submit: () => Promise<void>;

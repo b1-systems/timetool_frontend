@@ -1,7 +1,7 @@
 import { DateTime } from "luxon";
 import { v4 as uuidv4 } from "uuid";
 
-import { fetchSubmit } from "./api";
+import { fetchDelete, fetchSubmit } from "./api";
 import { DefaultTimelog, Incident, Perdiem, Shift } from "./models/internal";
 
 type PartialPick<T, F extends keyof T> = Omit<T, F> & Partial<Pick<T, F>>;
@@ -93,5 +93,13 @@ export const submitShift = (timelog: PartialShift) => {
             end_dt: incident.endTime.toSeconds() | 0,
             comment: incident.comment,
         })),
+    });
+};
+
+export const deleteTimelog = ({ uuid }: { uuid: string }) => {
+    return fetchDelete({
+        request: {
+            uuid,
+        },
     });
 };

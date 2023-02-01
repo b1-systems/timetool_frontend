@@ -1,13 +1,5 @@
 import { DateTime } from "luxon";
-import {
-    SetterOrUpdater,
-    atom,
-    selector,
-    useRecoilState,
-    useRecoilValue,
-} from "recoil";
-
-import { fetchIsMonthClosed } from "../api";
+import { SetterOrUpdater, atom, selector, useRecoilState } from "recoil";
 
 const _selectedDate = atom<DateTime>({
     key: "_selectedDate",
@@ -50,20 +42,4 @@ export const selectedMonth = selector({
 });
 export const useSelectedMonth = () => {
     return useRecoilState(selectedMonth);
-};
-
-const monthClosed = selector({
-    key: "monthClosed",
-    get: ({ get }) => {
-        const selectedMonthValue = get(selectedMonth);
-        return fetchIsMonthClosed({
-            year: selectedMonthValue.year.toString(),
-            month: selectedMonthValue.month.toString(),
-            format: "traditional",
-            scope: "me",
-        });
-    },
-});
-export const useIsMonthClosed = () => {
-    return useRecoilValue(monthClosed);
 };

@@ -1,17 +1,14 @@
 import ChatIcon from "@mui/icons-material/Chat";
-import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import DriveFileRenameOutlineIcon from "@mui/icons-material/DriveFileRenameOutline";
-import EditIcon from "@mui/icons-material/Edit";
 import EventIcon from "@mui/icons-material/Event";
 import PaidIcon from "@mui/icons-material/Paid";
-import { Box, Button, Card, CardActions, Grid } from "@mui/material";
+import { Box, Card, CardActions, Grid } from "@mui/material";
 import { useTranslation } from "react-i18next";
 
-import { fetchDelete } from "../../api";
-import { useEditUUID } from "../../atoms/edit";
-import { useUpdateLogs } from "../../atoms/logs";
 import { usePerdiemModels } from "../../atoms/projects";
 import { Perdiem } from "../../models/internal";
+import DeleteButton from "./DeleteButton";
+import EditButton from "./EditButton";
 import OutputChip from "./OutputChip";
 
 export default function OutputPerdiem(props: {
@@ -20,8 +17,6 @@ export default function OutputPerdiem(props: {
     index: number;
 }) {
     const { t } = useTranslation();
-    const [, setEditUUID] = useEditUUID();
-    const updateLogs = useUpdateLogs();
     const perdiemModels = usePerdiemModels();
 
     const perdiemModelHandler = (uuid: string, type: number): string => {
@@ -39,15 +34,6 @@ export default function OutputPerdiem(props: {
             }
         }
         return "unknown type";
-    };
-
-    const deleteHandler = (uuid: string) => {
-        const requestPrototype = {
-            request: { uuid: uuid },
-        };
-        fetchDelete(requestPrototype)
-            .then(() => updateLogs())
-            .catch((errorUpdateLogs) => console.error(errorUpdateLogs));
     };
 
     return (
@@ -131,27 +117,8 @@ export default function OutputPerdiem(props: {
             <CardActions>
                 {!props.monthIsClosed && props.log.uuid && (
                     <>
-                        <Button
-                            color="warning"
-                            size="small"
-                            variant="contained"
-                            onClick={() => setEditUUID(props.log.uuid)}
-                            data-testid={`OutputPerdiem_edit-warning-btn_index-${props.index}`}
-                        >
-                            <EditIcon />
-                        </Button>
-                        <Button
-                            color="error"
-                            size="small"
-                            variant="contained"
-                            onClick={() =>
-                                deleteHandler(props.log.uuid ? props.log.uuid : "")
-                            }
-                            disabled={props.monthIsClosed}
-                            data-testid={`OutputPerdiem_delete-error-btn`}
-                        >
-                            <DeleteForeverIcon />
-                        </Button>
+                        <EditButton uuid={props.log.uuid} />
+                        <DeleteButton uuid={props.log.uuid} />
                     </>
                 )}
             </CardActions>

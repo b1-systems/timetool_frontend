@@ -11,16 +11,15 @@ import { DatePicker } from "@mui/x-date-pickers";
 import { DateTime } from "luxon";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useSetRecoilState } from "recoil";
 
-import { autoTypeNotDoneState } from "../atom";
 import { useEditTimelog, useEditUUID } from "../atoms/edit";
+import { useIsMonthClosed } from "../atoms/monthClosed";
 import {
     useAvailableProjects,
     useSelectedProject,
     useSetProjectIfOnlyOne,
 } from "../atoms/projects";
-import { useIsMonthClosed, useSelectedMonth } from "../atoms/selectedDate";
+import { useSelectedMonth } from "../atoms/selectedDate";
 import MonthEndDialog from "./MonthEndDialog";
 import InputCard from "./inputLogs/InputCard";
 import TimelogItemList from "./outputLogs/TimelogItemList";
@@ -37,7 +36,6 @@ export default function MainGrid() {
     const availableProjects = useAvailableProjects();
     const [selectedProject, setSelectedProject] = useSelectedProject();
     useSetProjectIfOnlyOne();
-    const setAutoTypeNotDone = useSetRecoilState(autoTypeNotDoneState);
 
     const [, setEditUUID] = useEditUUID();
     const editTimelog = useEditTimelog();
@@ -102,7 +100,6 @@ export default function MainGrid() {
                                         )}
                                         value={selectedProject}
                                         onChange={(event, value) => {
-                                            setAutoTypeNotDone(true);
                                             setEditUUID(null);
                                             setSelectedProject(value?.uuid ?? null);
                                         }}
