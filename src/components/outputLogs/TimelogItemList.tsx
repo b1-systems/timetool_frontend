@@ -12,27 +12,29 @@ import {
     Grid,
 } from "@mui/material";
 import Box from "@mui/material/Box";
-import React, { useState } from "react";
+import React, { FC, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilValue } from "recoil";
 
 import { currentMonthLogsPerdiems, currentMonthLogsTimelogs } from "../../atoms/logs";
+import { useIsMonthClosed } from "../../atoms/monthClosed";
 import { isDefaultTimelog, isPerdiem, isShift } from "../../models/internal";
 import OutputPerdiem from "./OutputPerdiem";
 import OutputShift from "./OutputShift";
 import OutputTimelogs from "./OutputTimelog";
 
-export default function TimelogItemList(props: {
-    setEndMonthOpen(open: boolean): void;
-    monthIsClosed: boolean;
-}) {
+const TimelogItemList: FC<{ setEndMonthDialogOpen: (open: boolean) => void }> = ({
+    setEndMonthDialogOpen,
+}) => {
     const { t } = useTranslation();
+
+    const isMonthClosed = useIsMonthClosed();
+    const unsortedDefaultTimelogs = useRecoilValue(currentMonthLogsTimelogs);
+    const unsortedPerdiems = useRecoilValue(currentMonthLogsPerdiems);
+
     const [timelogsVisible, setTimelogsVisible] = useState<boolean>(true);
     const [perdiemsVisible, setPerdiemsVisible] = useState<boolean>(true);
     const [shiftsVisible, setShiftsVisible] = useState<boolean>(true);
-
-    const unsortedDefaultTimelogs = useRecoilValue(currentMonthLogsTimelogs);
-    const unsortedPerdiems = useRecoilValue(currentMonthLogsPerdiems);
 
     let defaultTimelogs = unsortedDefaultTimelogs
         .filter((log) => (log ? isDefaultTimelog(log) : []))
@@ -75,7 +77,7 @@ export default function TimelogItemList(props: {
                                 <Box sx={{ p: 0, mt: 1, mb: 1 }} key={log.uuid}>
                                     {isDefaultTimelog(log) && (
                                         <OutputTimelogs
-                                            monthIsClosed={props.monthIsClosed}
+                                            monthIsClosed={isMonthClosed}
                                             log={log}
                                             index={index}
                                             key={log.uuid}
@@ -109,7 +111,7 @@ export default function TimelogItemList(props: {
                                     {isShift(log) && (
                                         <OutputShift
                                             index={index}
-                                            monthIsClosed={props.monthIsClosed}
+                                            monthIsClosed={isMonthClosed}
                                             log={log}
                                             key={log.uuid}
                                         />
@@ -142,7 +144,7 @@ export default function TimelogItemList(props: {
                                     {isPerdiem(log) && (
                                         <OutputPerdiem
                                             index={index}
-                                            monthIsClosed={props.monthIsClosed}
+                                            monthIsClosed={isMonthClosed}
                                             log={log}
                                             key={log.uuid}
                                         />
@@ -172,8 +174,8 @@ export default function TimelogItemList(props: {
                             size="large"
                             variant="contained"
                             startIcon={<NoteAddIcon />}
-                            disabled={props.monthIsClosed}
-                            onClick={() => props.setEndMonthOpen(true)}
+                            disabled={isMonthClosed}
+                            onClick={() => setEndMonthDialogOpen(true)}
                         >
                             {t("end_month")}
                         </Button>
@@ -182,4 +184,5 @@ export default function TimelogItemList(props: {
             </CardActions>
         </Card>
     );
-}
+};
+export default TimelogItemList;

@@ -1,7 +1,7 @@
 import { DateTime } from "luxon";
 import { v4 as uuidv4 } from "uuid";
 
-import { fetchDelete, fetchSubmit } from "./api";
+import { fetchCloseMonth, fetchDelete, fetchSubmit } from "./api";
 import { DefaultTimelog, Incident, Perdiem, Shift } from "./models/internal";
 
 type PartialPick<T, F extends keyof T> = Omit<T, F> & Partial<Pick<T, F>>;
@@ -100,6 +100,17 @@ export const deleteTimelog = ({ uuid }: { uuid: string }) => {
     return fetchDelete({
         request: {
             uuid,
+        },
+    });
+};
+
+export const closeMonth = ({ month }: { month: DateTime }) => {
+    return fetchCloseMonth({
+        request: {
+            year: month.year.toString(),
+            month: month.month.toString(),
+            format: "traditional",
+            scope: "me",
         },
     });
 };

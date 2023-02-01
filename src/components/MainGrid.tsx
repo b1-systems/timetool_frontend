@@ -13,7 +13,6 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { useEditTimelog, useEditUUID } from "../atoms/edit";
-import { useIsMonthClosed } from "../atoms/monthClosed";
 import {
     useAvailableProjects,
     useSelectedProject,
@@ -30,9 +29,8 @@ import TimelogItemList from "./outputLogs/TimelogItemList";
 
 export default function MainGrid() {
     const { t } = useTranslation();
-    const [endMonthOpen, setEndMonthOpen] = useState(false);
+    const [endMonthDialogOpen, setEndMonthDialogOpen] = useState(false);
     const [selectedMonth, setSelectedMonth] = useSelectedMonth();
-    const isMonthClosed = useIsMonthClosed();
     const availableProjects = useAvailableProjects();
     const [selectedProject, setSelectedProject] = useSelectedProject();
     useSetProjectIfOnlyOne();
@@ -45,10 +43,6 @@ export default function MainGrid() {
         }
     }, [editTimelog, setSelectedProject]);
 
-    const monthEndHandler = () => {
-        setEndMonthOpen(false);
-    };
-
     return (
         <Grid container spacing={3}>
             <Grid item xs={12}>
@@ -56,12 +50,8 @@ export default function MainGrid() {
                     elevation={0}
                     sx={{ border: 1, borderColor: "grey.300", ml: 1, mr: 1 }}
                 >
-                    {endMonthOpen && (
-                        <MonthEndDialog
-                            close={monthEndHandler}
-                            year={selectedMonth.year}
-                            monthLong={selectedMonth.monthLong}
-                        />
+                    {endMonthDialogOpen && (
+                        <MonthEndDialog close={() => setEndMonthDialogOpen(false)} />
                     )}
                     <CardHeader></CardHeader>
                     <CardContent>
@@ -99,7 +89,7 @@ export default function MainGrid() {
                                             />
                                         )}
                                         value={selectedProject}
-                                        onChange={(event, value) => {
+                                        onChange={(_, value) => {
                                             setEditUUID(null);
                                             setSelectedProject(value?.uuid ?? null);
                                         }}
@@ -115,10 +105,7 @@ export default function MainGrid() {
                 <InputCard />
             </Grid>
             <Grid item xs={12}>
-                <TimelogItemList
-                    monthIsClosed={isMonthClosed}
-                    setEndMonthOpen={setEndMonthOpen}
-                />
+                <TimelogItemList setEndMonthDialogOpen={setEndMonthDialogOpen} />
             </Grid>
         </Grid>
     );
