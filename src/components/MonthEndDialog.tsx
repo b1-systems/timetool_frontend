@@ -1,3 +1,4 @@
+import { useToasty } from "@b1-systems/react-components";
 import CancelPresentationOutlinedIcon from "@mui/icons-material/CancelPresentationOutlined";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import {
@@ -8,44 +9,32 @@ import {
     DialogContent,
     Typography,
 } from "@mui/material";
+import { FC } from "react";
 import { useTranslation } from "react-i18next";
 
-import { fetchCloseMonth } from "../api";
 import { useUpdateIsMonthClosed } from "../atoms/monthClosed";
 import { useSelectedMonth } from "../atoms/selectedDate";
+import { closeMonth } from "../lib";
 
-const MonthEndDialog = (props: {
-    close: () => void;
-    monthLong: string;
-    year: number;
-}) => {
+const MonthEndDialog: FC<{ close: () => void }> = ({ close }) => {
     const { t } = useTranslation();
-    const cancelHandler = async () => {
-        props.close();
-    };
+    const { toasty } = useToasty();
 
     const [selectedMonth] = useSelectedMonth();
     const updateIsMonthClosed = useUpdateIsMonthClosed();
 
-    const handleEndMonth = () => {
-        fetchCloseMonth({
-            request: {
-                year: selectedMonth.year.toString(),
-                month: selectedMonth.month.toString(),
-                format: "traditional",
-                scope: "me",
-            },
-        })
-            .then(() => {
-                cancelHandler();
-                updateIsMonthClosed();
-                return;
+    const endMonth = () => {
+        closeMonth({ month: selectedMonth })
+            .then(close)
+            .catch((err) => {
+                toasty.error(t("notification.error_while_ending_month"));
+                console.error(err);
             })
-            .catch((errorNoClose) => console.error(errorNoClose));
+            .finally(() => updateIsMonthClosed());
     };
 
     return (
-        <Dialog onClose={cancelHandler} open={true}>
+        <Dialog onClose={close} open={true}>
             <Box
                 sx={{
                     mt: 1,
@@ -60,7 +49,7 @@ const MonthEndDialog = (props: {
                         {t("you_are_closing")}
                     </Typography>
                     <Typography variant="h6" component="div" align="center">
-                        {`${props.year} ${props.monthLong}`}
+                        {selectedMonth.year} {selectedMonth.monthLong}
                     </Typography>
                     <Typography variant="h6" component="div" align="center">
                         {t(
@@ -70,18 +59,18 @@ const MonthEndDialog = (props: {
                 </DialogContent>
                 <DialogActions>
                     <Button
-                        onClick={cancelHandler}
+                        onClick={close}
                         sx={{ mr: 1, mb: 2, mt: 2 }}
                         startIcon={<CancelPresentationOutlinedIcon />}
-                        data-testid="KeyDialog_close-btn"
+                        data-testid="MonthEndDialog--button--no"
                     >
                         {t("no")}
                     </Button>
                     <Button
                         sx={{ ml: 1, mb: 2, mt: 2 }}
                         startIcon={<CheckBoxIcon />}
-                        onClick={handleEndMonth}
-                        data-testid="KeyDialog_next-btn"
+                        onClick={endMonth}
+                        data-testid="MonthEndDialog--button--yes"
                     >
                         {t("yes")}
                     </Button>

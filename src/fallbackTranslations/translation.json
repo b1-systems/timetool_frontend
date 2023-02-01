@@ -42,6 +42,7 @@
   "no_timelogs_have_been_made_yet": "No timelogs have been made yet.",
   "notification": {
     "error_while_deleting": "An error occurred while deleting the timelog. Check the console for details.",
+    "error_while_ending_month": "An error occurred while ending the month. Check the console for details.",
     "error_while_submitting": "An error occurred while submitting the timelog. Check the console for details."
   },
   "perdiems": "Perdiems",
