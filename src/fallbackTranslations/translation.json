@@ -12,6 +12,14 @@
   "confirmation_required": "confirmation required",
   "day": "Day",
   "end_month": "End month",
+  "error": {
+    "fallback": {
+      "explanation": "An error occurred while running the app. Please try again. If this error persists, please contact the administrator.",
+      "options": "__STRING_NOT_TRANSLATED__"
+    },
+    "title": "An error occurred",
+    "try_again": "Try again"
+  },
   "from": "From",
   "keypoint": {
     "comment": "Comment: ",
@@ -31,10 +39,12 @@
   "month_is_closed": "This month is closed.",
   "my_projects": "My Projects",
   "no": "no",
-  "no_perdiems_in_this_project": "No perdiems in this project.",
-  "no_shifts_in_this_project": "No shifts in this project.",
   "no_timelogs_have_been_made_yet": "No timelogs have been made yet.",
-  "no_timelogs_in_this_project": "No timelogs in this project.",
+  "notification": {
+    "error_while_deleting": "An error occurred while deleting the timelog. Check the console for details.",
+    "error_while_ending_month": "An error occurred while ending the month. Check the console for details.",
+    "error_while_submitting": "An error occurred while submitting the timelog. Check the console for details."
+  },
   "perdiems": "Perdiems",
   "project": "Project",
   "question_the_closing_of_this_month_is_irreversible_do_you_still_want_to_continue": "The closing of this month is irreversible. Do you still want to continue?",

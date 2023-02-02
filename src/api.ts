@@ -1,12 +1,19 @@
+import { DateTime, Duration } from "luxon";
+
+import { Project } from "./models/common";
 import {
-  Logs,
-  Project,
-  RequestPrototyp,
-  requestCloseMonth,
-  requestPerdiem,
-  requestShift,
-  requestTimelog,
-} from "./models";
+  CloseMonthRequest,
+  DefaultTimelogRequest,
+  LogsResponse,
+  PerdiemRequest,
+  RequestPrototype,
+  ResponseTimelog,
+  ShiftRequest,
+  isDefaultTimelog,
+  isPerdiem,
+  isShift,
+} from "./models/external";
+import { Logs, Timelog } from "./models/internal";
 
 type BackendRoute =
   | "project"
@@ -60,7 +67,7 @@ const baseUrl = () =>
     .filter((subPath) => !!subPath)
     .join("/");
 
-export const fetchProjects = (requestPrototyp: RequestPrototyp): Promise<Project[]> =>
+export const fetchProjects = (requestPrototyp: RequestPrototype): Promise<Project[]> =>
   callBackend({
     endpoint: `project`,
     method: "GET",
@@ -80,16 +87,62 @@ export const fetchProjects = (requestPrototyp: RequestPrototyp): Promise<Project
         );
       }
     })
-    .then((projectObj) => projectObj.projects);
+    .then((projectObj) => projectObj.projects as Project[]);
 
+const toInternalLog = (log: ResponseTimelog): Timelog => {
+  if (isPerdiem(log)) {
+    return {
+      type: "perdiem",
+      uuid: log.uuid,
+      employee_uuid: log.employee_uuid,
+      project_uuid: log.project_uuid,
+      project_name: log.project_name,
+      startTime: DateTime.fromSeconds(log.start_dt),
+      perdiemModel: log.type,
+      comment: log.comment,
+    };
+  }
+  if (isShift(log)) {
+    return {
+      type: "shift",
+      uuid: log.uuid,
+      employee_uuid: log.employee_uuid,
+      project_uuid: log.project_uuid,
+      project_name: log.project_name,
+      startTime: DateTime.fromSeconds(log.start_dt),
+      endTime: DateTime.fromSeconds(log.end_dt),
+      shiftModel: log.shift_model,
+      incidents: log.incidents.map((incident) => ({
+        startTime: DateTime.fromSeconds(incident.start_dt),
+        endTime: DateTime.fromSeconds(incident.end_dt),
+        comment: incident.comment,
+      })),
+    };
+  }
+  if (isDefaultTimelog(log)) {
+    return {
+      type: "timelog",
+      uuid: log.uuid,
+      employee_uuid: log.employee_uuid,
+      project_uuid: log.project_uuid,
+      project_name: log.project_name,
+      startTime: DateTime.fromSeconds(log.start_dt),
+      endTime: DateTime.fromSeconds(log.end_dt),
+      breakTime: Duration.fromObject({ seconds: log.breaklength }),
+      travelTime: Duration.fromObject({ seconds: log.travel }),
+      site: log.onsite,
+      comment: log.comment,
+    };
+  }
+  throw new Error("Unknown log type");
+};
 /**
  * Get logs to display for the current month selected
  * @param newDate
  *
  */
-
 export const fetchCurrentMonthLogs = (
-  requestPrototyp: RequestPrototyp,
+  requestPrototyp: RequestPrototype,
 ): Promise<Logs> =>
   callBackend({
     endpoint: `employee/me/timelogs`,
@@ -100,15 +153,20 @@ export const fetchCurrentMonthLogs = (
       format: requestPrototyp.format,
       scope: requestPrototyp.scope,
     },
-  }).then((response) => {
-    if (response.ok) {
-      return response.json();
-    } else {
-      throw new Error(
-        `Could not fetch current month logs. Backend response code: ${response.status}`,
-      );
-    }
-  });
+  })
+    .then((response) => {
+      if (response.ok) {
+        return response.json();
+      } else {
+        throw new Error(
+          `Could not fetch current month logs. Backend response code: ${response.status}`,
+        );
+      }
+    })
+    .then((externalLogs: LogsResponse) => ({
+      timelogs: externalLogs.timelogs.map(toInternalLog),
+      perdiems: externalLogs.perdiems.map(toInternalLog),
+    }));
 
 export const fetchDelete = (requestPrototyp: {
   request: { uuid: string };
@@ -125,7 +183,7 @@ export const fetchDelete = (requestPrototyp: {
   });
 
 export const fetchSubmit = (
-  request: requestTimelog | requestPerdiem | requestShift,
+  request: DefaultTimelogRequest | PerdiemRequest | ShiftRequest,
 ): Promise<void> =>
   callBackend({
     endpoint: `timelog/${request.uuid}`,
@@ -140,7 +198,7 @@ export const fetchSubmit = (
   });
 
 export const fetchCloseMonth = (requestPrototyp: {
-  request: requestCloseMonth;
+  request: CloseMonthRequest;
 }): Promise<void> =>
   callBackend({
     endpoint: `lockedperiod`,
@@ -156,8 +214,8 @@ export const fetchCloseMonth = (requestPrototyp: {
     }
   });
 
-export const fetchIsMonthClosed = (
-  requestPrototyp: RequestPrototyp,
+export const fetchIsMonthClosed = async (
+  requestPrototyp: RequestPrototype,
 ): Promise<boolean> =>
   callBackend({
     endpoint: `lockedperiod`,
