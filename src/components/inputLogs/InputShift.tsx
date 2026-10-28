@@ -1,241 +1,247 @@
 import DeleteIcon from "@mui/icons-material/Delete";
-import DoDisturbIcon from "@mui/icons-material/DoDisturb";
 import NoteAddIcon from "@mui/icons-material/NoteAdd";
-import { TimePicker } from "@mui/x-date-pickers";
 import {
-  Alert,
-  Box,
-  Button,
-  Container,
-  FormControl,
-  Grid,
-  InputLabel,
-  MenuItem,
-  Select,
-  TextField,
+    Button,
+    FormControl,
+    Grid,
+    InputLabel,
+    MenuItem,
+    Select,
+    TextField,
 } from "@mui/material";
+import { TimePicker } from "@mui/x-date-pickers";
 import { DateTime } from "luxon";
-import React from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 
-import {
-  alertShownInInputState,
-  dateFromState,
-  projectState,
-  shiftModelsState,
-} from "../../atom";
-import { Shift } from "../../models";
+import { useEditTimelog } from "../../atoms/edit";
+import { useProjectShiftModels, useSelectedProject } from "../../atoms/projects";
+import { useSelectedDate } from "../../atoms/selectedDate";
+import { submitShift } from "../../lib";
+import { Incident, Shift } from "../../models/internal";
+import { combineDateTime, maxTime, roundMinutes } from "../../utils/DateUtils";
+import CancelEditButton from "./CancelEditButton";
+import SubmitButtons from "./SubmitButtons";
 
-export default function InputShift(props: {
-  types: string[];
-  shiftTimelog: Shift;
-  setShiftTimelog(timelog: Shift): void;
-}) {
-  const { t } = useTranslation();
-  const shiftModels = useRecoilValue(shiftModelsState);
-  const project = useRecoilValue(projectState);
-  const projectShiftModels = project ? shiftModels.get(project.uuid) : {};
-  const [dateFrom] = useRecoilState(dateFromState);
+/**
+ * Out of place implemenation of Array.prototype.splice
+ * @param array the array to splice
+ * @param index the index to start splicing at
+ * @param deleteCount the amount of elements to delete starting at index
+ * @param insertElements the elements to insert at index after deleteCount elements have been deleted; can be empty
+ * @returns a new array with the spliced elements
+ */
+const spliceOOP = <T extends unknown>(
+    array: T[],
+    index: number,
+    deleteCount: number,
+    ...insertElements: T[]
+) => array.slice(0, index).concat(insertElements, array.slice(index + deleteCount));
 
-  const setAlertShownInInput = useSetRecoilState(alertShownInInputState);
+export default function InputShift() {
+    const { t } = useTranslation();
+    const [selectedProject] = useSelectedProject();
+    const projectShiftModels = useProjectShiftModels();
+    // default to current date
+    const [selectedDate] = useSelectedDate();
+    const [selectedModel, setSelectedModel] = useState("");
+    const [incidents, setIncidents] = useState<Incident[]>([]);
 
-  const addHandler = () => {
-    props.setShiftTimelog({
-      ...props.shiftTimelog,
-      incidents: [
-        ...props.shiftTimelog.incidents,
-        {
-          start_dt: dateFrom.valueOf() / 1000,
-          end_dt: dateFrom.valueOf() / 1000,
-          comment: "",
-        },
-      ],
-    });
-  };
+    const resetInputs = useCallback(() => {
+        setSelectedModel("");
+        setIncidents([]);
+    }, []);
 
-  if (!props.types.includes("shift")) {
-    setAlertShownInInput(true);
+    const editTimelog = useEditTimelog() as Shift | null;
+    useEffect(() => {
+        // if the uuid is changed
+        // or editing is cancelled
+        // change the input values accordingly
+        if (editTimelog) {
+            setSelectedModel(editTimelog.shiftModel);
+            setIncidents(editTimelog.incidents);
+        } else {
+            // Editing was cancelled, reset inputs
+            resetInputs();
+        }
+
+        // disabling exhaustive-deps since working around it is more trouble than it's worth
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [editTimelog?.uuid]);
+
+    // TODO: default to first shift model if only one is available
+
+    const submit = () =>
+        submitShift({
+            startTime: selectedDate,
+            endTime: selectedDate,
+            project_uuid: selectedProject!.uuid,
+            shiftModel: selectedModel,
+            incidents: incidents.map((incident) => ({
+                ...incident,
+                // set the year, month and day to the selected date
+                // this is so we don't have to recalculate the times every time the date changes
+                startTime: combineDateTime(selectedDate, incident.startTime),
+                endTime: combineDateTime(selectedDate, incident.endTime),
+            })),
+            uuid: editTimelog?.uuid,
+        }).then(resetInputs);
+
+    const addHandler = () => {
+        const eightAM = selectedDate.set({ hour: 8, minute: 0 });
+        setIncidents((currentIncidents) => [
+            ...currentIncidents,
+            {
+                startTime: eightAM,
+                endTime: maxTime(roundMinutes(DateTime.now(), 30), eightAM),
+                comment: "",
+            },
+        ]);
+    };
+
     return (
-      <Container>
-        <Box sx={{ mx: "auto", textAlign: "center", p: 5 }}>
-          <Alert severity="info" sx={{ textAlign: "center" }}>
-            {t("no_shifts_in_this_project")}
-          </Alert>
-        </Box>
-      </Container>
+        <>
+            {/* Shift Model Selection */}
+            <Grid item xs={12} sm={4} md={3} lg={2}>
+                <FormControl fullWidth>
+                    <InputLabel id="select-label-shiftModelState">
+                        {t("shift_model")}
+                    </InputLabel>
+                    <Select
+                        labelId="select-label-model"
+                        required={true}
+                        id="demo-simple-select-shiftModel"
+                        value={selectedModel}
+                        label={t("shift_model")}
+                        onChange={(e) => setSelectedModel(e.target.value)}
+                    >
+                        {projectShiftModels &&
+                            Object.entries(projectShiftModels).map(
+                                ([key, shiftModel]) => (
+                                    <MenuItem key={key} value={key}>
+                                        {shiftModel}
+                                    </MenuItem>
+                                ),
+                            )}
+                    </Select>
+                </FormControl>
+            </Grid>
+
+            {/* Add Entry Button */}
+            <Grid item xs={12} sm={4} md={3} lg={2} sx={{ mt: 1 }}>
+                <Button
+                    disabled={!selectedModel}
+                    fullWidth
+                    size="large"
+                    onClick={addHandler}
+                    variant="contained"
+                    startIcon={<NoteAddIcon />}
+                >
+                    {t("add_entry")}
+                </Button>
+            </Grid>
+
+            {/* Entries List */}
+            {incidents.map((incident, index) => (
+                <Grid container spacing={3} item xs={12} key={index}>
+                    {/* From Time Picker */}
+                    <Grid item xs={12} sm={3} md={2} lg={2}>
+                        <FormControl fullWidth>
+                            <TimePicker
+                                label={t("from")}
+                                value={incident.startTime}
+                                ampm={false}
+                                ampmInClock={false}
+                                minutesStep={5}
+                                onChange={(newValue) => {
+                                    if (newValue) {
+                                        setIncidents((currentIncidents) =>
+                                            spliceOOP(currentIncidents, index, 1, {
+                                                ...incident,
+                                                startTime: DateTime.fromObject({
+                                                    hour: newValue.hour || 0,
+                                                    minute: newValue.minute || 0,
+                                                    second: 0,
+                                                    millisecond: 0,
+                                                }),
+                                            }),
+                                        );
+                                    }
+                                }}
+                                renderInput={(params: any) => <TextField {...params} />}
+                            />
+                        </FormControl>
+                    </Grid>
+
+                    {/* To Time Picker */}
+                    <Grid item xs={12} sm={3} md={2} lg={2}>
+                        <FormControl fullWidth>
+                            <TimePicker
+                                label={t("to")}
+                                ampm={false}
+                                ampmInClock={false}
+                                minutesStep={5}
+                                value={incident.endTime}
+                                onChange={(newValue) => {
+                                    if (newValue) {
+                                        setIncidents((currentIncidents) =>
+                                            spliceOOP(currentIncidents, index, 1, {
+                                                ...incident,
+                                                endTime: DateTime.fromObject({
+                                                    hour: newValue.hour || 0,
+                                                    minute: newValue.minute || 0,
+                                                    second: 0,
+                                                    millisecond: 0,
+                                                }),
+                                            }),
+                                        );
+                                    }
+                                }}
+                                renderInput={(params: any) => <TextField {...params} />}
+                            />
+                        </FormControl>
+                    </Grid>
+
+                    {/* Comment Input */}
+                    <Grid item xs={10} sm={5} md={3} lg={2}>
+                        <TextField
+                            fullWidth
+                            label={t("comment")}
+                            required={true}
+                            value={incident.comment}
+                            onChange={(e) => {
+                                setIncidents((currentIncidents) =>
+                                    spliceOOP(currentIncidents, index, 1, {
+                                        ...incident,
+                                        comment: e.target.value,
+                                    }),
+                                );
+                            }}
+                        />
+                    </Grid>
+
+                    {/* Delete Button */}
+                    <Grid item xs={1}>
+                        <Button
+                            sx={{ mt: 1 }}
+                            color="error"
+                            variant="contained"
+                            onClick={() => {
+                                setIncidents((currentIncidents) =>
+                                    spliceOOP(currentIncidents, index, 1),
+                                );
+                            }}
+                        >
+                            <DeleteIcon />
+                        </Button>
+                    </Grid>
+                </Grid>
+            ))}
+
+            {/* Cancel Editing Button */}
+            {editTimelog && <CancelEditButton />}
+            {/* Submit Buttons */}
+            <SubmitButtons submit={submit} />
+        </>
     );
-  }
-
-  setAlertShownInInput(false);
-
-  return (
-    <>
-      <Grid item xs={12} sm={4} md={3} lg={2}>
-        <FormControl fullWidth>
-          <InputLabel id="select-label-shiftModelState">{t("shift_model")}</InputLabel>
-          <Select
-            labelId="select-label-shiftModel"
-            id="demo-simple-select-shiftModel"
-            value={props.shiftTimelog.shift_model}
-            required={true}
-            label={t("shift_model")}
-            onChange={(e) => {
-              props.setShiftTimelog({
-                ...props.shiftTimelog,
-                shift_model: e.target.value,
-              });
-            }}
-          >
-            {projectShiftModels &&
-              Object.entries(projectShiftModels).map(([key, shift]) => (
-                <MenuItem key={key} value={key}>
-                  {shift}
-                </MenuItem>
-              ))}
-          </Select>
-        </FormControl>
-      </Grid>
-      <Grid item xs={12} sm={4} md={3} lg={2} sx={{ mt: 1 }}>
-        <Button
-          disabled={!props.shiftTimelog.shift_model}
-          fullWidth
-          size="large"
-          onClick={addHandler}
-          variant="contained"
-          startIcon={<NoteAddIcon />}
-        >
-          {t("add_entry")}
-        </Button>
-      </Grid>
-      <Grid item xs={12} sm={4} md={3} lg={2} sx={{ mt: 1 }}>
-        {props.shiftTimelog.uuid && (
-          <Button
-            color="warning"
-            fullWidth
-            size="large"
-            onClick={() => {
-              props.setShiftTimelog({ ...props.shiftTimelog, uuid: null });
-            }}
-            variant="contained"
-            data-testid={`InputShift_cancel_edit-warning-btn`}
-            startIcon={<DoDisturbIcon />}
-          >
-            {t("cancel_edit")}
-          </Button>
-        )}
-      </Grid>
-      {props.shiftTimelog.incidents.map((incident, index) => (
-        <Grid container spacing={3} item xs={12} key={index}>
-          <Grid item xs={12} sm={3} md={2} lg={2}>
-            <FormControl fullWidth>
-              <TimePicker
-                label={t("from")}
-                value={DateTime.fromSeconds(incident.start_dt)}
-                ampm={false}
-                ampmInClock={false}
-                onChange={(newValue) => {
-                  if (newValue) {
-                    props.setShiftTimelog({
-                      ...props.shiftTimelog,
-                      incidents: [
-                        ...props.shiftTimelog.incidents.slice(0, index),
-                        {
-                          ...incident,
-                          start_dt:
-                            dateFrom
-                              .set({
-                                hour: newValue.hour || 0,
-                                minute: newValue.minute || 0,
-                                second: 0,
-                                millisecond: 0,
-                              })
-                              .valueOf() / 1000,
-                        },
-                        ...props.shiftTimelog.incidents.slice(index + 1),
-                      ],
-                    });
-                  }
-                }}
-                renderInput={(params: any) => <TextField {...params} />}
-              />
-            </FormControl>
-          </Grid>
-          <Grid item xs={12} sm={3} md={2} lg={2}>
-            <FormControl fullWidth>
-              <TimePicker
-                label={t("to")}
-                ampm={false}
-                ampmInClock={false}
-                value={DateTime.fromSeconds(incident.end_dt)}
-                onChange={(newValue) => {
-                  if (newValue) {
-                    props.setShiftTimelog({
-                      ...props.shiftTimelog,
-                      incidents: [
-                        ...props.shiftTimelog.incidents.slice(0, index),
-                        {
-                          ...incident,
-                          end_dt:
-                            dateFrom
-                              .set({
-                                hour: newValue.hour || 0,
-                                minute: newValue.minute || 0,
-                                second: 0,
-                                millisecond: 0,
-                              })
-                              .valueOf() / 1000,
-                        },
-                        ...props.shiftTimelog.incidents.slice(index + 1),
-                      ],
-                    });
-                  }
-                }}
-                renderInput={(params: any) => <TextField {...params} />}
-              />
-            </FormControl>
-          </Grid>
-          <Grid item xs={10} sm={5} md={3} lg={2}>
-            <TextField
-              fullWidth
-              label={t("comment")}
-              required={true}
-              value={incident.comment}
-              onChange={(e) => {
-                props.setShiftTimelog({
-                  ...props.shiftTimelog,
-                  incidents: [
-                    ...props.shiftTimelog.incidents.slice(0, index),
-                    {
-                      ...incident,
-                      comment: e.target.value,
-                    },
-                    ...props.shiftTimelog.incidents.slice(index + 1),
-                  ],
-                });
-              }}
-            />
-          </Grid>
-          <Grid item xs={1}>
-            <Button
-              sx={{ mt: 1 }}
-              color="error"
-              variant="contained"
-              onClick={() => {
-                props.setShiftTimelog({
-                  ...props.shiftTimelog,
-                  incidents: [
-                    ...props.shiftTimelog.incidents.slice(0, index),
-                    ...props.shiftTimelog.incidents.slice(index + 1),
-                  ],
-                });
-              }}
-            >
-              <DeleteIcon />
-            </Button>
-          </Grid>
-        </Grid>
-      ))}
-    </>
-  );
 }

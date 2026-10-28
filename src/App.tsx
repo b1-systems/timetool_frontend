@@ -12,62 +12,67 @@ import OuterMenu from "./components/OuterMenu";
 
 // TODO: replace with horde backend information
 const supportedLanguages: ReadonlyMap<string, string> = new Map([
-  ["de", "Deutsch"],
-  ["en", "English"],
+    ["de", "Deutsch"],
+    ["en", "English"],
 ]);
 
 const deLanguageTuple = [deDE, coreDeDE];
 const enLanguageTuple = [enUS, coreEnUs];
 
 const i18LangToMUILocales = new Map(
-  Object.entries({
-    de: deLanguageTuple,
-    "de-DE": deLanguageTuple,
-    en: enLanguageTuple,
-    "en-US": enLanguageTuple,
-  }),
+    Object.entries({
+        de: deLanguageTuple,
+        "de-DE": deLanguageTuple,
+        en: enLanguageTuple,
+        "en-US": enLanguageTuple,
+    }),
 );
 function App() {
-  const { t, i18n } = useTranslation();
-  const localeTuple = i18LangToMUILocales.get(i18n.language) || enLanguageTuple;
-  // Theming has to take place here, otherwise our Toasts/Notifications are not
-  // themed
+    const { t, i18n } = useTranslation();
+    const localeTuple = i18LangToMUILocales.get(i18n.language) || enLanguageTuple;
+    // Theming has to take place here, otherwise our Toasts/Notifications are not
+    // themed
 
-  const preTheme = createTheme(
-    // https://mui.com/components/data-grid/localization/#locale-text
-    {},
-    localeTuple[0],
-    localeTuple[1],
-  );
-  // sometimes appWebroot is a full URL, but basename requires a path
-  // we will have to support multiple URL in the future for now simply replace the URL with '/'
-  let appWebroot = "/";
-  try {
-    new URL(globalThis.horde.appWebroot);
-  } catch (TypeError) {
-    // not a full URL, use as is
-    appWebroot = globalThis.horde.appWebroot;
-  }
-  const theme = responsiveFontSizes(preTheme);
-  return (
-    <RecoilRoot>
-      <LocalizationProvider dateAdapter={AdapterLuxon} locale={"de"}>
-        <BrowserRouter basename={appWebroot}>
-          <ThemeProvider theme={theme}>
-            <Toastyfier position="bottom-center" gutter={12}>
-              <ConfirmationDialog
-                confirm={t("confirm")}
-                cancel={t("cancel")}
-                title={t("confirmation_required")}
-              >
-                <OuterMenu supportedLanguages={supportedLanguages}></OuterMenu>
-              </ConfirmationDialog>
-            </Toastyfier>
-          </ThemeProvider>
-        </BrowserRouter>
-      </LocalizationProvider>
-    </RecoilRoot>
-  );
+    const preTheme = createTheme(
+        // https://mui.com/components/data-grid/localization/#locale-text
+        {},
+        localeTuple[0],
+        localeTuple[1],
+    );
+    // sometimes appWebroot is a full URL, but basename requires a path
+    // we will have to support multiple URL in the future for now simply replace the URL with '/'
+    let appWebroot = "/";
+    try {
+        new URL(globalThis.horde.appWebroot);
+    } catch (TypeError) {
+        // not a full URL, use as is
+        appWebroot = globalThis.horde.appWebroot;
+    }
+    const theme = responsiveFontSizes(preTheme);
+    return (
+        <RecoilRoot>
+            <LocalizationProvider
+                dateAdapter={AdapterLuxon}
+                adapterLocale={i18n.language}
+            >
+                <BrowserRouter basename={appWebroot}>
+                    <ThemeProvider theme={theme}>
+                        <Toastyfier position="bottom-center" gutter={12}>
+                            <ConfirmationDialog
+                                confirm={t("confirm")}
+                                cancel={t("cancel")}
+                                title={t("confirmation_required")}
+                            >
+                                <OuterMenu
+                                    supportedLanguages={supportedLanguages}
+                                ></OuterMenu>
+                            </ConfirmationDialog>
+                        </Toastyfier>
+                    </ThemeProvider>
+                </BrowserRouter>
+            </LocalizationProvider>
+        </RecoilRoot>
+    );
 }
 
 export default App;

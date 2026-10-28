@@ -1,86 +1,116 @@
 import { DateTime } from "luxon";
 import { v4 as uuidv4 } from "uuid";
 
-import { fetchSubmit } from "./api";
-import { Incident, Timelog, isPerdiem, isShift, isTimelog } from "./models";
+import { fetchCloseMonth, fetchDelete, fetchSubmit } from "./api";
+import { DefaultTimelog, Incident, Perdiem, Shift } from "./models/internal";
 
-export const handleSubmit = async (timelog: Timelog) => {
-  if (timelog) {
-    const commonData = {
-      uuid: timelog.uuid || uuidv4(),
-      project_uuid: timelog.project_uuid,
-      start_dt: timelog.start_dt,
-      timezone: window.Intl.DateTimeFormat().resolvedOptions().timeZone,
-    };
-    let submitData;
-    let incidentsChecked: Incident[] = [];
-    if (isShift(timelog)) {
-      let overZero = false;
-      let lastTimeChecked = -1;
-      timelog.incidents.forEach((incident) => {
-        if (lastTimeChecked !== -1) {
-          if (lastTimeChecked > incident.start_dt) {
-            overZero = true;
-          }
-        }
-        if (!overZero) {
-          if (incident.end_dt < incident.start_dt) {
-            incidentsChecked.push({
-              start_dt: incident.start_dt,
-              end_dt:
-                DateTime.fromSeconds(incident.end_dt).plus({ days: 1 }).valueOf() /
-                1000,
-              comment: incident.comment,
-            });
-            lastTimeChecked = incident.end_dt;
-            overZero = true;
-          } else {
-            incidentsChecked.push(incident);
-            lastTimeChecked = incident.end_dt;
-          }
-        } else {
-          incidentsChecked.push({
-            start_dt:
-              DateTime.fromSeconds(incident.start_dt).plus({ days: 1 }).valueOf() /
-              1000,
-            end_dt:
-              DateTime.fromSeconds(incident.end_dt).plus({ days: 1 }).valueOf() / 1000,
-            comment: incident.comment,
-          });
-        }
-      });
-      submitData = {
-        ...commonData,
-        end_dt: Math.round(
-          DateTime.fromSeconds(timelog.start_dt)
-            .set({ hour: 23, minute: 59 })
-            .valueOf() / 1000,
-        ),
-        type: "shift",
-        incidents: incidentsChecked,
-        shift_model: timelog.shift_model,
-      };
-      overZero = false;
-    } else if (isTimelog(timelog)) {
-      submitData = {
-        ...commonData,
-        end_dt: timelog.end_dt,
-        type: "default",
-        breakTime: timelog.breaklength,
-        travelTime: timelog.travel,
-        comment: timelog.comment,
-        onsite: timelog.onsite,
-      };
-    } else if (isPerdiem(timelog)) {
-      submitData = {
-        ...commonData,
-        type: timelog.type,
-        comment: timelog.comment,
+type PartialPick<T, F extends keyof T> = Omit<T, F> & Partial<Pick<T, F>>;
+
+type PartialPerdiem = PartialPick<
+    Perdiem,
+    "type" | "uuid" | "employee_uuid" | "project_name"
+>;
+export const submitPerdiem = (timelog: PartialPerdiem) =>
+    fetchSubmit({
         is_perdiem: true,
-      };
-    } else {
-      throw new Error("not a valid submit");
+        uuid: timelog.uuid || uuidv4(),
+        timezone: window.Intl.DateTimeFormat().resolvedOptions().timeZone,
+        project_uuid: timelog.project_uuid,
+        start_dt: timelog.startTime.toSeconds() | 0,
+        type: timelog.perdiemModel,
+        comment: timelog.comment,
+    });
+
+type PartialDefaultTimelog = PartialPick<
+    DefaultTimelog,
+    "type" | "uuid" | "employee_uuid" | "project_name"
+>;
+export const submitDefaultTimelog = (timelog: PartialDefaultTimelog) =>
+    fetchSubmit({
+        type: "default",
+        uuid: timelog.uuid || uuidv4(),
+        timezone: window.Intl.DateTimeFormat().resolvedOptions().timeZone,
+        project_uuid: timelog.project_uuid,
+        start_dt: timelog.startTime.toSeconds() | 0,
+        end_dt: timelog.endTime.toSeconds() | 0,
+        breakTime: timelog.breakTime.as("seconds") | 0,
+        travelTime: timelog.travelTime.as("seconds") | 0,
+        comment: timelog.comment,
+        onsite: timelog.site,
+    });
+
+type PartialShift = PartialPick<
+    Shift,
+    "type" | "uuid" | "employee_uuid" | "project_name" | "endTime"
+>;
+export const submitShift = (timelog: PartialShift) => {
+    let incidentsChecked: Incident[] = [];
+    let lastTimeChecked = DateTime.fromMillis(-1);
+
+    for (let incident of timelog.incidents) {
+        let overZero = false;
+        if (lastTimeChecked.toMillis() !== -1) {
+            if (lastTimeChecked > incident.startTime) {
+                overZero = true;
+            }
+        }
+
+        if (!overZero) {
+            if (incident.endTime < incident.startTime) {
+                // Roll over to next if end time is before start time
+                incidentsChecked.push({
+                    startTime: incident.startTime,
+                    endTime: incident.endTime.plus({ days: 1 }),
+                    comment: incident.comment,
+                });
+                lastTimeChecked = incident.endTime;
+                overZero = true;
+            } else {
+                // Otherwise, just add the incident
+                incidentsChecked.push(incident);
+                lastTimeChecked = incident.endTime;
+            }
+        } else {
+            // If we've already rolled over, add the incident to the next day
+            incidentsChecked.push({
+                startTime: incident.startTime.plus({ days: 1 }),
+                endTime: incident.endTime.plus({ days: 1 }),
+                comment: incident.comment,
+            });
+        }
     }
-    fetchSubmit(submitData).catch((errorNoSubmit) => console.error(errorNoSubmit));
-  }
+
+    return fetchSubmit({
+        type: "shift",
+        uuid: timelog.uuid || uuidv4(),
+        timezone: window.Intl.DateTimeFormat().resolvedOptions().timeZone,
+        project_uuid: timelog.project_uuid,
+        start_dt: timelog.startTime.toSeconds() | 0,
+        end_dt: timelog.startTime.endOf("day").toSeconds() | 0,
+        shift_model: timelog.shiftModel,
+        incidents: incidentsChecked.map((incident) => ({
+            start_dt: incident.startTime.toSeconds() | 0,
+            end_dt: incident.endTime.toSeconds() | 0,
+            comment: incident.comment,
+        })),
+    });
+};
+
+export const deleteTimelog = ({ uuid }: { uuid: string }) => {
+    return fetchDelete({
+        request: {
+            uuid,
+        },
+    });
+};
+
+export const closeMonth = ({ month }: { month: DateTime }) => {
+    return fetchCloseMonth({
+        request: {
+            year: month.year.toString(),
+            month: month.month.toString(),
+            format: "traditional",
+            scope: "me",
+        },
+    });
 };

@@ -10,16 +10,16 @@ jest.setTimeout(20000); // milliseconds
 enableFetchMocks();
 
 jest.mock("react-i18next", () => ({
-  // this mock makes sure any components using the translate hook can use it without a warning being shown
-  useTranslation: () => {
-    return {
-      t: (key: string) => key,
-      i18n: {
-        changeLanguage: () => Promise.resolve(),
-        language: "en",
-      },
-    };
-  },
+    // this mock makes sure any components using the translate hook can use it without a warning being shown
+    useTranslation: () => {
+        return {
+            t: (key: string) => key,
+            i18n: {
+                changeLanguage: () => Promise.resolve(),
+                language: "en",
+            },
+        };
+    },
 }));
 
 // Todo how?
